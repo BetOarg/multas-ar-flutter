@@ -65,7 +65,7 @@ class OcrChannel(
                         }
                     }
                 }
-                "isAvailable" -> result.success(true)
+                "isAvailable" -> result.success(hasRequiredModels())
                 else -> result.notImplemented()
             }
         }
@@ -87,6 +87,23 @@ class OcrChannel(
             lines.joinToString("\n").trim()
         }
 
+    // ── Disponibilidad real del motor ─────────────────────────
+    private fun hasRequiredModels(): Boolean {
+        val required = listOf(
+            "flutter_assets/assets/models/det.onnx",
+            "flutter_assets/assets/models/cls.onnx",
+            "flutter_assets/assets/models/rec.onnx",
+            "flutter_assets/assets/models/ppocr_keys.txt",
+        )
+        return required.all { path ->
+            try {
+                context.assets.open(path).use { true }
+            } catch (_: Exception) {
+                false
+            }
+        }
+    }
+
     // ── Carga lazy de modelos ─────────────────────────────────
     private fun ensureModelsLoaded() {
         if (env != null) return
@@ -97,9 +114,9 @@ class OcrChannel(
             setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT)
         }
 
-        detSession = env!!.createSession(assetBytes("models/det.onnx"), opts)
-        clsSession = env!!.createSession(assetBytes("models/cls.onnx"), opts)
-        recSession = env!!.createSession(assetBytes("models/rec.onnx"), opts)
+        detSession = env!!.createSession(assetBytes("assets/models/det.onnx"), opts)
+        clsSession = env!!.createSession(assetBytes("assets/models/cls.onnx"), opts)
+        recSession = env!!.createSession(assetBytes("assets/models/rec.onnx"), opts)
         charset    = loadCharset()
     }
 
@@ -245,7 +262,7 @@ class OcrChannel(
 
     private fun loadCharset(): List<String> {
         return try {
-            context.assets.open("models/ppocr_keys.txt")
+            context.assets.open("flutter_assets/assets/models/ppocr_keys.txt")
                 .bufferedReader().readLines()
         } catch (e: Exception) {
             emptyList()
@@ -253,7 +270,7 @@ class OcrChannel(
     }
 
     private fun assetBytes(assetPath: String): ByteArray {
-        return context.assets.open(assetPath).readBytes()
+        return context.assets.open("flutter_assets/$assetPath").use { it.readBytes() }
     }
 
     fun release() {
