@@ -1,0 +1,227 @@
+// ══════════════════════════════════════════════════════════════════
+// PLAZOS SERVICE — implementación completa
+// Motor de cálculo de plazos legales para tránsito Argentina.
+//
+// Tipos de plazo:
+//   - Días hábiles administrativos (L-V, sin feriados)
+//   - Días hábiles judiciales (ídem, con receso julio/enero)
+//   - Días corridos (calendario, sin excepción)
+//
+// Prescripción: por jurisdicción y tipo de falta.
+// EstadoPlazo:  semáforo vencido/urgente/próximo/vigente.
+// ══════════════════════════════════════════════════════════════════
+
+enum EstadoPlazo { vencido, urgente, proximo, vigente }
+
+class PlazoCalculado {
+  final String nombre;
+  final String norma;
+  final DateTime fechaInicio;
+  final DateTime fechaVencimiento;
+  final int diasRestantesVal;
+  final EstadoPlazo estado;
+
+  const PlazoCalculado({
+    required this.nombre,
+    required this.norma,
+    required this.fechaInicio,
+    required this.fechaVencimiento,
+    required this.diasRestantesVal,
+    required this.estado,
+  });
+
+  int get diasRestantes => diasRestantesVal;
+}
+
+class PlazosService {
+  final List<DateTime> feriados;
+
+  PlazosService({required this.feriados});
+
+  // ── Días hábiles administrativos ─────────────────────────────
+  DateTime sumarDiasHabilesAdmin(DateTime inicio, int dias) {
+    var fecha = inicio;
+    var contados = 0;
+    while (contados < dias) {
+      fecha = fecha.add(const Duration(days: 1));
+      if (_esHabilAdmin(fecha)) contados++;
+    }
+    return fecha;
+  }
+
+  // ── Días hábiles judiciales ───────────────────────────────────
+  DateTime sumarDiasHabilesJud(DateTime inicio, int dias) {
+    var fecha = inicio;
+    var contados = 0;
+    while (contados < dias) {
+      fecha = fecha.add(const Duration(days: 1));
+      if (_esHabilJud(fecha)) contados++;
+    }
+    return fecha;
+  }
+
+  // ── Días corridos ─────────────────────────────────────────────
+  DateTime sumarDiasCorridos(DateTime inicio, int dias) =>
+      inicio.add(Duration(days: dias));
+
+  // ── Prescripción por jurisdicción y tipo de falta ─────────────
+  DateTime calcularPrescripcion(
+      DateTime hecho, String jurisdiccion, String tipoFalta) {
+    final anios = _aniosPrescrip(jurisdiccion, tipoFalta);
+    return DateTime(hecho.year + anios, hecho.month, hecho.day);
+  }
+
+  int _aniosPrescrip(String jur, String tipo) {
+    switch (jur) {
+      case 'CABA':
+        return 5; // Ley 451 (texto vigente; Fallo Andrade → 2, verificar alzada)
+      case 'Mendoza':
+        return switch (tipo) {
+          'gravisima' => 4,
+          'grave'     => 3,
+          _           => 2,
+        };
+      case 'Neuquén':
+        return 3;
+      default: // PBA, Nacional, resto → Ley 24.449
+        return switch (tipo) {
+          'grave' => 5,
+          _       => 2,
+        };
+    }
+  }
+
+  // ── Estado del plazo (semáforo) ───────────────────────────────
+  EstadoPlazo evaluarEstado(DateTime vencimiento) {
+    final hoy  = DateTime.now();
+    final diff = vencimiento.difference(hoy).inDays;
+    if (diff < 0)  return EstadoPlazo.vencido;
+    if (diff <= 3) return EstadoPlazo.urgente;
+    if (diff <= 7) return EstadoPlazo.proximo;
+    return EstadoPlazo.vigente;
+  }
+
+  int diasRestantes(DateTime vencimiento) =>
+      vencimiento.difference(DateTime.now()).inDays;
+
+  // ── Internos ──────────────────────────────────────────────────
+  bool _esHabilAdmin(DateTime d) =>
+      d.weekday != DateTime.saturday &&
+      d.weekday != DateTime.sunday &&
+      !_esFeriado(d);
+
+  bool _esHabilJud(DateTime d) {
+    if (!_esHabilAdmin(d)) return false;
+    // Receso judicial: enero completo y 1-31 julio
+    if (d.month == 1) return false;
+    if (d.month == 7 && d.day <= 31) return false;
+    return true;
+  }
+
+  bool _esFeriado(DateTime d) => feriados.any(
+        (f) => f.year == d.year && f.month == d.month && f.day == d.day);
+
+  // ── Builder de plazos para un caso completo ───────────────────
+  List<PlazoCalculado> calcularPlazos({
+    required String jurisdiccion,
+    required DateTime fechaNotificacion,
+    bool esFotomulta = false,
+  }) {
+    final plazos = <PlazoCalculado>[];
+
+    switch (jurisdiccion) {
+      case 'CABA':
+        plazos.addAll(_plazosCaba(fechaNotificacion));
+      case 'PBA':
+        plazos.addAll(_plazosPba(fechaNotificacion, esFotomulta));
+      default:
+        plazos.addAll(_plazosGeneral(fechaNotificacion));
+    }
+
+    return plazos;
+  }
+
+  List<PlazoCalculado> _plazosCaba(DateTime inicio) {
+    final venc = sumarDiasHabilesAdmin(inicio, 5);
+    return [
+      PlazoCalculado(
+        nombre:          'Descargo administrativo',
+        norma:           'Art. 8 Ley 1217 CABA — 5 días hábiles',
+        fechaInicio:     inicio,
+        fechaVencimiento: venc,
+        diasRestantesVal: diasRestantes(venc),
+        estado:          evaluarEstado(venc),
+      ),
+    ];
+  }
+
+  List<PlazoCalculado> _plazosPba(DateTime inicio, bool esFoto) {
+    final descargo = sumarDiasHabilesAdmin(inicio, 45);
+    final presentacion = sumarDiasCorridos(inicio, 30);
+    final caducidadLic = sumarDiasCorridos(inicio, 90);
+    final apelacion = sumarDiasHabilesJud(inicio, 5);
+
+    final lista = [
+      PlazoCalculado(
+        nombre:          'Descargo administrativo',
+        norma:           'Art. 35 Ley 13.927 PBA — 45 días hábiles',
+        fechaInicio:     inicio,
+        fechaVencimiento: descargo,
+        diasRestantesVal: diasRestantes(descargo),
+        estado:          evaluarEstado(descargo),
+      ),
+      PlazoCalculado(
+        nombre:          'Presentación ante JAITP',
+        norma:           'Art. 35 Ley 13.927 PBA — 30 días corridos',
+        fechaInicio:     inicio,
+        fechaVencimiento: presentacion,
+        diasRestantesVal: diasRestantes(presentacion),
+        estado:          evaluarEstado(presentacion),
+      ),
+      PlazoCalculado(
+        nombre:          'Caducidad habilitación para conducir',
+        norma:           'Art. 35 Ley 13.927 PBA — 90 días corridos',
+        fechaInicio:     inicio,
+        fechaVencimiento: caducidadLic,
+        diasRestantesVal: diasRestantes(caducidadLic),
+        estado:          evaluarEstado(caducidadLic),
+      ),
+      PlazoCalculado(
+        nombre:          'Recurso de apelación (fundado)',
+        norma:           'Arts. 40-41 Ley 13.927 PBA — 5 días hábiles judiciales',
+        fechaInicio:     inicio,
+        fechaVencimiento: apelacion,
+        diasRestantesVal: diasRestantes(apelacion),
+        estado:          evaluarEstado(apelacion),
+      ),
+    ];
+
+    if (esFoto) {
+      final notifFoto = sumarDiasHabilesAdmin(inicio, 60);
+      lista.add(PlazoCalculado(
+        nombre:          'Notificación fotomulta (término legal)',
+        norma:           'Art. 28 Ley 13.927 PBA — 60 días hábiles',
+        fechaInicio:     inicio,
+        fechaVencimiento: notifFoto,
+        diasRestantesVal: diasRestantes(notifFoto),
+        estado:          evaluarEstado(notifFoto),
+      ));
+    }
+
+    return lista;
+  }
+
+  List<PlazoCalculado> _plazosGeneral(DateTime inicio) {
+    final venc = sumarDiasCorridos(inicio, 30);
+    return [
+      PlazoCalculado(
+        nombre:          'Plazo general de descargo',
+        norma:           'Art. 70 Ley 24.449 — verificar normativa local',
+        fechaInicio:     inicio,
+        fechaVencimiento: venc,
+        diasRestantesVal: diasRestantes(venc),
+        estado:          evaluarEstado(venc),
+      ),
+    ];
+  }
+}

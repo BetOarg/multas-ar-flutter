@@ -1,0 +1,191 @@
+{
+  "version": 1,
+  "generado": "2026-10-01",
+  "advertencia": "Verificar vigencia normativa al momento de uso. Fuente: textos legales públicos.",
+  "entradas": [
+    {
+      "jurisdiccion": "CABA",
+      "categoria": "ley",
+      "titulo": "Ley de Procedimiento de Faltas",
+      "contenido": "Ley 1217 — Texto Consolidado Ley 6.764 (18/12/2024)",
+      "norma_base": "Ley 1217 CABA",
+      "es_alta_importancia": true,
+      "orden": 1
+    },
+    {
+      "jurisdiccion": "CABA",
+      "categoria": "ley",
+      "titulo": "Código de Faltas",
+      "contenido": "Ley 451 — Régimen de Faltas de la CABA",
+      "norma_base": "Ley 451 CABA",
+      "es_alta_importancia": true,
+      "orden": 2
+    },
+    {
+      "jurisdiccion": "CABA",
+      "categoria": "plazo",
+      "titulo": "Descargo administrativo",
+      "contenido": "5 días hábiles administrativos desde la notificación fehaciente",
+      "norma_base": "Art. 8 Ley 1217 CABA",
+      "es_alta_importancia": true,
+      "orden": 3
+    },
+    {
+      "jurisdiccion": "CABA",
+      "categoria": "prescripcion",
+      "titulo": "Prescripción — texto legal",
+      "contenido": "5 años desde la infracción, sin distinción leve/grave",
+      "norma_base": "Ley 451 CABA",
+      "es_alta_importancia": true,
+      "tiene_alerta_dual": true,
+      "alerta_dual_detalle": "Fallo Andrade (Juzgado PCyF N°15, 30/05/2023) aplica 2 años (Art. 89 Ley 24.449). Verificar estado en alzada antes de invocar.",
+      "orden": 4
+    },
+    {
+      "jurisdiccion": "CABA",
+      "categoria": "advertencia",
+      "titulo": "Notificación por email",
+      "contenido": "Desde la reforma de la Ley 1217 (t.c. Ley 6.764/2024), la notificación por correo electrónico es fehaciente. El plazo corre desde la recepción.",
+      "norma_base": "Ley 1217 CABA (t.c. Ley 6.764/2024)",
+      "es_alta_importancia": true,
+      "orden": 5
+    },
+    {
+      "jurisdiccion": "PBA",
+      "categoria": "ley",
+      "titulo": "Régimen de Infracciones de Tránsito",
+      "contenido": "Ley 13.927 y modificatoria Ley 15.002",
+      "norma_base": "Ley 13.927 PBA",
+      "es_alta_importancia": true,
+      "orden": 1
+    },
+    {
+      "jurisdiccion": "PBA",
+      "categoria": "plazo",
+      "titulo": "Presentación ante juzgado",
+      "contenido": "30 días corridos desde el labrado del acta para presentarse ante el JAITP",
+      "norma_base": "Art. 35 Ley 13.927 PBA",
+      "es_alta_importancia": true,
+      "orden": 2
+    },
+    {
+      "jurisdiccion": "PBA",
+      "categoria": "plazo",
+      "titulo": "Descargo administrativo",
+      "contenido": "45 días hábiles administrativos desde la notificación fehaciente",
+      "norma_base": "Art. 35 Ley 13.927 PBA",
+      "es_alta_importancia": true,
+      "orden": 3
+    },
+    {
+      "jurisdiccion": "PBA",
+      "categoria": "plazo",
+      "titulo": "Caducidad habilitación para conducir",
+      "contenido": "90 días corridos desde la boleta de citación sin presentarse ante el juzgado",
+      "norma_base": "Art. 35 Ley 13.927 PBA",
+      "es_alta_importancia": true,
+      "orden": 4
+    },
+    {
+      "jurisdiccion": "PBA",
+      "categoria": "plazo",
+      "titulo": "Recurso de apelación judicial",
+      "contenido": "5 días hábiles desde la notificación de la condena. DEBE fundarse en el mismo escrito — si no se funda, queda desierto.",
+      "norma_base": "Arts. 40-41 Ley 13.927 PBA",
+      "es_alta_importancia": true,
+      "orden": 5
+    },
+    {
+      "jurisdiccion": "PBA",
+      "categoria": "plazo",
+      "titulo": "Notificación de fotomultas",
+      "contenido": "60 días hábiles desde el labrado del acta para notificar al infractor",
+      "norma_base": "Art. 28 Ley 13.927 PBA",
+      "es_alta_importancia": true,
+      "tiene_alerta_dual": true,
+      "alerta_dual_detalle": "Cámara Apelación Gral. San Martín, Sala I, 2018 (Exp. 37.639): el plazo es ordenatorio, no perentorio. No opera caducidad automática — oponer nulidad acreditando perjuicio concreto.",
+      "orden": 6
+    },
+    {
+      "jurisdiccion": "PBA",
+      "categoria": "advertencia",
+      "titulo": "Plan de pagos — RENUNCIA A RECURSOS",
+      "contenido": "La adhesión al plan de pagos implica reconocimiento irrevocable de deuda, renuncia a todos los recursos y causal de interrupción de la prescripción. Informar siempre al cliente ANTES de cualquier gestión de pago.",
+      "norma_base": "Art. 35 Ley 13.927 PBA",
+      "es_alta_importancia": true,
+      "orden": 7
+    },
+    {
+      "jurisdiccion": "PBA",
+      "categoria": "prescripcion",
+      "titulo": "Prescripción falta leve",
+      "contenido": "2 años desde el hecho (supletorio Ley 24.449)",
+      "norma_base": "Art. 89 Ley 24.449",
+      "es_alta_importancia": false,
+      "orden": 8
+    },
+    {
+      "jurisdiccion": "PBA",
+      "categoria": "prescripcion",
+      "titulo": "Prescripción falta grave",
+      "contenido": "5 años desde el hecho (supletorio Ley 24.449)",
+      "norma_base": "Art. 89 Ley 24.449",
+      "es_alta_importancia": false,
+      "orden": 9
+    },
+    {
+      "jurisdiccion": "Mendoza",
+      "categoria": "prescripcion",
+      "titulo": "Prescripción falta leve",
+      "contenido": "2 años desde el hecho",
+      "norma_base": "Art. 94 Ley 9024 Mendoza",
+      "es_alta_importancia": true,
+      "orden": 1
+    },
+    {
+      "jurisdiccion": "Mendoza",
+      "categoria": "prescripcion",
+      "titulo": "Prescripción falta grave",
+      "contenido": "3 años desde el hecho",
+      "norma_base": "Art. 94 Ley 9024 Mendoza",
+      "es_alta_importancia": true,
+      "orden": 2
+    },
+    {
+      "jurisdiccion": "Mendoza",
+      "categoria": "prescripcion",
+      "titulo": "Prescripción falta gravísima",
+      "contenido": "4 años desde el hecho",
+      "norma_base": "Art. 94 Ley 9024 Mendoza",
+      "es_alta_importancia": true,
+      "orden": 3
+    },
+    {
+      "jurisdiccion": "nacional",
+      "categoria": "ley",
+      "titulo": "Ley Nacional de Tránsito",
+      "contenido": "Ley 24.449 y Decreto Reglamentario 779/95 — modificado por Decreto 196/2025",
+      "norma_base": "Ley 24.449",
+      "es_alta_importancia": true,
+      "orden": 1
+    },
+    {
+      "jurisdiccion": "nacional",
+      "categoria": "prescripcion",
+      "titulo": "Prescripción falta leve",
+      "contenido": "2 años desde el hecho — DESDE EL HECHO, no desde la notificación",
+      "norma_base": "Art. 89 Ley 24.449",
+      "es_alta_importancia": true,
+      "orden": 2
+    },
+    {
+      "jurisdiccion": "nacional",
+      "categoria": "prescripcion",
+      "titulo": "Prescripción falta grave",
+      "contenido": "5 años desde el hecho — DESDE EL HECHO, no desde la notificación",
+      "norma_base": "Art. 89 Ley 24.449",
+      "es_alta_importancia": true,
+      "orden": 3
+    }
+  ]
+}

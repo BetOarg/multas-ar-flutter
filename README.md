@@ -1,0 +1,122 @@
+# Multas Argentina Pro — Flutter App
+
+Asistente legal para análisis de infracciones de tránsito en Argentina.
+
+## Stack técnico
+
+| Capa | Tecnología |
+|------|-----------|
+| Framework | Flutter 3.x / Dart 3.3+ |
+| Estado | BLoC (flutter_bloc) |
+| Base de datos | Drift + SQLite |
+| OCR Android | PaddleOCR v4 + ONNX Runtime |
+| OCR iOS | Apple Vision Framework |
+| OCR Fallback | google_mlkit_text_recognition |
+| Análisis IA | Anthropic Claude Sonnet (claude-sonnet-4-6) |
+| Navegación | go_router |
+| Notificaciones | flutter_local_notifications |
+| Seguridad | flutter_secure_storage |
+
+## Requisitos
+
+- Flutter 3.22+
+- Dart 3.3+
+- Android: minSdk 26 (Android 8.0+), NDK 27.0.12077973
+- iOS: 13.0+
+- Xcode 15+
+
+## Setup inicial
+
+```bash
+# 1. Clonar
+git clone https://github.com/BetOarg/multas-ar.git
+cd multas-ar
+
+# 2. Instalar dependencias
+flutter pub get
+
+# 3. Generar código Drift
+dart run build_runner build --delete-conflicting-outputs
+
+# 4. Ejecutar en modo debug
+flutter run
+
+# 5. Tests
+flutter test test/unit/
+flutter test test/integration/
+```
+
+## Modelos PaddleOCR (Android)
+
+Descargar y ubicar en `assets/models/`:
+```
+assets/models/
+├── det.onnx          # Detección de regiones (960×960)
+├── cls.onnx          # Clasificación de ángulo
+├── rec.onnx          # Reconocimiento de texto
+└── ppocr_keys.txt    # Charset español
+```
+
+Fuente: https://github.com/PaddlePaddle/PaddleOCR/releases
+
+## Estructura
+
+```
+lib/
+├── main.dart                    ← Entry point + DI
+├── core/
+│   ├── constants/               ← Jurisdicciones, normas, plazos
+│   ├── database/                ← Drift: tablas, DAOs, migraciones
+│   ├── repository/              ← ICasosRepository, NormativaRepository
+│   └── services/
+│       ├── ocr_service.dart     ← PaddleOCR / Vision / MLKit
+│       ├── plazos_service.dart  ← Motor de plazos hábiles/corridos
+│       ├── analisis_service.dart ← Alertas y oportunidades
+│       ├── nulidades_service.dart ← Art. 3 Ley 13.927 + Art. 9 Ley 1217
+│       ├── notification_service.dart
+│       ├── sinai_service.dart   ← URLs portales gubernamentales
+│       └── firebase_service.dart ← Stub Fase 3
+├── features/
+│   ├── analisis/    ← OCR + análisis IA (BLoC + UI)
+│   ├── casos/       ← CRUD casos + detalle (BLoC + UI)
+│   ├── escritos/    ← 6 modelos de escritos (BLoC + UI)
+│   ├── nulidades/   ← Motor nulidades formales (BLoC + UI)
+│   ├── normativa/   ← 9 jurisdicciones (UI)
+│   └── configuracion/ ← Perfil usuario (UI)
+└── shared/
+    ├── router/      ← go_router (5 tabs)
+    ├── theme/       ← Dark theme: bg #0D1117, acento #4361EE
+    └── widgets/     ← LegalAlert, PlazoCard, CampoFaltante, ScaffoldNav
+```
+
+## Normativa implementada
+
+- **CABA**: Ley 1217 (t.c. 6.764/2024), Ley 451, Fallo Andrade
+- **PBA**: Ley 13.927, Ley 15.002, Art. 3 nulidades, fotomultas
+- **Mendoza**: Ley 9024, Art. 94 prescripción tripartita
+- **Nacional**: Ley 24.449, Decreto 779/95
+- **+ Córdoba, Santa Fe, Tucumán, Salta, Neuquén**
+
+## Alertas duales implementadas
+
+| Jurisdicción | Norma A | Norma B | Advertencia |
+|---|---|---|---|
+| CABA | Prescripción 5 años (Ley 451) | 2 años (Fallo Andrade PCyF N°15) | Verificar alzada |
+| PBA fotomultas | Caducidad automática 60 días hábiles (Art. 28) | Plazo ordenatorio (Cám. San Martín 2018) | Acreditar perjuicio |
+
+## Roadmap
+
+| Fase | Estado |
+|------|--------|
+| 1 — Core local (OCR, nulidades, plazos, escritos) | ✅ Completo |
+| 2 — OCR nativo PaddleOCR + Apple Vision | ✅ Completo |
+| 3 — Motor nulidades + Firebase stub | ✅ Completo |
+| 4 — Google Play Store | 🔜 Pendiente |
+| 5 — Firebase Auth + Firestore sync | 🔜 Pendiente |
+| 6 — SINAI/DVE integración | 🔜 Pendiente |
+
+## Disclaimer
+
+**MULTAS ARGENTINA PRO** es una herramienta informativa.
+No constituye asesoramiento jurídico profesional ni reemplaza
+la intervención de un abogado/a matriculado/a (Ley 23.187).

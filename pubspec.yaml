@@ -1,0 +1,82 @@
+name: multas_ar
+description: "Multas Argentina Pro — Asistente legal para infracciones de tránsito"
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # ── Estado ──────────────────────────────────────────────────
+  flutter_bloc: ^8.1.6
+  bloc: ^8.1.4
+  equatable: ^2.0.5
+
+  # ── Navegación ───────────────────────────────────────────────
+  go_router: ^14.2.7
+
+  # ── Base de datos ────────────────────────────────────────────
+  drift: ^2.18.0
+  sqlite3_flutter_libs: ^0.5.24
+  path_provider: ^2.1.3
+  path: ^1.9.0
+
+  # ── OCR Fallback ─────────────────────────────────────────────
+  google_mlkit_text_recognition: ^0.13.0
+
+  # ── Imágenes ─────────────────────────────────────────────────
+  image_picker: ^1.1.2
+  image_cropper: ^8.0.2
+
+  # ── Notificaciones ───────────────────────────────────────────
+  flutter_local_notifications: ^17.2.2
+  timezone: ^0.9.4
+
+  # ── Seguridad ────────────────────────────────────────────────
+  flutter_secure_storage: ^9.2.2
+
+  # ── Red ──────────────────────────────────────────────────────
+  http: ^1.2.1
+
+  # ── Utilidades ───────────────────────────────────────────────
+  share_plus: ^10.0.2
+  url_launcher: ^6.3.0
+  intl: ^0.19.0
+  uuid: ^4.4.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  drift_dev: ^2.18.0
+  build_runner: ^2.4.11
+  mocktail: ^1.0.4
+  bloc_test: ^9.1.7
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/normativa/
+    - assets/models/          # PaddleOCR ONNX: det.onnx, cls.onnx, rec.onnx, ppocr_keys.txt
+    - assets/fonts/
+
+  # fonts:
+  #   - family: Inter
+  #     fonts:
+  #       - asset: assets/fonts/Inter-Regular.ttf
+  #       - asset: assets/fonts/Inter-Medium.ttf
+  #         weight: 500
+  #       - asset: assets/fonts/Inter-SemiBold.ttf
+  #         weight: 600
+  #       - asset: assets/fonts/Inter-Bold.ttf
+  #         weight: 700
+
+  # ── Firebase (Fase 5 — descomentar cuando se active) ──────────
+  # firebase_core: ^3.6.0
+  # firebase_auth: ^5.3.1
+  # cloud_firestore: ^5.4.3
+  # google_sign_in: ^6.2.1
