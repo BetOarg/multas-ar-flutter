@@ -18,7 +18,7 @@ import '../database/tables/tables.dart';
 
 class NormativaRepository {
   static const _urlOta =
-      'https://raw.githubusercontent.com/BetOarg/multas-ar/main/normativa_base.json';
+      'https://raw.githubusercontent.com/BetOarg/multas-ar-flutter/main/assets/normativa/normativa_base.json';
   static const _assetPath = 'assets/normativa/normativa_base.json';
 
   final NormativaDao _dao;
