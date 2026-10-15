@@ -6,11 +6,12 @@
 ## PRE-BUILD
 
 ### Keystore y firma
-- [ ] Ejecutar `scripts/keystore_setup.sh` y generar `multas-ar-release.jks`
-- [ ] Guardar keystore + contraseñas en gestor de secretos (1Password, etc.)
-- [ ] Confirmar que `android/key.properties` existe y NO está en git
-- [ ] Confirmar que `android/app/multas-ar-release.jks` NO está en git
-- [ ] Copiar bloque de `build_release.gradle` al `build.gradle` definitivo
+- [ ] Ejecutar `scripts/keystore_setup.sh` y generar `android/app/multas-ar-release.jks`
+- [ ] Guardar keystore y contraseñas en un gestor de secretos
+- [ ] Confirmar que `android/key.properties` existe y NO está en Git
+- [ ] Confirmar que `android/app/multas-ar-release.jks` NO está en Git
+- [ ] Verificar que `android/app/build.gradle` usa `signingConfigs.release`, nunca la clave debug
+- [ ] Confirmar que una release sin `key.properties` falla y no genera un artefacto firmado con debug
 
 ### .gitignore — verificar que contiene
 ```
@@ -19,24 +20,26 @@ android/app/*.jks
 android/app/*.keystore
 ```
 
+No ignorar el Gradle Wrapper: `android/gradlew`, `android/gradlew.bat` y `android/gradle/wrapper/gradle-wrapper.jar` son parte de una estructura Android reproducible y deben versionarse cuando se incorporen.
+
 ### Versión
-- [ ] Actualizar `version` en `pubspec.yaml` → `1.0.0+1`
-- [ ] Confirmar `versionCode: 1` y `versionName: "1.0.0"`
+- [ ] Actualizar `version` en `pubspec.yaml`
+- [ ] Confirmar que versionCode/versionName son los esperados para Play Console
 
 ### Assets PaddleOCR
-- [ ] `assets/models/det.onnx` presente
-- [ ] `assets/models/cls.onnx` presente
-- [ ] `assets/models/rec.onnx` presente
-- [ ] `assets/models/ppocr_keys.txt` presente
-- [ ] Tamaño total de modelos < 80 MB (límite APK inicial)
+- [ ] `assets/models/det.onnx` presente, o fallback OCR probado y documentado
+- [ ] `assets/models/cls.onnx` presente, o fallback OCR probado y documentado
+- [ ] `assets/models/rec.onnx` presente, o fallback OCR probado y documentado
+- [ ] `assets/models/ppocr_keys.txt` presente, o fallback OCR probado y documentado
+- [ ] Confirmar licencias, procedencia, compatibilidad y tamaño de los modelos
 
 ### Código
 - [ ] `flutter analyze` sin errores
-- [ ] `dart run build_runner build` ejecutado (código Drift generado)
-- [ ] `flutter test test/unit/ test/integration/` — todos pasan
-- [ ] API key Anthropic NO hardcodeada (se ingresa en configuración)
-- [ ] `debugShowCheckedModeBanner: false` en MaterialApp
-- [ ] Logs de debug eliminados o detrás de `kDebugMode`
+- [ ] `dart run build_runner build --delete-conflicting-outputs` ejecutado
+- [ ] Tests unitarios y de integración pasan
+- [ ] La clave de Anthropic no está hardcodeada ni incluida en el cliente sin una evaluación de seguridad
+- [ ] Política de privacidad coincide con el almacenamiento, cifrado y tráfico reales
+- [ ] Normativa y reglas jurídicas revisadas por jurisdicción, vigencia y fuente oficial
 
 ---
 
@@ -45,109 +48,48 @@ android/app/*.keystore
 ### Android AAB (recomendado para Play)
 ```bash
 flutter build appbundle --release
-# Output: build/app/outputs/bundle/release/app-release.aab
 ```
 
-### Verificar firma del AAB
-```bash
-# Requiere bundletool
-java -jar bundletool.jar validate --bundle=app-release.aab
-```
+### Verificación
+- [ ] Validar AAB con bundletool
+- [ ] Confirmar que el certificado de firma coincide con el esperado
+- [ ] Instalar y probar el artefacto de release en un dispositivo real
+- [ ] Registrar hash SHA-256 del artefacto publicado
 
-### APK para testing directo (opcional)
-```bash
-flutter build apk --release --split-per-abi
-# Output: build/app/outputs/apk/release/
-```
-
-### Tamaño del AAB
-- [ ] AAB < 150 MB (límite Play Store sin expansión)
-- Si supera: revisar modelos ONNX, comprimir assets
+### iOS
+- [ ] Restaurar y verificar el proyecto Xcode/Podfile desde un clon limpio
+- [ ] Ejecutar build de release en macOS con las credenciales y perfiles correspondientes
+- [ ] Probar OCR, permisos, almacenamiento y notificaciones en dispositivo real
 
 ---
 
 ## PLAY CONSOLE — CONFIGURACIÓN INICIAL
 
-### Crear app
-- [ ] Crear cuenta de desarrollador Google Play (USD 25 — único pago)
-- [ ] Crear nueva app en Play Console
-- [ ] Nombre: "Multas Argentina Pro"
-- [ ] Idioma por defecto: Español (es-419)
-- [ ] App o juego: App
-- [ ] Gratis o de pago: Gratis
-
-### Presencia en la tienda
-- [ ] Título (30 chars): `Multas Argentina Pro`
-- [ ] Descripción corta (80 chars): ver `play_store_listing.md`
-- [ ] Descripción larga (4000 chars): ver `play_store_listing.md`
-- [ ] Ícono 512×512 PNG (sin alfa): generar y subir
-- [ ] Banner 1024×500 PNG: generar y subir
-- [ ] Screenshots teléfono (mín. 2, máx. 8): 6 capturas
-- [ ] Screenshots tablet (opcional): 1 captura
-- [ ] Categoría: Herramientas
-- [ ] Email de soporte: soporte@multasargentina.app
-- [ ] URL política de privacidad: subir `docs/privacy_policy.html` a host
-
-### Clasificación de contenido
-- [ ] Completar cuestionario (ver `play_store_listing.md`)
-- [ ] Clasificación esperada: Everyone / PEGI 3
-
-### Seguridad de datos (Data Safety)
-- [ ] Completar formulario (ver tabla en `play_store_listing.md`)
-- [ ] Declarar: fotos procesadas localmente + Anthropic opcional
-- [ ] Declarar: sin venta de datos, sin analíticas
-
-### Precios y distribución
-- [ ] Precio: Gratis
-- [ ] Países: Argentina + todos disponibles
-- [ ] Apto para familias: No (herramienta legal, +18)
+- [ ] Crear app y completar listing
+- [ ] Subir política de privacidad accesible públicamente
+- [ ] Completar clasificación de contenido y Data Safety según comportamiento real
+- [ ] Confirmar correo de soporte, capturas, icono y banner
+- [ ] Revisar todos los requisitos vigentes de Play Console
 
 ---
 
 ## PRIMER RELEASE (Internal Testing)
 
-- [ ] Subir AAB a track "Internal Testing"
-- [ ] Agregar testers (mín. 1 cuenta Google personal)
-- [ ] Completar todas las secciones requeridas por Play
-- [ ] Enviar a revisión interna
-- [ ] Instalar desde Play en dispositivo real y testear flujo completo
-
-### Checklist de smoke test en dispositivo
-- [ ] App abre sin crash
-- [ ] Cámara funciona y OCR procesa una acta
-- [ ] Plazos se calculan correctamente
-- [ ] Motor de nulidades detecta un defecto de prueba
-- [ ] Notificaciones aparecen cuando se configuran
-- [ ] Escritos se generan y pueden copiarse
-- [ ] Normativa carga para CABA y PBA
-- [ ] Configuración guarda y recarga los datos
+- [ ] Subir AAB al track Internal Testing
+- [ ] Instalar desde Play en un dispositivo real y probar el flujo completo
+- [ ] Verificar OCR, plazos, nulidades, escritos, notificaciones, persistencia y normativa
+- [ ] No promover a producción hasta cerrar los bloqueantes y registrar resultados
 
 ---
 
 ## RELEASE A PRODUCCIÓN
 
-- [ ] Al menos 7 días en Internal Testing sin crashs
-- [ ] Promover a "Production"
-- [ ] Rollout al 10% inicial — monitorear Play Console → Android Vitals
-- [ ] Rollout al 50% a las 48hs si sin anomalías
-- [ ] Rollout al 100% a los 5 días
-
-### Monitoreo post-release
-- [ ] ANR rate < 0.47% (umbral Google Play)
-- [ ] Crash rate < 1.09% (umbral Google Play)
-- [ ] Calificación promedio objetivo: ≥ 4.0
+- [ ] Completar los requisitos de revisión de Play Console
+- [ ] Hacer despliegue gradual y monitorizar Android Vitals
+- [ ] Mantener un canal de soporte y un proceso de corrección de normativa
 
 ---
 
 ## NOTAS IMPORTANTES
 
-> ⚠️ **El keystore es IRRECUPERABLE**. Si lo perdés, deberás publicar
-> la app con un nuevo package name y perderás todas las instalaciones
-> existentes. Guardarlo en al menos 2 lugares seguros distintos.
-
-> ⚠️ Google Play puede tardar **1-3 días hábiles** en revisar la primera
-> publicación. Las actualizaciones posteriores suelen ser < 24hs.
-
-> ℹ️ Para la versión v1.0 no es necesario Google Play Billing ni
-> ninguna SDK adicional de Google. La app cumple las políticas de
-> Play sin módulos extra.
+No publicar mientras la compilación limpia, la firma, el OCR, la política de privacidad y las reglas jurídicas no hayan sido verificadas. La pérdida de la clave de firma puede impedir actualizar la aplicación con la misma identidad.
