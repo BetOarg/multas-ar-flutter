@@ -29,8 +29,8 @@ Asistente legal para análisis de infracciones de tránsito en Argentina.
 
 ```bash
 # 1. Clonar
-git clone https://github.com/BetOarg/multas-ar.git
-cd multas-ar
+git clone https://github.com/BetOarg/multas-ar-flutter.git
+cd multas-ar-flutter
 
 # 2. Instalar dependencias
 flutter pub get
