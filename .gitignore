@@ -14,11 +14,9 @@ build/
 *.dill
 
 # ── Android ───────────────────────────────────────────────────────
-**/android/**/gradle-wrapper.jar
+# Mantener versionados gradlew, gradlew.bat y gradle-wrapper.jar.
 **/android/.gradle
 **/android/captures/
-**/android/gradlew
-**/android/gradlew.bat
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
 **/android/app/debug.keystore
