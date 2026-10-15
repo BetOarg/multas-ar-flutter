@@ -9,13 +9,13 @@ Asistente legal para análisis de infracciones de tránsito en Argentina.
 | Framework | Flutter 3.x / Dart 3.3+ |
 | Estado | BLoC (flutter_bloc) |
 | Base de datos | Drift + SQLite |
-| OCR Android | PaddleOCR v4 + ONNX Runtime |
-| OCR iOS | Apple Vision Framework |
+| OCR Android | Canal nativo PaddleOCR/ONNX (requiere modelos; no verificado en build) |
+| OCR iOS | Apple Vision Framework (implementación presente; build iOS no verificado) |
 | OCR Fallback | google_mlkit_text_recognition |
-| Análisis IA | Anthropic Claude Sonnet (claude-sonnet-4-6) |
+| Análisis IA | Integración Anthropic no acreditada en la configuración/dependencias inspeccionadas |
 | Navegación | go_router |
 | Notificaciones | flutter_local_notifications |
-| Seguridad | flutter_secure_storage |
+| Almacenamiento seguro | flutter_secure_storage para secretos compatibles; no implica cifrado de la base SQLite |
 
 ## Requisitos
 
@@ -48,7 +48,7 @@ flutter test test/integration/
 
 ## Modelos PaddleOCR (Android)
 
-Descargar y ubicar en `assets/models/`:
+Los modelos no están incluidos actualmente en este repositorio. Antes de declarar PaddleOCR operativo, obtener modelos compatibles, revisar sus licencias y añadirlos en `assets/models/`:
 ```
 assets/models/
 ├── det.onnx          # Detección de regiones (960×960)
@@ -104,13 +104,17 @@ lib/
 | CABA | Prescripción 5 años (Ley 451) | 2 años (Fallo Andrade PCyF N°15) | Verificar alzada |
 | PBA fotomultas | Caducidad automática 60 días hábiles (Art. 28) | Plazo ordenatorio (Cám. San Martín 2018) | Acreditar perjuicio |
 
+## Estado de verificación
+
+La presencia de código fuente no demuestra que una función esté lista para producción. En la revisión estática actual no se encontraron los modelos PaddleOCR ni los archivos esenciales del proyecto Gradle raíz y Xcode/Pods; tampoco hay workflows de CI. No se han ejecutado builds ni tests en un entorno Flutter en esta auditoría. La integración Anthropic, el cifrado real de SQLite y la sincronización Firebase deben verificarse antes de presentarse como capacidades disponibles.
+
 ## Roadmap
 
 | Fase | Estado |
 |------|--------|
 | 1 — Core local (OCR, nulidades, plazos, escritos) | ✅ Completo |
-| 2 — OCR nativo PaddleOCR + Apple Vision | ✅ Completo |
-| 3 — Motor nulidades + Firebase stub | ✅ Completo |
+| 2 — OCR nativo PaddleOCR + Apple Vision | ⚠️ Código parcial; modelos y builds nativos por verificar |
+| 3 — Motor nulidades + Firebase stub | ⚠️ Stub presente; no equivale a autenticación ni sincronización operativa |
 | 4 — Google Play Store | 🔜 Pendiente |
 | 5 — Firebase Auth + Firestore sync | 🔜 Pendiente |
 | 6 — SINAI/DVE integración | 🔜 Pendiente |
