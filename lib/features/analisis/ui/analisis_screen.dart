@@ -103,6 +103,8 @@ class _AnalisisScreenState extends State<AnalisisScreen> {
               else if (state is AnalisisCalculandoPlazos && state.acta != null)
                 _OcrResultadoCard(acta: state.acta!)
               else if (state is AnalisisCompletado && state.acta != null)
+                _OcrResultadoCard(acta: state.acta!)
+              else if (state is AnalisisError && state.acta != null)
                 _OcrResultadoCard(acta: state.acta!),
 
               const SizedBox(height: 8),
@@ -231,14 +233,14 @@ class _UploadZone extends StatelessWidget {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
                   const SizedBox(width: 10),
-                  Text('Analizando con IA...',
+                  Text('Reconociendo texto de la imagen...',
                       style: Theme.of(context).textTheme.bodyMedium),
                 ],
               ),
             ],
             const SizedBox(height: 8),
             Text(
-              'JPG · PNG — el sistema extrae los datos automáticamente con OCR + IA.',
+              'JPG · PNG — el sistema reconoce texto con OCR. Verificá y corregí los datos antes de usarlos.',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
