@@ -140,7 +140,7 @@ class ActaParser {
   static final _reNorma    = RegExp(r'(?:ART[.\s]*\d+[\w\s.]*(?:LEY|LN)[.\s]*[\d.]+|LEY[\s]*[\d.]+)', caseSensitive: false);
   static final _reGeo      = RegExp(r'(?:LUGAR|DOMICILIO|CALLE|AV\.|RUTA|KM|AVENIDA)[:\s]+(.{5,80})', caseSensitive: false);
 
-  static OcrResult parsear(String texto, {required String motor}) {
+  static OcrResult parsear(String texto, {String motor = 'unknown'}) {
     final upper     = texto.toUpperCase();
     final faltantes = <String>[];
 
