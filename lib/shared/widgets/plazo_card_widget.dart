@@ -67,14 +67,6 @@ class PlazoCardWidget extends StatelessWidget {
                     color: AppColors.indigoLight,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  _tipoCómputoLabel(plazo.tipoCómputo),
-                  style: const TextStyle(
-                    fontSize: 10.5,
-                    color: AppColors.text3,
-                  ),
-                ),
               ],
             ),
           ),
@@ -101,18 +93,6 @@ class PlazoCardWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              if (plazo.esAltaCriticidad)
-                Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Text(
-                    '● CRÍTICO',
-                    style: TextStyle(
-                      color: cfg.accent,
-                      fontSize: 9.5,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
             ],
           ),
         ],
@@ -165,16 +145,6 @@ class PlazoCardWidget extends StatelessWidget {
     return '${dias[d.weekday - 1]} ${d.day} de ${meses[d.month]} de ${d.year}';
   }
 
-  String _tipoCómputoLabel(TipoCómputo tipo) {
-    switch (tipo) {
-      case TipoCómputo.habilesAdministrativos:
-        return 'Días hábiles administrativos';
-      case TipoCómputo.habilesJudiciales:
-        return 'Días hábiles judiciales';
-      case TipoCómputo.corridos:
-        return 'Días corridos';
-    }
-  }
 }
 
 class _PlazoConfig {
