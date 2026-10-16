@@ -152,6 +152,34 @@ void main() {
     });
   });
 
+  // ── Datos no confirmados y campos del formulario ──────────────
+  group('datos no confirmados', () {
+    test('no calcula prescripción si la gravedad no está determinada', () {
+      final acta = DatosActa(
+        jurisdiccion: Jurisdiccion.pba,
+        fechaInfraccion: DateTime(2020, 1, 1),
+        tipoFalta: null,
+      );
+      final resultado = svc.analizar(acta);
+      expect(resultado.fechaPrescripcion, isNull);
+      expect(resultado.posiblePrescripcion, false);
+      expect(resultado.alertas.where((a) => a.tipo == TipoAlerta.peligro), isEmpty);
+    });
+
+    test('muestra errores formales declarados sin afirmar nulidad automática', () {
+      final resultado = svc.analizar(DatosActa(
+        jurisdiccion: Jurisdiccion.pba,
+        erroresFormales: const ['Patente errónea'],
+      ));
+      expect(
+        resultado.alertas.any((a) =>
+          a.mensaje.contains('Patente errónea') &&
+          a.mensaje.contains('no implica nulidad automática')),
+        true,
+      );
+    });
+  });
+
   // ── Plan de pagos PBA ────────────────────────────────────────
   group('alertaPlanPagosPBA', () {
     test('PBA plan de pagos genera alerta crítica', () {
