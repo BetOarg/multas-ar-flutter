@@ -95,7 +95,7 @@ class LocalCasosRepository implements ICasosRepository {
   // ── Actualizar ────────────────────────────────────────────────
   @override
   Future<void> actualizarCaso(CasosCompanion datos) async {
-    final id = datos.id.value;
+    final id = datos.id.present ? datos.id.value : null;
     if (id == null) return;
 
     final companion = datos.copyWith(
