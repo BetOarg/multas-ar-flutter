@@ -81,7 +81,8 @@ GoRouter buildAppRouter(AuthState authState) {
               path: '/casos',
               pageBuilder: (context, state) => NoTransitionPage(
                 child: BlocProvider(
-                  create: (ctx) => CasosBloc(casosRepository: ctx.read()),
+                  create: (ctx) => CasosBloc(casosRepository: ctx.read())
+                    ..add(const CargarCasosEvent()),
                   child: const CasosScreen(),
                 ),
               ),
