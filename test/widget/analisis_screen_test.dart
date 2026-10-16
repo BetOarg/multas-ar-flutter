@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:multas_ar/core/repository/casos_repository.dart';
 import 'package:multas_ar/core/services/ocr_service.dart';
+import 'package:multas_ar/core/services/analisis_service.dart';
 import 'package:multas_ar/core/services/analisis_service.dart';
 import 'package:multas_ar/core/services/plazos_service.dart';
 import 'package:multas_ar/features/analisis/bloc/analisis_bloc.dart';
@@ -42,7 +44,8 @@ void main() {
         create: (_) => AnalisisBloc(
           ocrService:     mockOcr,
           analisisService: analisis,
-          repository:     mockRepo,
+          casosRepository: mockRepo,
+          plazosService:   plazos,
         ),
         child: child,
       ),
@@ -54,7 +57,7 @@ void main() {
     testWidgets('muestra título de la app', (tester) async {
       await tester.pumpWidget(_buildApp(const AnalisisScreen()));
       await tester.pump();
-      expect(find.textContaining('Análisis'), findsOneWidget);
+      expect(find.textContaining('Analizar multa'), findsOneWidget);
     });
 
     testWidgets('muestra botón de cámara', (tester) async {
@@ -104,7 +107,7 @@ void main() {
       final bloc = tester
           .element(find.byType(AnalisisScreen))
           .read<AnalisisBloc>();
-      bloc.add(const AnalisisImagenSeleccionada('/tmp/test.jpg'));
+      bloc.add(AnalizarImagenEvent(imagen: File('/tmp/test.jpg')));
 
       await tester.pump(const Duration(milliseconds: 100));
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
