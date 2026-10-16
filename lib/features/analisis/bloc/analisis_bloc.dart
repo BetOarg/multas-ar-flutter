@@ -58,7 +58,7 @@ class AnalisisBloc extends Bloc<AnalisisEvent, AnalisisState> {
         fechaInfraccion: ocr.fechaInfraccion,
         patente: ocr.patente,
         normaInfringida: ocr.normaInfringida,
-        tipoFalta: TipoFalta.leve,
+        tipoFalta: null,
         lugarInfraccion: ocr.lugarInfraccion,
         agente: ocr.agente,
         esFotomulta: ocr.esFotomulta,
@@ -78,8 +78,13 @@ class AnalisisBloc extends Bloc<AnalisisEvent, AnalisisState> {
       final resultado = _analisisService.analizar(DatosActa(
         jurisdiccion: event.jurisdiccion,
         fechaNotificacion: event.fechaNotificacion,
-        tipoFalta: event.tipoFalta ?? TipoFalta.leve,
+        tipoFalta: event.tipoFalta,
         numeroActa: event.numeroActa,
+        erroresFormales: event.erroresFormales,
+        titularEsConductor: event.titularEsConductor,
+        estadoProcesal: event.estadoProcesal,
+        vaJudicial: event.vaJudicial,
+        agotamientoVia: event.agotamientoVia,
       ));
       emit(AnalisisCompletado(resultado: resultado));
     } catch (e) {
