@@ -16,7 +16,6 @@ part 'analisis_state.dart';
 class AnalisisBloc extends Bloc<AnalisisEvent, AnalisisState> {
   final ICasosRepository _casosRepository;
   final IOcrService _ocrService;
-  final PlazosService _plazosService;
   final AnalisisService _analisisService;
 
   AnalisisBloc({
@@ -26,7 +25,6 @@ class AnalisisBloc extends Bloc<AnalisisEvent, AnalisisState> {
     required AnalisisService analisisService,
   })  : _casosRepository = casosRepository,
         _ocrService = ocrService,
-        _plazosService = plazosService,
         _analisisService = analisisService,
         super(const AnalisisInitial()) {
     on<AnalizarImagenEvent>(_onAnalizarImagen);
