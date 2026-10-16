@@ -51,16 +51,18 @@ class AppDatabase extends _$AppDatabase {
         onCreate: (m) async {
           await m.createAll();
           // Seed de configuración inicial
-          await into(configuracion).insertAll([
-            const ConfiguracionCompanion(
-              clave: Value('app_version'),
-              valor: Value('1.0.0'),
-            ),
-            const ConfiguracionCompanion(
-              clave: Value('normativa_version'),
-              valor: Value('0'),
-            ),
-          ]);
+          await batch((batch) {
+            batch.insertAll(configuracion, const [
+              ConfiguracionCompanion(
+                clave: Value('app_version'),
+                valor: Value('1.0.0'),
+              ),
+              ConfiguracionCompanion(
+                clave: Value('normativa_version'),
+                valor: Value('0'),
+              ),
+            ]);
+          });
         },
         onUpgrade: (m, from, to) async {
           // v1 → v2: legajo_agente en Casos
