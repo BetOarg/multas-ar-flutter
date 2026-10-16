@@ -564,14 +564,14 @@ class _ResultadoSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Campos faltantes
-        if (resultado.faltantes.isNotEmpty) ...[
+        if (resultado.camposFaltantes.isNotEmpty) ...[
           Text('⚠️  Información faltante',
               style: Theme.of(context)
                   .textTheme
                   .titleMedium
                   ?.copyWith(color: AppColors.danger)),
           const SizedBox(height: 8),
-          ...resultado.faltantes
+          ...resultado.camposFaltantes
               .map<Widget>((f) => CampoFaltanteWidget(faltante: f))
               .toList(),
           const SizedBox(height: 12),
@@ -602,35 +602,18 @@ class _ResultadoSection extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                       side: BorderSide(
-                          color: AppColors.success.withOpacity(0.3)),
+                        color: AppColors.success.withOpacity(0.3),
+                      ),
                     ),
-                    color:
-                        AppColors.success.withOpacity(0.08),
+                    color: AppColors.success.withOpacity(0.08),
                     child: Padding(
                       padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start,
-                        children: [
-                          Text('✅  ${o.titulo}',
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.success,
-                                  fontSize: 13)),
-                          const SizedBox(height: 4),
-                          Text(o.detalle,
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.text2)),
-                          if (o.normaAplicable != null)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: Text(o.normaAplicable!,
-                                  style: const TextStyle(
-                                      fontSize: 11,
-                                      color: AppColors.indigoLight)),
-                            ),
-                        ],
+                      child: Text(
+                        '✓  $o',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.text2,
+                        ),
                       ),
                     ),
                   ))
