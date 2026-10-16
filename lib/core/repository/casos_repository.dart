@@ -16,6 +16,9 @@ import '../services/plazos_service.dart';
 // ── Interfaz ──────────────────────────────────────────────────────
 abstract class ICasosRepository {
   Stream<List<Caso>> watchCasos();
+  Stream<List<Caso>> watchCasosActivos();
+  Future<void> archivarCaso(String id);
+  Future<void> actualizarEstado(String id, String estado);
   Future<Caso?> getCasoPorId(String id);
   Future<List<Caso>> getCasosTodos();
   Future<String> crearCaso(CasosCompanion datos);
@@ -40,6 +43,19 @@ class LocalCasosRepository implements ICasosRepository {
 
   @override
   Stream<List<Caso>> watchCasos() => _casosDao.watchTodos();
+
+  @override
+  Stream<List<Caso>> watchCasosActivos() => _casosDao.watchActivos();
+
+  @override
+  Future<void> archivarCaso(String id) async {
+    await _casosDao.actualizarEstadoCaso(id, 'archivado');
+  }
+
+  @override
+  Future<void> actualizarEstado(String id, String estado) async {
+    await _casosDao.actualizarEstadoCaso(id, estado);
+  }
 
   @override
   Future<Caso?> getCasoPorId(String id) => _casosDao.getCasoPorId(id);
