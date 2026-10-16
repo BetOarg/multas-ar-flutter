@@ -50,7 +50,9 @@ class LocalCasosRepository implements ICasosRepository {
   // ── Crear ─────────────────────────────────────────────────────
   @override
   Future<String> crearCaso(CasosCompanion datos) async {
-    final id  = _uuid.v4();
+    // Respetar el ID proporcionado por el flujo de análisis; generar uno
+    // solo cuando el companion no incluya identificador.
+    final id = datos.id.value ?? _uuid.v4();
     final now = DateTime.now();
 
     final companion = datos.copyWith(
