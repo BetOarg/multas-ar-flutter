@@ -272,7 +272,7 @@ class _OcrResultadoCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('📋  Datos extraídos por IA',
+            Text('📋  Datos extraídos por OCR',
                 style: Theme.of(context)
                     .textTheme
                     .titleMedium
@@ -280,8 +280,11 @@ class _OcrResultadoCard extends StatelessWidget {
             const SizedBox(height: 10),
             _campo('N° de acta', acta.numeroActa),
             _campo('Patente', acta.patente),
-            _campo('Jurisdicción', acta.jurisdiccion),
-            _campo('Norma imputada', acta.normaImputada),
+            _campo('Fecha', acta.fechaInfraccion?.toIso8601String().split('T').first),
+            _campo('Agente', acta.agente),
+            _campo('Motor OCR', acta.motor),
+            _campo('Jurisdicción', acta.jurisdiccionDetectada),
+            _campo('Norma detectada', acta.normaInfringida),
             const SizedBox(height: 8),
             const LegalAlertWidget(
               tipo: TipoAlerta.advertencia,
