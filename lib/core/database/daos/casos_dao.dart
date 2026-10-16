@@ -21,6 +21,24 @@ class CasosDao extends DatabaseAccessor<AppDatabase> with _$CasosDaoMixin {
         .getSingleOrNull();
   }
 
+  /// Stream de casos no archivados.
+  Stream<List<Caso>> watchActivos() {
+    return (select(casos)
+          ..where((c) => c.estado.isNull() | c.estado.isNotValue('archivado'))
+          ..orderBy([(c) => OrderingTerm.desc(c.actualizadoEn)]))
+        .watch();
+  }
+
+  /// Actualizar el estado sin reemplazar el resto de columnas.
+  Future<int> actualizarEstadoCaso(String id, String estado) {
+    return (update(casos)..where((c) => c.id.equals(id))).write(
+      CasosCompanion(
+        estado: Value(estado),
+        actualizadoEn: Value(DateTime.now()),
+      ),
+    );
+  }
+
   /// Todos los casos (para sync)
   Future<List<Caso>> getTodos() => select(casos).get();
 
