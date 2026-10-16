@@ -6,7 +6,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:multas_ar/core/repository/casos_repository.dart';
 import 'package:multas_ar/core/services/ocr_service.dart';
 import 'package:multas_ar/core/services/analisis_service.dart';
-import 'package:multas_ar/core/services/analisis_service.dart';
 import 'package:multas_ar/core/services/plazos_service.dart';
 import 'package:multas_ar/features/analisis/bloc/analisis_bloc.dart';
 import 'package:multas_ar/features/analisis/ui/analisis_screen.dart';
@@ -126,7 +125,7 @@ void main() {
       final bloc = tester
           .element(find.byType(AnalisisScreen))
           .read<AnalisisBloc>();
-      bloc.add(const AnalisisImagenSeleccionada('/tmp/test.jpg'));
+      bloc.add(AnalizarImagenEvent(imagen: File('/tmp/test.jpg')));
 
       await tester.pumpAndSettle();
       expect(
