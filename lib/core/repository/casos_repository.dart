@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:uuid/uuid.dart';
+import '../database/app_database.dart';
 import '../database/daos/casos_dao.dart';
 import '../database/daos/plazos_dao.dart';
 import '../database/tables/tables.dart';
