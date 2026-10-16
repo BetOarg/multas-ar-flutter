@@ -55,11 +55,16 @@ class DatosActa {
   final DateTime? fechaNotificacion;
   final String? patente;
   final String? normaInfringida;
-  final String tipoFalta;
+  final String? tipoFalta;
   final String? lugarInfraccion;
   final String? agente;
   final bool esFotomulta;
   final String? tieneNovedad; // 'plan_pagos', etc.
+  final List<String> erroresFormales;
+  final bool? titularEsConductor;
+  final String? estadoProcesal;
+  final bool vaJudicial;
+  final bool agotamientoVia;
 
   const DatosActa({
     required this.jurisdiccion,
@@ -68,11 +73,16 @@ class DatosActa {
     this.fechaNotificacion,
     this.patente,
     this.normaInfringida,
-    this.tipoFalta = TipoFalta.leve,
+    this.tipoFalta,
     this.lugarInfraccion,
     this.agente,
     this.esFotomulta = false,
     this.tieneNovedad,
+    this.erroresFormales = const [],
+    this.titularEsConductor,
+    this.estadoProcesal,
+    this.vaJudicial = false,
+    this.agotamientoVia = false,
   });
 }
 
@@ -128,12 +138,33 @@ class AnalisisService {
       oportunidades.add('Falta firma o legajo del agente — posible nulidad absoluta');
     }
 
+    // Los errores formales son datos declarados por el usuario, no
+    // conclusiones automáticas de nulidad.
+    for (final error in acta.erroresFormales) {
+      alertas.add(AlertaLegal(
+        tipo: TipoAlerta.advertencia,
+        mensaje: 'Error formal informado: $error. Verificar contra el acta original y la normativa aplicable; no implica nulidad automática.',
+      ));
+    }
+    if (acta.titularEsConductor == false) {
+      alertas.add(const AlertaLegal(
+        tipo: TipoAlerta.info,
+        mensaje: 'El usuario indicó que el titular no era quien conducía. Verificar identificación del conductor y régimen aplicable.',
+      ));
+    }
+    if (acta.vaJudicial || acta.agotamientoVia) {
+      alertas.add(const AlertaLegal(
+        tipo: TipoAlerta.info,
+        mensaje: 'Se informó una instancia judicial o agotamiento de la vía administrativa. Revisar expediente y plazos específicos antes de actuar.',
+      ));
+    }
+
     // ── Prescripción ────────────────────────────────────────────
     bool prescripto = false;
     DateTime? fechaPresc;
-    if (acta.fechaInfraccion != null) {
+    if (acta.fechaInfraccion != null && acta.tipoFalta != null) {
       fechaPresc = plazosService.calcularPrescripcion(
-          acta.fechaInfraccion!, acta.jurisdiccion, acta.tipoFalta);
+          acta.fechaInfraccion!, acta.jurisdiccion, acta.tipoFalta!);
       prescripto = DateTime.now().isAfter(fechaPresc);
 
       if (prescripto) {
