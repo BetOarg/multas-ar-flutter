@@ -7,6 +7,7 @@ import '../../../core/repository/casos_repository.dart';
 import '../../../core/services/ocr_service.dart';
 import '../../../core/services/plazos_service.dart';
 import '../../../core/services/analisis_service.dart';
+import '../../../core/constants/legal_constants.dart';
 
 part 'analisis_event.dart';
 part 'analisis_state.dart';
@@ -99,14 +100,14 @@ class AnalisisBloc extends Bloc<AnalisisEvent, AnalisisState> {
     try {
       final now = DateTime.now();
       final id = await _casosRepository.crearCaso(CasosCompanion.insert(
-        id: Value(event.id ?? _generarId()),
-        jurisdiccion: Value(event.jurisdiccion),
-        numeroActa: Value(event.numeroActa),
-        fechaNotificacion: Value(event.fechaNotificacion),
-        tipoFalta: Value(event.tipoFalta),
-        patente: Value(event.patente),
-        estado: Value(event.estadoProcesal ?? 'admin'),
-        normaInfringida: Value(event.normaImputada),
+        id: event.id ?? _generarId(),
+        jurisdiccion: event.jurisdiccion,
+        numeroActa: event.numeroActa,
+        fechaNotificacion: event.fechaNotificacion,
+        tipoFalta: event.tipoFalta,
+        patente: event.patente,
+        estado: event.estadoProcesal ?? 'admin',
+        normaInfringida: event.normaImputada,
         creadoEn: now,
         actualizadoEn: now,
       ));
