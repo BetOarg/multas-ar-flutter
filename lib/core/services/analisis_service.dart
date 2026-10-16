@@ -152,6 +152,12 @@ class AnalisisService {
         mensaje: 'El usuario indicó que el titular no era quien conducía. Verificar identificación del conductor y régimen aplicable.',
       ));
     }
+    if (acta.estadoProcesal != null && acta.estadoProcesal!.trim().isNotEmpty) {
+      alertas.add(AlertaLegal(
+        tipo: TipoAlerta.info,
+        mensaje: 'Estado procesal informado: ${acta.estadoProcesal}. Confirmar con la resolución o expediente correspondiente.',
+      ));
+    }
     if (acta.vaJudicial || acta.agotamientoVia) {
       alertas.add(const AlertaLegal(
         tipo: TipoAlerta.info,
