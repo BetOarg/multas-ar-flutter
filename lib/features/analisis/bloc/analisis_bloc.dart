@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:drift/drift.dart';
@@ -7,7 +8,6 @@ import '../../../core/repository/casos_repository.dart';
 import '../../../core/services/ocr_service.dart';
 import '../../../core/services/plazos_service.dart';
 import '../../../core/services/analisis_service.dart';
-import '../../../core/constants/legal_constants.dart';
 
 part 'analisis_event.dart';
 part 'analisis_state.dart';
