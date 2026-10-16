@@ -99,7 +99,11 @@ class _AnalisisScreenState extends State<AnalisisScreen> {
 
               // ── Resultado OCR ──────────────────────────────
               if (state is AnalisisOcrCompletado)
-                _OcrResultadoCard(acta: state.acta),
+                _OcrResultadoCard(acta: state.acta)
+              else if (state is AnalisisCalculandoPlazos && state.acta != null)
+                _OcrResultadoCard(acta: state.acta!)
+              else if (state is AnalisisCompletado && state.acta != null)
+                _OcrResultadoCard(acta: state.acta!),
 
               const SizedBox(height: 8),
 
