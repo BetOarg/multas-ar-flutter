@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../core/services/ocr_service.dart';
 import '../bloc/analisis_bloc.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../../shared/widgets/legal_alert_widget.dart';
@@ -20,7 +21,6 @@ class AnalisisScreen extends StatefulWidget {
 }
 
 class _AnalisisScreenState extends State<AnalisisScreen> {
-  final _picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
 
   // Controladores de formulario
@@ -261,7 +261,7 @@ class _UploadZone extends StatelessWidget {
 
 // ── RESULTADO OCR ─────────────────────────────────────────────────
 class _OcrResultadoCard extends StatelessWidget {
-  final dynamic acta;
+  final OcrResult acta;
   const _OcrResultadoCard({required this.acta});
 
   @override
