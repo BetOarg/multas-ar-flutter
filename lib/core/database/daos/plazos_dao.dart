@@ -16,6 +16,14 @@ class PlazosDao extends DatabaseAccessor<AppDatabase> with _$PlazosDaoMixin {
         .watch();
   }
 
+  /// Plazos de un caso para su pantalla de detalle.
+  Future<List<Plazo>> getPlazosDeCaso(String casoId) {
+    return (select(plazos)
+          ..where((p) => p.casoId.equals(casoId))
+          ..orderBy([(p) => OrderingTerm.asc(p.fechaVencimiento)]))
+        .get();
+  }
+
   /// Plazos próximos a vencer en los próximos N días (todos los casos)
   Future<List<Plazo>> getPlazosProximos({int dias = 7}) {
     final limite = DateTime.now().add(Duration(days: dias));
