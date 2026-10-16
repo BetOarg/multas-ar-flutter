@@ -72,8 +72,9 @@ class AnalisisGuardado extends AnalisisState {
 
 class AnalisisError extends AnalisisState {
   final String mensaje;
-  const AnalisisError({required this.mensaje});
+  final OcrResult? acta;
+  const AnalisisError({required this.mensaje, this.acta});
 
   @override
-  List<Object?> get props => [mensaje];
+  List<Object?> get props => [mensaje, acta?.textoCompleto];
 }
