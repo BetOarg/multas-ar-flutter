@@ -55,7 +55,7 @@ GoRouter buildAppRouter(AuthState authState) {
       // ── Tabs principales (autenticado o modo local) ────────────
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) =>
-            ScaffoldWithNav(shell: shell),
+            ScaffoldWithNav(navigationShell: shell),
         branches: [
           // Tab 0 — Análisis
           StatefulShellBranch(routes: [
@@ -66,7 +66,8 @@ GoRouter buildAppRouter(AuthState authState) {
                   create: (ctx) => AnalisisBloc(
                     ocrService:      ctx.read(),
                     analisisService: ctx.read(),
-                    repository:      ctx.read(),
+                    casosRepository: ctx.read(),
+                    plazosService: ctx.read(),
                   ),
                   child: const AnalisisScreen(),
                 ),
@@ -80,7 +81,7 @@ GoRouter buildAppRouter(AuthState authState) {
               path: '/casos',
               pageBuilder: (context, state) => NoTransitionPage(
                 child: BlocProvider(
-                  create: (ctx) => CasosBloc(repository: ctx.read()),
+                  create: (ctx) => CasosBloc(casosRepository: ctx.read()),
                   child: const CasosScreen(),
                 ),
               ),
@@ -126,10 +127,7 @@ GoRouter buildAppRouter(AuthState authState) {
               path: '/escritos',
               pageBuilder: (context, state) => NoTransitionPage(
                 child: BlocProvider(
-                  create: (ctx) => EscritosBloc(
-                    escritosDao:   ctx.read(),
-                    plazosService: PlazosService(feriados: ctx.read()),
-                  ),
+                  create: (ctx) => EscritosBloc(casosRepository: ctx.read()),
                   child: const EscritosScreen(),
                 ),
               ),
