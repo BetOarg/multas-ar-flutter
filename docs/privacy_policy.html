@@ -44,10 +44,7 @@
 <p class="date">Última actualización: octubre de 2026</p>
 
 <div class="highlight">
-  <strong>Resumen:</strong> Multas Argentina Pro almacena todos los datos
-  exclusivamente en tu dispositivo. No recopilamos ni transmitimos información
-  personal a servidores propios, excepto cuando elegís usar el análisis con IA
-  (que envía la imagen del acta a Anthropic).
+  <strong>Resumen:</strong> Multas Argentina Pro guarda los datos de las actas y la configuración en el dispositivo. La versión actual incluye análisis local basado en reglas y puede consultar una copia remota de la base normativa en GitHub. Esta política no debe interpretarse como una garantía de cifrado de la base SQLite.
 </div>
 
 <h2>1. Quiénes somos</h2>
@@ -60,8 +57,7 @@
 <h2>2. Datos que procesamos y cómo</h2>
 
 <p><span class="badge">LOCAL</span>
-  Los siguientes datos se almacenan <em>únicamente en tu dispositivo</em>
-  usando SQLite cifrado y no salen nunca a ningún servidor:
+  Los siguientes datos se guardan localmente en el dispositivo mediante SQLite. La implementación revisada no acredita cifrado de la base de datos SQLite; protegé el dispositivo con el bloqueo de pantalla y mantené el sistema actualizado:
 </p>
 <ul>
   <li>Datos de actas de infracción ingresados manualmente o por OCR</li>
@@ -71,26 +67,15 @@
   <li>Imágenes de actas fotografiadas o seleccionadas de la galería</li>
 </ul>
 
-<p><span class="badge" style="background:#e3b341; color:#000;">EXTERNO</span>
-  Los siguientes datos se envían a terceros <em>sólo cuando vos iniciás el
-  análisis con IA</em>:
+<p><span class="badge" style="background:#e3b341; color:#000;">RED</span>
+  La versión del código revisada no contiene una integración operativa con Anthropic/Claude ni una llamada que envíe imágenes de actas a ese proveedor. El análisis disponible en <code>AnalisisService</code> se realiza localmente mediante reglas. La app sí puede descargar actualizaciones de la base normativa desde GitHub; esa solicitud transmite la petición de red habitual, no la imagen del acta.
 </p>
-<ul>
-  <li>
-    <strong>Imagen del acta</strong> → enviada a
-    <a href="https://www.anthropic.com/privacy" target="_blank">Anthropic, Inc.</a>
-    para análisis con Claude. Anthropic procesa la imagen y responde con el análisis;
-    no la almacena para entrenamiento (según su política comercial vigente).
-    La imagen puede contener datos personales del acta (nombre, DNI, patente).
-  </li>
-</ul>
 
 <h2>3. Permisos de la app</h2>
 <ul>
   <li><strong>Cámara:</strong> para fotografiar actas. Las fotos solo se guardan localmente.</li>
   <li><strong>Galería:</strong> para seleccionar imágenes existentes.</li>
-  <li><strong>Internet:</strong> únicamente para el análisis con IA (Anthropic API)
-      y para actualizaciones de la base normativa desde GitHub.</li>
+  <li><strong>Internet:</strong> para consultar actualizaciones de la base normativa desde GitHub. La integración con Anthropic/Claude no está acreditada en la versión revisada.</li>
   <li><strong>Notificaciones:</strong> para alertas de vencimiento de plazos.
       Opcionales y configurables.</li>
   <li><strong>Alarmas exactas:</strong> para programar las notificaciones de vencimiento
@@ -105,12 +90,9 @@
   con anunciantes.
 </p>
 
-<h2>5. Almacenamiento seguro</h2>
+<h2>5. Almacenamiento y seguridad</h2>
 <p>
-  Los datos de configuración sensibles (clave de API, datos profesionales)
-  se almacenan en el <em>Android Keystore / iOS Keychain</em> mediante
-  <code>flutter_secure_storage</code>, con cifrado respaldado por hardware
-  en dispositivos compatibles.
+  La app utiliza SQLite para los datos locales. En la implementación revisada no se encontró evidencia suficiente para afirmar que el archivo de base de datos SQLite esté cifrado. La dependencia <code>flutter_secure_storage</code>, por sí sola, no cifra la base SQLite. No guardes información que no quieras conservar en el dispositivo y protegé el acceso al mismo.
 </p>
 
 <h2>6. Menores de edad</h2>
