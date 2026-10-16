@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/services/nulidades_service.dart';
+import '../../core/database/daos/plazos_dao.dart';
 import '../../features/analisis/bloc/analisis_bloc.dart';
 import '../../features/auth/bloc/auth_bloc.dart';
 import '../../features/auth/ui/auth_screen.dart';
@@ -91,8 +92,10 @@ GoRouter buildAppRouter(AuthState authState) {
                     final id = state.pathParameters['id']!;
                     return MaterialPage(
                       child: BlocProvider(
-                        create: (ctx) =>
-                            CasosBloc(repository: ctx.read()),
+                        create: (ctx) => CasosBloc(
+                          casosRepository: ctx.read(),
+                          plazosDao: ctx.read<PlazosDao>(),
+                        ),
                         child: CasoDetalleScreen(casoId: id),
                       ),
                     );
