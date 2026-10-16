@@ -68,7 +68,7 @@ class LocalCasosRepository implements ICasosRepository {
   Future<String> crearCaso(CasosCompanion datos) async {
     // Respetar el ID proporcionado por el flujo de análisis; generar uno
     // solo cuando el companion no incluya identificador.
-    final id = datos.id.value ?? _uuid.v4();
+    final id = datos.id.present ? datos.id.value : _uuid.v4();
     final now = DateTime.now();
 
     final companion = datos.copyWith(
@@ -80,11 +80,13 @@ class LocalCasosRepository implements ICasosRepository {
     await _casosDao.upsertCaso(companion);
 
     // Calcular y guardar plazos si hay fecha de notificación
-    final jur   = datos.jurisdiccion.value;
-    final notif = datos.fechaNotificacion.value;
+    final jur = datos.jurisdiccion.present ? datos.jurisdiccion.value : null;
+    final notif = datos.fechaNotificacion.present
+        ? datos.fechaNotificacion.value
+        : null;
     if (jur != null && notif != null) {
       await _guardarPlazos(id, jur, notif,
-          esFoto: datos.esFotomulta.value ?? false);
+          esFoto: datos.esFotomulta.present && datos.esFotomulta.value);
     }
 
     return id;
@@ -102,12 +104,14 @@ class LocalCasosRepository implements ICasosRepository {
     await _casosDao.actualizarCaso(companion);
 
     // Recalcular plazos
-    final jur   = datos.jurisdiccion.value;
-    final notif = datos.fechaNotificacion.value;
+    final jur = datos.jurisdiccion.present ? datos.jurisdiccion.value : null;
+    final notif = datos.fechaNotificacion.present
+        ? datos.fechaNotificacion.value
+        : null;
     if (jur != null && notif != null) {
       await _plazosDao.eliminarPlazosDeCaso(id);
       await _guardarPlazos(id, jur, notif,
-          esFoto: datos.esFotomulta.value ?? false);
+          esFoto: datos.esFotomulta.present && datos.esFotomulta.value);
     }
   }
 
