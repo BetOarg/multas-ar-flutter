@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import '../../../core/database/app_database.dart';
 import '../../../core/database/tables/tables.dart';
 import '../../../core/repository/casos_repository.dart';
 
