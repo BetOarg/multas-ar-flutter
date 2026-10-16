@@ -46,7 +46,8 @@ class AnalisisBloc extends Bloc<AnalisisEvent, AnalisisState> {
       final jurisdiccion = ocr.jurisdiccionDetectada;
       if (jurisdiccion == null || jurisdiccion.trim().isEmpty) {
         emit(AnalisisError(
-          mensaje: 'No se pudo detectar la jurisdicción. Seleccionala y analizá el formulario.',
+          mensaje: 'No se pudo detectar la jurisdicción. Seleccionala en el formulario; los datos OCR quedan disponibles para revisar.',
+          acta: ocr,
         ));
         return;
       }
