@@ -36,6 +36,22 @@ void main() {
       expect(resultado.camposFaltantes.where((c) => c.esCritico), isEmpty);
     });
 
+    test('trata campos compuestos solo por espacios como faltantes', () {
+      final resultado = svc.analizar(DatosActa(
+        jurisdiccion: Jurisdiccion.pba,
+        numeroActa: '   ',
+        patente: ' ',
+        normaInfringida: '  ',
+        agente: '\t ',
+      ));
+
+      final campos = resultado.camposFaltantes.map((c) => c.campo).toSet();
+      expect(campos, contains('Número de acta'));
+      expect(campos, contains('Patente del vehículo'));
+      expect(campos, contains('Norma infringida'));
+      expect(campos, contains('Identificación del agente'));
+    });
+
     test('acta sin número reporta campo crítico', () {
       final acta = DatosActa(
         jurisdiccion: Jurisdiccion.caba,
@@ -148,6 +164,54 @@ void main() {
         tipoFalta: TipoFalta.leve,
       );
       final resultado = svc.analizar(acta);
+      expect(resultado.posiblePrescripcion, false);
+    });
+  });
+
+  // ── Datos no confirmados y campos del formulario ──────────────
+  group('datos no confirmados', () {
+    test('no calcula prescripción si la gravedad no está determinada', () {
+      final acta = DatosActa(
+        jurisdiccion: Jurisdiccion.pba,
+        fechaInfraccion: DateTime(2020, 1, 1),
+        tipoFalta: null,
+      );
+      final resultado = svc.analizar(acta);
+      expect(resultado.fechaPrescripcion, isNull);
+      expect(resultado.posiblePrescripcion, false);
+      expect(resultado.alertas.where((a) => a.tipo == TipoAlerta.peligro), isEmpty);
+    });
+
+    test('muestra errores formales declarados sin afirmar nulidad automática', () {
+      final resultado = svc.analizar(DatosActa(
+        jurisdiccion: Jurisdiccion.pba,
+        erroresFormales: const ['Patente errónea'],
+      ));
+      expect(
+        resultado.alertas.any((a) =>
+          a.mensaje.contains('Patente errónea') &&
+          a.mensaje.contains('no implica nulidad automática')),
+        true,
+      );
+    });
+
+    test('no calcula prescripción con un tipo de falta vacío', () {
+      final resultado = svc.analizar(DatosActa(
+        jurisdiccion: Jurisdiccion.pba,
+        fechaInfraccion: DateTime(2020, 1, 1),
+        tipoFalta: '',
+      ));
+      expect(resultado.fechaPrescripcion, isNull);
+      expect(resultado.posiblePrescripcion, false);
+    });
+
+    test('no calcula prescripción para jurisdicción desconocida', () {
+      final resultado = svc.analizar(DatosActa(
+        jurisdiccion: 'Jurisdicción no identificada',
+        fechaInfraccion: DateTime(2020, 1, 1),
+        tipoFalta: TipoFalta.leve,
+      ));
+      expect(resultado.fechaPrescripcion, isNull);
       expect(resultado.posiblePrescripcion, false);
     });
   });

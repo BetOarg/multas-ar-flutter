@@ -12,13 +12,13 @@ import '../database/tables/tables.dart';
 // (OTA). Usa versionado: solo actualiza si el servidor tiene
 // versión mayor a la almacenada en la DB.
 //
-// URL OTA configurada como constante: apuntar a GitHub raw o
-// endpoint propio en Fase 3.
+// URL OTA apunta al JSON versionado en assets/normativa del repositorio.
+ // Mantener el esquema JSON compatible con _actualizarDesdeJson.
 // ══════════════════════════════════════════════════════════════════
 
 class NormativaRepository {
   static const _urlOta =
-      'https://raw.githubusercontent.com/BetOarg/multas-ar/main/normativa_base.json';
+      'https://raw.githubusercontent.com/BetOarg/multas-ar-flutter/main/assets/normativa/normativa_base.json';
   static const _assetPath = 'assets/normativa/normativa_base.json';
 
   final NormativaDao _dao;

@@ -21,6 +21,24 @@ class CasosDao extends DatabaseAccessor<AppDatabase> with _$CasosDaoMixin {
         .getSingleOrNull();
   }
 
+  /// Stream de casos no archivados.
+  Stream<List<Caso>> watchActivos() {
+    return (select(casos)
+          ..where((c) => c.estado.isNull() | c.estado.isNotValue('archivado'))
+          ..orderBy([(c) => OrderingTerm.desc(c.actualizadoEn)]))
+        .watch();
+  }
+
+  /// Actualizar el estado sin reemplazar el resto de columnas.
+  Future<int> actualizarEstadoCaso(String id, String estado) {
+    return (update(casos)..where((c) => c.id.equals(id))).write(
+      CasosCompanion(
+        estado: Value(estado),
+        actualizadoEn: Value(DateTime.now()),
+      ),
+    );
+  }
+
   /// Todos los casos (para sync)
   Future<List<Caso>> getTodos() => select(casos).get();
 
@@ -29,9 +47,13 @@ class CasosDao extends DatabaseAccessor<AppDatabase> with _$CasosDaoMixin {
     await into(casos).insertOnConflictUpdate(caso);
   }
 
-  /// Actualizar campos específicos de un caso
-  Future<bool> actualizarCaso(CasosCompanion caso) {
-    return update(casos).replace(caso);
+  /// Actualizar solo las columnas presentes en el companion.
+  Future<bool> actualizarCaso(CasosCompanion caso) async {
+    if (!caso.id.present) return false;
+    final id = caso.id.value;
+    final cambios = await (update(casos)..where((c) => c.id.equals(id)))
+        .write(caso);
+    return cambios > 0;
   }
 
   /// Eliminar caso
@@ -58,7 +80,7 @@ class CasosDao extends DatabaseAccessor<AppDatabase> with _$CasosDaoMixin {
   Future<int> contarCasos() async {
     final count = casos.id.count();
     final query = selectOnly(casos)..addColumns([count]);
-    final row   = await query.getSingle();
+    final row = await query.getSingle();
     return row.read(count) ?? 0;
   }
 }

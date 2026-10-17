@@ -53,17 +53,17 @@ class CampoFaltanteWidget extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            faltante.detalle,
+            faltante.norma,
             style: const TextStyle(
               fontSize: 12,
               color: AppColors.text2,
               height: 1.5,
             ),
           ),
-          if (faltante.normaQueLoExige != null) ...[
+          if (faltante.esCritico) ...[
             const SizedBox(height: 4),
             Text(
-              faltante.normaQueLoExige!,
+              'Campo crítico: revisar el acta original.',
               style: const TextStyle(
                 fontSize: 11,
                 color: AppColors.indigoLight,

@@ -87,7 +87,7 @@ Infracción: Art. 51 Ley 13.927
       );
     });
 
-    test('Plazos: calcula 45 días hábiles desde fecha del acta', () {
+    test('Plazos: suma 45 días hábiles desde la fecha inicial sin caer en inhábil', () {
       final inicio    = DateTime(2026, 3, 15);
       final vencimiento = plazos.sumarDiasHabilesAdmin(inicio, 45);
 

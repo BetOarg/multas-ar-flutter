@@ -207,7 +207,7 @@ class NulidadesService {
     }
 
     // 3.f — Identificación del agente
-    if (!d.tieneFiremaAgente || d.legajoAgente == null) {
+    if (!d.tieneFiremaAgente || d.legajoAgente == null || d.legajoAgente!.trim().isEmpty) {
       det.add(const CausalNulidad(
         id: 'pba_3f_agente',
         titulo: 'Falta firma o identificación del agente',
@@ -274,15 +274,15 @@ class NulidadesService {
       }
     }
 
-    // Cámara no homologada (potencial)
+    // Cámara no homologada: observación potencial, su efecto jurídico requiere verificación.
     if (d.camaraHomologada == false) {
-      det.add(const CausalNulidad(
+      pot.add(const CausalNulidad(
         id: 'pba_fotomulta_camara',
         titulo: 'Cámara fotográfica sin homologación vigente',
         descripcion: 'El equipo de fotomulta no cuenta con resolución de '
             'homologación vigente o la misma no surge del acta.',
         norma: 'Art. 27-28 Ley 13.927 PBA — Res. ANSV',
-        tipo: TipoNulidad.absoluta,
+        tipo: TipoNulidad.relativa,
         argumentoJuridico:
             'La Ley 13.927 exige que los equipos de control automático '
             'estén homologados y calibrados. Sin homologación vigente '
@@ -352,7 +352,7 @@ class NulidadesService {
               'desde la infracción. El Fallo Andrade (PCyF N°15, 30/05/2023) '
               'aplica prescripción bienal del Art. 89 Ley 24.449.',
           norma: 'Fallo Andrade — Juzgado PCyF N°15 CABA (30/05/2023) — Art. 89 Ley 24.449',
-          tipo: TipoNulidad.absoluta,
+          tipo: TipoNulidad.relativa,
           jurisprudencia:
               'VERIFICAR estado en alzada antes de invocar. '
               'Ley 451 establece 5 años (texto vigente). '
@@ -369,7 +369,7 @@ class NulidadesService {
     List<CausalNulidad> det,
     List<CausalNulidad> pot,
   ) {
-    if (d.numeroActa == null) {
+    if (d.numeroActa == null || d.numeroActa!.trim().isEmpty) {
       det.add(const CausalNulidad(
         id: 'nac_70_num',
         titulo: 'Falta número de acta',
@@ -378,7 +378,7 @@ class NulidadesService {
         tipo: TipoNulidad.absoluta,
       ));
     }
-    if (d.normaInfringida == null) {
+    if (d.normaInfringida == null || d.normaInfringida!.trim().isEmpty) {
       det.add(const CausalNulidad(
         id: 'nac_70_norma',
         titulo: 'Falta cita de norma infringida',
@@ -425,7 +425,7 @@ class NulidadesService {
           descripcion: 'El acta labrada en PBA cita la Ley 451 CABA, '
               'que es de aplicación exclusiva en CABA.',
           norma: 'Art. 3 Ley 13.927 PBA',
-          tipo: TipoNulidad.absoluta,
+          tipo: TipoNulidad.relativa,
           argumentoJuridico:
               'La cita de una norma inaplicable en la jurisdicción '
               'configura error en la tipificación que puede fundar nulidad.',

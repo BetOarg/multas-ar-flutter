@@ -1,20 +1,17 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:uuid/uuid.dart';
+import '../database/app_database.dart';
 import '../database/daos/casos_dao.dart';
 import '../database/daos/plazos_dao.dart';
+import '../database/daos/escritos_dao.dart';
 import '../database/tables/tables.dart';
 import '../services/plazos_service.dart';
 
-// ══════════════════════════════════════════════════════════════════
-// CASOS REPOSITORY
-// ICasosRepository: interfaz que aísla BLoC y UI del motor de DB.
-// LocalCasosRepository: implementación sobre Drift.
-// FirestoreCasosRepository: en firestore_casos_repository.dart.
-// ══════════════════════════════════════════════════════════════════
-
-// ── Interfaz ──────────────────────────────────────────────────────
 abstract class ICasosRepository {
   Stream<List<Caso>> watchCasos();
+  Stream<List<Caso>> watchCasosActivos();
+  Future<void> archivarCaso(String id);
+  Future<void> actualizarEstado(String id, String estado);
   Future<Caso?> getCasoPorId(String id);
   Future<List<Caso>> getCasosTodos();
   Future<String> crearCaso(CasosCompanion datos);
@@ -22,23 +19,41 @@ abstract class ICasosRepository {
   Future<void> eliminarCaso(String id);
 }
 
-// ── Implementación local ──────────────────────────────────────────
 class LocalCasosRepository implements ICasosRepository {
-  final CasosDao     _casosDao;
-  final PlazosDao    _plazosDao;
+  final AppDatabase _database;
+  final CasosDao _casosDao;
+  final PlazosDao _plazosDao;
+  final EscritosDao _escritosDao;
   final PlazosService _plazosService;
   final _uuid = const Uuid();
 
   LocalCasosRepository({
-    required CasosDao     casosDao,
-    required PlazosDao    plazosDao,
+    required AppDatabase database,
+    required CasosDao casosDao,
+    required PlazosDao plazosDao,
+    required EscritosDao escritosDao,
     required PlazosService plazosService,
-  })  : _casosDao     = casosDao,
-        _plazosDao    = plazosDao,
+  })  : _database = database,
+        _casosDao = casosDao,
+        _plazosDao = plazosDao,
+        _escritosDao = escritosDao,
         _plazosService = plazosService;
 
   @override
   Stream<List<Caso>> watchCasos() => _casosDao.watchTodos();
+
+  @override
+  Stream<List<Caso>> watchCasosActivos() => _casosDao.watchActivos();
+
+  @override
+  Future<void> archivarCaso(String id) async {
+    await _casosDao.actualizarEstadoCaso(id, 'archivado');
+  }
+
+  @override
+  Future<void> actualizarEstado(String id, String estado) async {
+    await _casosDao.actualizarEstadoCaso(id, estado);
+  }
 
   @override
   Future<Caso?> getCasoPorId(String id) => _casosDao.getCasoPorId(id);
@@ -46,60 +61,84 @@ class LocalCasosRepository implements ICasosRepository {
   @override
   Future<List<Caso>> getCasosTodos() => _casosDao.getTodos();
 
-  // ── Crear ─────────────────────────────────────────────────────
   @override
   Future<String> crearCaso(CasosCompanion datos) async {
-    final id  = _uuid.v4();
+    final id = datos.id.present ? datos.id.value : _uuid.v4();
     final now = DateTime.now();
-
     final companion = datos.copyWith(
-      id:           Value(id),
-      creadoEn:     Value(now),
+      id: Value(id),
+      creadoEn: Value(now),
       actualizadoEn: Value(now),
     );
 
-    await _casosDao.upsertCaso(companion);
+    await _database.transaction(() async {
+      await _casosDao.upsertCaso(companion);
 
-    // Calcular y guardar plazos si hay fecha de notificación
-    final jur   = datos.jurisdiccion.value;
-    final notif = datos.fechaNotificacion.value;
-    if (jur != null && notif != null) {
-      await _guardarPlazos(id, jur, notif,
-          esFoto: datos.esFotomulta.value ?? false);
-    }
-
+      final jur = datos.jurisdiccion.present ? datos.jurisdiccion.value : null;
+      final notif = datos.fechaNotificacion.present
+          ? datos.fechaNotificacion.value
+          : null;
+      if (jur != null && notif != null) {
+        await _guardarPlazos(
+          id,
+          jur,
+          notif,
+          esFoto: datos.esFotomulta.present && datos.esFotomulta.value,
+        );
+      }
+    });
     return id;
   }
 
-  // ── Actualizar ────────────────────────────────────────────────
   @override
   Future<void> actualizarCaso(CasosCompanion datos) async {
+    if (!datos.id.present) return;
     final id = datos.id.value;
-    if (id == null) return;
 
-    final companion = datos.copyWith(
-      actualizadoEn: Value(DateTime.now()),
-    );
-    await _casosDao.actualizarCaso(companion);
+    final recalcularPlazos = datos.jurisdiccion.present ||
+        datos.fechaNotificacion.present ||
+        datos.esFotomulta.present;
 
-    // Recalcular plazos
-    final jur   = datos.jurisdiccion.value;
-    final notif = datos.fechaNotificacion.value;
-    if (jur != null && notif != null) {
+    await _database.transaction(() async {
+      final companion = datos.copyWith(
+        actualizadoEn: Value(DateTime.now()),
+      );
+      final actualizadoCount = await _casosDao.actualizarCaso(companion);
+      if (!actualizadoCount) {
+        throw StateError('No existe el caso $id para actualizar.');
+      }
+
+      if (!recalcularPlazos) return;
+
+      // Leer dentro de la misma transacción evita perder campos existentes
+      // y mantiene caso/plazos consistentes si falla el recálculo.
+      final actualizado = await _casosDao.getCasoPorId(id);
       await _plazosDao.eliminarPlazosDeCaso(id);
-      await _guardarPlazos(id, jur, notif,
-          esFoto: datos.esFotomulta.value ?? false);
-    }
+
+      if (actualizado != null &&
+          actualizado.jurisdiccion != null &&
+          actualizado.fechaNotificacion != null) {
+        await _guardarPlazos(
+          id,
+          actualizado.jurisdiccion!,
+          actualizado.fechaNotificacion!,
+          esFoto: actualizado.esFotomulta,
+        );
+      }
+    });
   }
 
-  // ── Eliminar ──────────────────────────────────────────────────
   @override
   Future<void> eliminarCaso(String id) async {
-    await _plazosDao.eliminarPlazosDeCaso(id);
-    await _casosDao.eliminarCaso(id);
+    await _database.transaction(() async {
+      // La transacción evita dejar el caso sin plazos/escritos si falla
+      // cualquiera de los borrados dependientes.
+      await _plazosDao.eliminarPlazosDeCaso(id);
+      await _escritosDao.eliminarEscritosDeCaso(id);
+      await _casosDao.eliminarCaso(id);
+    });
   }
 
-  // ── Guardar plazos calculados ─────────────────────────────────
   Future<void> _guardarPlazos(
     String casoId,
     String jurisdiccion,
@@ -107,21 +146,21 @@ class LocalCasosRepository implements ICasosRepository {
     bool esFoto = false,
   }) async {
     final calculados = _plazosService.calcularPlazos(
-      jurisdiccion:      jurisdiccion,
+      jurisdiccion: jurisdiccion,
       fechaNotificacion: fechaNotif,
-      esFotomulta:       esFoto,
+      esFotomulta: esFoto,
     );
 
     final companions = calculados.map((p) {
       return PlazosCompanion(
-        casoId:           Value(casoId),
-        nombre:           Value(p.nombre),
-        norma:            Value(p.norma),
-        fechaInicio:      Value(p.fechaInicio),
+        casoId: Value(casoId),
+        nombre: Value(p.nombre),
+        norma: Value(p.norma),
+        fechaInicio: Value(p.fechaInicio),
         fechaVencimiento: Value(p.fechaVencimiento),
-        tipoPlazo:        const Value('habiles_adm'),
-        notificado:       const Value(false),
-        vencido:          Value(p.estado == EstadoPlazo.vencido),
+        tipoPlazo: Value(p.tipoPlazo),
+        notificado: const Value(false),
+        vencido: Value(p.estado == EstadoPlazo.vencido),
       );
     }).toList();
 

@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../core/services/ocr_service.dart';
+import '../../../core/services/analisis_service.dart';
 import '../bloc/analisis_bloc.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../../shared/widgets/legal_alert_widget.dart';
@@ -20,7 +22,6 @@ class AnalisisScreen extends StatefulWidget {
 }
 
 class _AnalisisScreenState extends State<AnalisisScreen> {
-  final _picker = ImagePicker();
   final _formKey = GlobalKey<FormState>();
 
   // Controladores de formulario
@@ -99,7 +100,13 @@ class _AnalisisScreenState extends State<AnalisisScreen> {
 
               // ── Resultado OCR ──────────────────────────────
               if (state is AnalisisOcrCompletado)
-                _OcrResultadoCard(acta: state.acta),
+                _OcrResultadoCard(acta: state.acta)
+              else if (state is AnalisisCalculandoPlazos && state.acta != null)
+                _OcrResultadoCard(acta: state.acta!)
+              else if (state is AnalisisCompletado && state.acta != null)
+                _OcrResultadoCard(acta: state.acta!)
+              else if (state is AnalisisError && state.acta != null)
+                _OcrResultadoCard(acta: state.acta!),
 
               const SizedBox(height: 8),
 
@@ -227,14 +234,14 @@ class _UploadZone extends StatelessWidget {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
                   const SizedBox(width: 10),
-                  Text('Analizando con IA...',
+                  Text('Reconociendo texto de la imagen...',
                       style: Theme.of(context).textTheme.bodyMedium),
                 ],
               ),
             ],
             const SizedBox(height: 8),
             Text(
-              'JPG · PNG — el sistema extrae los datos automáticamente con OCR + IA.',
+              'JPG · PNG — el sistema reconoce texto con OCR. Verificá y corregí los datos antes de usarlos.',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
@@ -257,7 +264,7 @@ class _UploadZone extends StatelessWidget {
 
 // ── RESULTADO OCR ─────────────────────────────────────────────────
 class _OcrResultadoCard extends StatelessWidget {
-  final dynamic acta;
+  final OcrResult acta;
   const _OcrResultadoCard({required this.acta});
 
   @override
@@ -272,7 +279,7 @@ class _OcrResultadoCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('📋  Datos extraídos por IA',
+            Text('📋  Datos extraídos por OCR',
                 style: Theme.of(context)
                     .textTheme
                     .titleMedium
@@ -280,8 +287,11 @@ class _OcrResultadoCard extends StatelessWidget {
             const SizedBox(height: 10),
             _campo('N° de acta', acta.numeroActa),
             _campo('Patente', acta.patente),
-            _campo('Jurisdicción', acta.jurisdiccion),
-            _campo('Norma imputada', acta.normaImputada),
+            _campo('Fecha', acta.fechaInfraccion?.toIso8601String().split('T').first),
+            _campo('Agente', acta.agente),
+            _campo('Motor OCR', acta.motor),
+            _campo('Jurisdicción', acta.jurisdiccionDetectada),
+            _campo('Norma detectada', acta.normaInfringida),
             const SizedBox(height: 8),
             const LegalAlertWidget(
               tipo: TipoAlerta.advertencia,
@@ -561,14 +571,14 @@ class _ResultadoSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Campos faltantes
-        if (resultado.faltantes.isNotEmpty) ...[
+        if (resultado.camposFaltantes.isNotEmpty) ...[
           Text('⚠️  Información faltante',
               style: Theme.of(context)
                   .textTheme
                   .titleMedium
                   ?.copyWith(color: AppColors.danger)),
           const SizedBox(height: 8),
-          ...resultado.faltantes
+          ...resultado.camposFaltantes
               .map<Widget>((f) => CampoFaltanteWidget(faltante: f))
               .toList(),
           const SizedBox(height: 12),
@@ -599,35 +609,18 @@ class _ResultadoSection extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                       side: BorderSide(
-                          color: AppColors.success.withOpacity(0.3)),
+                        color: AppColors.success.withOpacity(0.3),
+                      ),
                     ),
-                    color:
-                        AppColors.success.withOpacity(0.08),
+                    color: AppColors.success.withOpacity(0.08),
                     child: Padding(
                       padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start,
-                        children: [
-                          Text('✅  ${o.titulo}',
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.success,
-                                  fontSize: 13)),
-                          const SizedBox(height: 4),
-                          Text(o.detalle,
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.text2)),
-                          if (o.normaAplicable != null)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: Text(o.normaAplicable!,
-                                  style: const TextStyle(
-                                      fontSize: 11,
-                                      color: AppColors.indigoLight)),
-                            ),
-                        ],
+                      child: Text(
+                        '✓  $o',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.text2,
+                        ),
                       ),
                     ),
                   ))

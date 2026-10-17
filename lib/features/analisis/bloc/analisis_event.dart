@@ -46,7 +46,11 @@ class AnalizarFormularioEvent extends AnalisisEvent {
         fechaNotificacion,
         tipoFalta,
         erroresFormales,
+        titularEsConductor,
         estadoProcesal,
+        vaJudicial,
+        agotamientoVia,
+        numeroActa,
       ];
 }
 
@@ -75,7 +79,17 @@ class GuardarCasoEvent extends AnalisisEvent {
   });
 
   @override
-  List<Object?> get props => [jurisdiccion, numeroActa];
+  List<Object?> get props => [
+        id,
+        jurisdiccion,
+        numeroActa,
+        fechaNotificacion,
+        tipoFalta,
+        patente,
+        estadoProcesal,
+        normaImputada,
+        erroresFormales,
+      ];
 }
 
 /// Actualizar un campo del formulario en tiempo real

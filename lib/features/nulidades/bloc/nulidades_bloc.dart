@@ -1,8 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/services/nulidades_service.dart';
+import '../../../core/constants/legal_constants.dart';
 import '../../../core/repository/casos_repository.dart';
 import '../../../core/database/daos/escritos_dao.dart';
+import '../../../core/database/app_database.dart';
 import '../../../core/database/tables/tables.dart';
 import 'package:drift/drift.dart' show Value;
 
@@ -50,7 +52,8 @@ class NulidadesBloc extends Bloc<NulidadesEvent, NulidadesState> {
       }
 
       final datos = DatosActaParaAnalisis(
-        jurisdiccion:      caso.jurisdiccion,
+        // La columna es nullable: sin jurisdicción confirmada no inferir PBA/CABA.
+        jurisdiccion:      caso.jurisdiccion ?? Jurisdiccion.otra,
         numeroActa:        caso.numeroActa,
         fechaInfraccion:   caso.fechaInfraccion,
         fechaNotificacion: caso.fechaNotificacion,
@@ -85,6 +88,13 @@ class NulidadesBloc extends Bloc<NulidadesEvent, NulidadesState> {
   ) async {
     final estadoActual = state;
     if (estadoActual is! NulidadesAnalizado) return;
+    // Nunca asociar el resultado de un caso con otro caso por un evento obsoleto.
+    if (estadoActual.casoId != event.casoId) {
+      emit(const NulidadesError(
+        mensaje: 'El análisis no corresponde al caso seleccionado. Vuelva a analizarlo.',
+      ));
+      return;
+    }
 
     emit(const NulidadesCargando());
     try {
@@ -103,7 +113,8 @@ class NulidadesBloc extends Bloc<NulidadesEvent, NulidadesState> {
           tipo:      const Value('nulidad_formal'),
           titulo:    const Value('Planteo de Nulidad Formal del Acta'),
           contenido: Value(contenido),
-          completo:  Value(_isEscritoCompleto(caso)),
+          // El borrador conserva campos de identidad, firma y fecha sin completar.
+          completo:  const Value(false),
           creadoEn:  Value(DateTime.now()),
           actualizadoEn: Value(DateTime.now()),
         ),
@@ -238,10 +249,4 @@ class NulidadesBloc extends Bloc<NulidadesEvent, NulidadesState> {
     return buf.toString();
   }
 
-  bool _isEscritoCompleto(dynamic caso) {
-    return caso.patente != null &&
-        caso.numeroActa != null &&
-        caso.fechaInfraccion != null &&
-        caso.jurisdiccion != null;
-  }
 }

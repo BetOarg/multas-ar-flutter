@@ -1,5 +1,7 @@
 part of 'casos_bloc.dart';
 
+
+
 sealed class CasosState extends Equatable {
   const CasosState();
   @override
@@ -19,6 +21,19 @@ class CasosCargados extends CasosState {
   const CasosCargados({required this.casos});
   @override
   List<Object?> get props => [casos];
+}
+
+class CasoDetalleCargado extends CasosState {
+  final Caso caso;
+  final List<Plazo> plazos;
+  final List<AlertaLegal> alertas;
+  const CasoDetalleCargado({
+    required this.caso,
+    required this.plazos,
+    required this.alertas,
+  });
+  @override
+  List<Object?> get props => [caso, plazos, alertas];
 }
 
 class CasosVacio extends CasosState {

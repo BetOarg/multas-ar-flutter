@@ -140,7 +140,7 @@ class ActaParser {
   static final _reNorma    = RegExp(r'(?:ART[.\s]*\d+[\w\s.]*(?:LEY|LN)[.\s]*[\d.]+|LEY[\s]*[\d.]+)', caseSensitive: false);
   static final _reGeo      = RegExp(r'(?:LUGAR|DOMICILIO|CALLE|AV\.|RUTA|KM|AVENIDA)[:\s]+(.{5,80})', caseSensitive: false);
 
-  static OcrResult parsear(String texto, {required String motor}) {
+  static OcrResult parsear(String texto, {String motor = 'unknown'}) {
     final upper     = texto.toUpperCase();
     final faltantes = <String>[];
 
@@ -151,13 +151,13 @@ class ActaParser {
     if (fecha == null) faltantes.add('fecha');
 
     final numActa = _reNumActa.firstMatch(texto)?.group(1)?.trim();
-    if (numActa == null) faltantes.add('número de acta');
+    if (numActa == null || numActa.isEmpty) faltantes.add('número de acta');
 
     final norma = _reNorma.firstMatch(texto)?.group(0)?.trim();
-    if (norma == null) faltantes.add('norma infringida');
+    if (norma == null || norma.isEmpty) faltantes.add('norma infringida');
 
     final agente = _reAgente.firstMatch(texto)?.group(1)?.trim();
-    if (agente == null) faltantes.add('agente');
+    if (agente == null || agente.isEmpty) faltantes.add('agente');
 
     return OcrResult(
       textoCompleto:       texto,
@@ -185,7 +185,9 @@ class ActaParser {
       final mo = int.parse(m.group(2)!);
       final y  = int.parse(m.group(3)!);
       if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
-      return DateTime(y, mo, d);
+      final fecha = DateTime(y, mo, d);
+      if (fecha.year != y || fecha.month != mo || fecha.day != d) return null;
+      return fecha;
     } catch (_) { return null; }
   }
 

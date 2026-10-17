@@ -55,11 +55,16 @@ class DatosActa {
   final DateTime? fechaNotificacion;
   final String? patente;
   final String? normaInfringida;
-  final String tipoFalta;
+  final String? tipoFalta;
   final String? lugarInfraccion;
   final String? agente;
   final bool esFotomulta;
   final String? tieneNovedad; // 'plan_pagos', etc.
+  final List<String> erroresFormales;
+  final bool? titularEsConductor;
+  final String? estadoProcesal;
+  final bool vaJudicial;
+  final bool agotamientoVia;
 
   const DatosActa({
     required this.jurisdiccion,
@@ -68,11 +73,16 @@ class DatosActa {
     this.fechaNotificacion,
     this.patente,
     this.normaInfringida,
-    this.tipoFalta = TipoFalta.leve,
+    this.tipoFalta,
     this.lugarInfraccion,
     this.agente,
     this.esFotomulta = false,
     this.tieneNovedad,
+    this.erroresFormales = const [],
+    this.titularEsConductor,
+    this.estadoProcesal,
+    this.vaJudicial = false,
+    this.agotamientoVia = false,
   });
 }
 
@@ -88,7 +98,7 @@ class AnalisisService {
     final oportunidades = <String>[];
 
     // ── Campos faltantes ────────────────────────────────────────
-    if (acta.numeroActa == null || acta.numeroActa!.isEmpty) {
+    if (acta.numeroActa == null || acta.numeroActa!.trim().isEmpty) {
       faltantes.add(const CampoFaltante(
         campo:      'Número de acta',
         norma:      'Art. 3 Ley 13.927 / Art. 9 Ley 1217',
@@ -96,7 +106,7 @@ class AnalisisService {
       ));
       oportunidades.add('Falta número de acta — posible nulidad formal');
     }
-    if (acta.patente == null || acta.patente!.isEmpty) {
+    if (acta.patente == null || acta.patente!.trim().isEmpty) {
       faltantes.add(const CampoFaltante(
         campo:     'Patente del vehículo',
         norma:     'Art. 3 inc. d) Ley 13.927',
@@ -111,29 +121,62 @@ class AnalisisService {
         esCritico: true,
       ));
     }
-    if (acta.normaInfringida == null || acta.normaInfringida!.isEmpty) {
+    if (acta.normaInfringida == null || acta.normaInfringida!.trim().isEmpty) {
       faltantes.add(const CampoFaltante(
         campo:     'Norma infringida',
         norma:     'Art. 3 inc. e) Ley 13.927 — Art. 18 CN',
         esCritico: true,
       ));
-      oportunidades.add('Falta norma — vulnera principio de tipicidad');
+      oportunidades.add('Falta norma infringida — verificar el acta original y la norma aplicable');
     }
-    if (acta.agente == null || acta.agente!.isEmpty) {
+    if (acta.agente == null || acta.agente!.trim().isEmpty) {
       faltantes.add(const CampoFaltante(
         campo:     'Identificación del agente',
         norma:     'Art. 3 inc. f) Ley 13.927',
         esCritico: true,
       ));
-      oportunidades.add('Falta firma o legajo del agente — posible nulidad absoluta');
+      oportunidades.add('Falta identificación del agente — verificar el acta original y el régimen aplicable');
+    }
+
+    // Los errores formales son datos declarados por el usuario, no
+    // conclusiones automáticas de nulidad.
+    for (final error in acta.erroresFormales) {
+      alertas.add(AlertaLegal(
+        tipo: TipoAlerta.advertencia,
+        mensaje: 'Error formal informado: $error. Verificar contra el acta original y la normativa aplicable; no implica nulidad automática.',
+      ));
+    }
+    if (acta.titularEsConductor == false) {
+      alertas.add(const AlertaLegal(
+        tipo: TipoAlerta.info,
+        mensaje: 'El usuario indicó que el titular no era quien conducía. Verificar identificación del conductor y régimen aplicable.',
+      ));
+    }
+    if (acta.estadoProcesal != null && acta.estadoProcesal!.trim().isNotEmpty) {
+      alertas.add(AlertaLegal(
+        tipo: TipoAlerta.info,
+        mensaje: 'Estado procesal informado: ${acta.estadoProcesal}. Confirmar con la resolución o expediente correspondiente.',
+      ));
+    }
+    if (acta.vaJudicial || acta.agotamientoVia) {
+      alertas.add(const AlertaLegal(
+        tipo: TipoAlerta.info,
+        mensaje: 'Se informó una instancia judicial o agotamiento de la vía administrativa. Revisar expediente y plazos específicos antes de actuar.',
+      ));
     }
 
     // ── Prescripción ────────────────────────────────────────────
     bool prescripto = false;
     DateTime? fechaPresc;
-    if (acta.fechaInfraccion != null) {
+    final jurisdiccionReconocida =
+        Jurisdiccion.todas.contains(acta.jurisdiccion) &&
+        acta.jurisdiccion != Jurisdiccion.otra;
+    final tipoFaltaReconocido = TipoFalta.todos.contains(acta.tipoFalta);
+    if (acta.fechaInfraccion != null &&
+        jurisdiccionReconocida &&
+        tipoFaltaReconocido) {
       fechaPresc = plazosService.calcularPrescripcion(
-          acta.fechaInfraccion!, acta.jurisdiccion, acta.tipoFalta);
+          acta.fechaInfraccion!, acta.jurisdiccion, acta.tipoFalta!);
       prescripto = DateTime.now().isAfter(fechaPresc);
 
       if (prescripto) {

@@ -35,22 +35,19 @@ void main() {
 
   // ── Días hábiles administrativos ─────────────────────────────
   group('calcularDiasHabilesAdmin', () {
-    test('5 días hábiles desde lunes — llega viernes misma semana', () {
-      // Lunes 06/04/2026 + 5 días hábiles = Lunes 13/04/2026
-      // (viernes 10 es hábil, pero el test usa 5 hábiles exactos)
+    test('5 días hábiles desde lunes — llega el lunes siguiente', () {
+      // El día inicial no se cuenta: martes 7 a lunes 13 = 5 hábiles.
       final inicio = DateTime(2026, 4, 6); // lunes
       final resultado = svc.sumarDiasHabilesAdmin(inicio, 5);
-      // L-M-M-J-V = 5 días → llega viernes 10/04
-      expect(resultado, DateTime(2026, 4, 10));
+      expect(resultado, DateTime(2026, 4, 13));
     });
 
     test('5 días hábiles desde lunes — saltea semana santa', () {
-      // Martes 31/03/2026 + 5 días hábiles (viernes 03/04 es feriado)
+      // El día inicial no se cuenta; 2 y 3 de abril son feriados.
       final inicio = DateTime(2026, 3, 31); // martes
       final resultado = svc.sumarDiasHabilesAdmin(inicio, 5);
-      // M(31)-X(01)-J(02 feriado Malvinas)-V(03 feriado VS) → salta
-      // continúa: L(06)-M(07) = 5 hábiles
-      expect(resultado, DateTime(2026, 4, 7));
+      // 01/04 (1), 06/04 (2), 07/04 (3), 08/04 (4), 09/04 (5).
+      expect(resultado, DateTime(2026, 4, 9));
     });
 
     test('45 días hábiles (PBA) — no cae en feriado', () {
@@ -163,6 +160,17 @@ void main() {
 
   // ── Días restantes ───────────────────────────────────────────
   group('diasRestantes', () {
+
+    test('usa días de calendario y no la hora actual', () {
+      final ahora = DateTime.now();
+      final hoy = DateTime(ahora.year, ahora.month, ahora.day);
+      final manana = hoy.add(const Duration(days: 1));
+
+      expect(svc.diasRestantes(hoy), 0);
+      expect(svc.evaluarEstado(hoy), EstadoPlazo.urgente);
+      expect(svc.diasRestantes(manana), 1);
+      expect(svc.evaluarEstado(manana), EstadoPlazo.urgente);
+    });
     test('negativo si ya venció', () {
       final vencido = DateTime.now().subtract(const Duration(days: 5));
       expect(svc.diasRestantes(vencido), lessThan(0));
@@ -173,4 +181,36 @@ void main() {
       expect(svc.diasRestantes(futuro), greaterThan(0));
     });
   });
+
+  // ── Selección de plazos por jurisdicción ─────────────────────
+  group('calcularPlazos por jurisdicción', () {
+    test('CABA devuelve solo los plazos de CABA', () {
+      final resultado = svc.calcularPlazos(
+        jurisdiccion: 'CABA',
+        fechaNotificacion: DateTime(2026, 4, 6),
+      );
+      expect(resultado, hasLength(1));
+      expect(resultado.single.nombre, 'Descargo administrativo');
+      expect(resultado.single.norma, contains('Ley 1217 CABA'));
+    });
+
+    test('PBA devuelve sus plazos sin añadir los de otras jurisdicciones', () {
+      final resultado = svc.calcularPlazos(
+        jurisdiccion: 'PBA',
+        fechaNotificacion: DateTime(2026, 4, 6),
+      );
+      expect(resultado, hasLength(4));
+      expect(resultado.any((p) => p.norma.contains('Ley 1217 CABA')), false);
+    });
+
+    test('jurisdicción no específica usa el plazo general', () {
+      final resultado = svc.calcularPlazos(
+        jurisdiccion: 'Jurisdicción no configurada',
+        fechaNotificacion: DateTime(2026, 4, 6),
+      );
+      expect(resultado, hasLength(1));
+      expect(resultado.single.norma, contains('Ley 24.449'));
+    });
+  });
+
 }
