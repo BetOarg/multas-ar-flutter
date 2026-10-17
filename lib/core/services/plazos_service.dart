@@ -89,17 +89,26 @@ class PlazosService {
     }
   }
 
-  EstadoPlazo evaluarEstado(DateTime vencimiento) {
+  /// Compara fechas de calendario: la hora actual no debe alterar el día
+  /// restante de un vencimiento que se almacena como fecha.
+  int diasRestantes(DateTime vencimiento) {
     final hoy = DateTime.now();
-    final diff = vencimiento.difference(hoy).inDays;
+    final hoyCalendario = DateTime(hoy.year, hoy.month, hoy.day);
+    final vencimientoCalendario = DateTime(
+      vencimiento.year,
+      vencimiento.month,
+      vencimiento.day,
+    );
+    return vencimientoCalendario.difference(hoyCalendario).inDays;
+  }
+
+  EstadoPlazo evaluarEstado(DateTime vencimiento) {
+    final diff = diasRestantes(vencimiento);
     if (diff < 0) return EstadoPlazo.vencido;
     if (diff <= 3) return EstadoPlazo.urgente;
     if (diff <= 7) return EstadoPlazo.proximo;
     return EstadoPlazo.vigente;
   }
-
-  int diasRestantes(DateTime vencimiento) =>
-      vencimiento.difference(DateTime.now()).inDays;
 
   bool _esHabilAdmin(DateTime d) =>
       d.weekday != DateTime.saturday &&
