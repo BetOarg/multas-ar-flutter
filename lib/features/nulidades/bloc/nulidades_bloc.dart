@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/services/nulidades_service.dart';
+import '../../../core/constants/legal_constants.dart';
 import '../../../core/repository/casos_repository.dart';
 import '../../../core/database/daos/escritos_dao.dart';
 import '../../../core/database/app_database.dart';
@@ -51,7 +52,8 @@ class NulidadesBloc extends Bloc<NulidadesEvent, NulidadesState> {
       }
 
       final datos = DatosActaParaAnalisis(
-        jurisdiccion:      caso.jurisdiccion,
+        // La columna es nullable: sin jurisdicción confirmada no inferir PBA/CABA.
+        jurisdiccion:      caso.jurisdiccion ?? Jurisdiccion.otra,
         numeroActa:        caso.numeroActa,
         fechaInfraccion:   caso.fechaInfraccion,
         fechaNotificacion: caso.fechaNotificacion,
