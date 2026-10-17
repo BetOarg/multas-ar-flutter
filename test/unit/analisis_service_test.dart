@@ -178,6 +178,26 @@ void main() {
         true,
       );
     });
+
+    test('no calcula prescripción con un tipo de falta vacío', () {
+      final resultado = svc.analizar(DatosActa(
+        jurisdiccion: Jurisdiccion.pba,
+        fechaInfraccion: DateTime(2020, 1, 1),
+        tipoFalta: '',
+      ));
+      expect(resultado.fechaPrescripcion, isNull);
+      expect(resultado.posiblePrescripcion, false);
+    });
+
+    test('no calcula prescripción para jurisdicción desconocida', () {
+      final resultado = svc.analizar(DatosActa(
+        jurisdiccion: 'Jurisdicción no identificada',
+        fechaInfraccion: DateTime(2020, 1, 1),
+        tipoFalta: TipoFalta.leve,
+      ));
+      expect(resultado.fechaPrescripcion, isNull);
+      expect(resultado.posiblePrescripcion, false);
+    });
   });
 
   // ── Plan de pagos PBA ────────────────────────────────────────
