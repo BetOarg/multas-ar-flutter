@@ -36,6 +36,22 @@ void main() {
       expect(resultado.camposFaltantes.where((c) => c.esCritico), isEmpty);
     });
 
+    test('trata campos compuestos solo por espacios como faltantes', () {
+      final resultado = svc.analizar(DatosActa(
+        jurisdiccion: Jurisdiccion.pba,
+        numeroActa: '   ',
+        patente: ' ',
+        normaInfringida: '  ',
+        agente: '\t ',
+      ));
+
+      final campos = resultado.camposFaltantes.map((c) => c.campo).toSet();
+      expect(campos, contains('Número de acta'));
+      expect(campos, contains('Patente del vehículo'));
+      expect(campos, contains('Norma infringida'));
+      expect(campos, contains('Identificación del agente'));
+    });
+
     test('acta sin número reporta campo crítico', () {
       final acta = DatosActa(
         jurisdiccion: Jurisdiccion.caba,
