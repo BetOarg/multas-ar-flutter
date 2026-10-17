@@ -207,7 +207,7 @@ class NulidadesService {
     }
 
     // 3.f — Identificación del agente
-    if (!d.tieneFiremaAgente || d.legajoAgente == null) {
+    if (!d.tieneFiremaAgente || d.legajoAgente == null || d.legajoAgente!.trim().isEmpty) {
       det.add(const CausalNulidad(
         id: 'pba_3f_agente',
         titulo: 'Falta firma o identificación del agente',
@@ -369,7 +369,7 @@ class NulidadesService {
     List<CausalNulidad> det,
     List<CausalNulidad> pot,
   ) {
-    if (d.numeroActa == null) {
+    if (d.numeroActa == null || d.numeroActa!.trim().isEmpty) {
       det.add(const CausalNulidad(
         id: 'nac_70_num',
         titulo: 'Falta número de acta',
@@ -378,7 +378,7 @@ class NulidadesService {
         tipo: TipoNulidad.absoluta,
       ));
     }
-    if (d.normaInfringida == null) {
+    if (d.normaInfringida == null || d.normaInfringida!.trim().isEmpty) {
       det.add(const CausalNulidad(
         id: 'nac_70_norma',
         titulo: 'Falta cita de norma infringida',
