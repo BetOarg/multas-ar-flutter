@@ -19,7 +19,13 @@ class NulidadesAnalizado extends NulidadesState {
   final String casoId;
   const NulidadesAnalizado({required this.resultado, required this.casoId});
   @override
-  List<Object?> get props => [casoId, resultado.causalesDetectadas.length];
+  List<Object?> get props => [
+    casoId,
+    resultado.causalesDetectadas.map((causal) => causal.id).toList(),
+    resultado.causalesPotenciales.map((causal) => causal.id).toList(),
+    resultado.recomendacion,
+    resultado.tieneNulidadAbsoluta,
+  ];
 }
 
 class NulidadesEscritoGenerado extends NulidadesState {
