@@ -7,14 +7,6 @@ import '../database/daos/escritos_dao.dart';
 import '../database/tables/tables.dart';
 import '../services/plazos_service.dart';
 
-// ══════════════════════════════════════════════════════════════════
-// CASOS REPOSITORY
-// ICasosRepository: interfaz que aísla BLoC y UI del motor de DB.
-// LocalCasosRepository: implementación sobre Drift.
-// FirestoreCasosRepository: en firestore_casos_repository.dart.
-// ══════════════════════════════════════════════════════════════════
-
-// ── Interfaz ──────────────────────────────────────────────────────
 abstract class ICasosRepository {
   Stream<List<Caso>> watchCasos();
   Stream<List<Caso>> watchCasosActivos();
@@ -27,22 +19,21 @@ abstract class ICasosRepository {
   Future<void> eliminarCaso(String id);
 }
 
-// ── Implementación local ──────────────────────────────────────────
 class LocalCasosRepository implements ICasosRepository {
-  final CasosDao     _casosDao;
-  final PlazosDao    _plazosDao;
+  final CasosDao _casosDao;
+  final PlazosDao _plazosDao;
   final EscritosDao? _escritosDao;
   final PlazosService _plazosService;
   final _uuid = const Uuid();
 
   LocalCasosRepository({
-    required CasosDao     casosDao,
-    required PlazosDao    plazosDao,
+    required CasosDao casosDao,
+    required PlazosDao plazosDao,
     EscritosDao? escritosDao,
     required PlazosService plazosService,
-  })  : _casosDao     = casosDao,
-        _plazosDao    = plazosDao,
-        _escritosDao  = escritosDao,
+  })  : _casosDao = casosDao,
+        _plazosDao = plazosDao,
+        _escritosDao = escritosDao,
         _plazosService = plazosService;
 
   @override
@@ -67,59 +58,65 @@ class LocalCasosRepository implements ICasosRepository {
   @override
   Future<List<Caso>> getCasosTodos() => _casosDao.getTodos();
 
-  // ── Crear ─────────────────────────────────────────────────────
   @override
   Future<String> crearCaso(CasosCompanion datos) async {
-    // Respetar el ID proporcionado por el flujo de análisis; generar uno
-    // solo cuando el companion no incluya identificador.
     final id = datos.id.present ? datos.id.value : _uuid.v4();
     final now = DateTime.now();
-
     final companion = datos.copyWith(
-      id:           Value(id),
-      creadoEn:     Value(now),
+      id: Value(id),
+      creadoEn: Value(now),
       actualizadoEn: Value(now),
     );
 
     await _casosDao.upsertCaso(companion);
 
-    // Calcular y guardar plazos si hay fecha de notificación
     final jur = datos.jurisdiccion.present ? datos.jurisdiccion.value : null;
     final notif = datos.fechaNotificacion.present
         ? datos.fechaNotificacion.value
         : null;
     if (jur != null && notif != null) {
-      await _guardarPlazos(id, jur, notif,
-          esFoto: datos.esFotomulta.present && datos.esFotomulta.value);
+      await _guardarPlazos(
+        id,
+        jur,
+        notif,
+        esFoto: datos.esFotomulta.present && datos.esFotomulta.value,
+      );
     }
-
     return id;
   }
 
-  // ── Actualizar ────────────────────────────────────────────────
   @override
   Future<void> actualizarCaso(CasosCompanion datos) async {
-    final id = datos.id.present ? datos.id.value : null;
-    if (id == null) return;
+    if (!datos.id.present) return;
+    final id = datos.id.value;
+
+    final recalcularPlazos = datos.jurisdiccion.present ||
+        datos.fechaNotificacion.present ||
+        datos.esFotomulta.present;
 
     final companion = datos.copyWith(
       actualizadoEn: Value(DateTime.now()),
     );
     await _casosDao.actualizarCaso(companion);
 
-    // Recalcular plazos
-    final jur = datos.jurisdiccion.present ? datos.jurisdiccion.value : null;
-    final notif = datos.fechaNotificacion.present
-        ? datos.fechaNotificacion.value
-        : null;
-    if (jur != null && notif != null) {
-      await _plazosDao.eliminarPlazosDeCaso(id);
-      await _guardarPlazos(id, jur, notif,
-          esFoto: datos.esFotomulta.present && datos.esFotomulta.value);
+    if (!recalcularPlazos) return;
+
+    // Consultar el registro persistido evita perder jurisdicción o fecha
+    // cuando el formulario actualiza solo uno de esos campos.
+    final actualizado = await _casosDao.getCasoPorId(id);
+    await _plazosDao.eliminarPlazosDeCaso(id);
+
+    if (actualizado?.jurisdiccion != null &&
+        actualizado?.fechaNotificacion != null) {
+      await _guardarPlazos(
+        id,
+        actualizado!.jurisdiccion!,
+        actualizado.fechaNotificacion!,
+        esFoto: actualizado.esFotomulta,
+      );
     }
   }
 
-  // ── Eliminar ──────────────────────────────────────────────────
   @override
   Future<void> eliminarCaso(String id) async {
     await _plazosDao.eliminarPlazosDeCaso(id);
@@ -129,7 +126,6 @@ class LocalCasosRepository implements ICasosRepository {
     await _casosDao.eliminarCaso(id);
   }
 
-  // ── Guardar plazos calculados ─────────────────────────────────
   Future<void> _guardarPlazos(
     String casoId,
     String jurisdiccion,
@@ -137,21 +133,21 @@ class LocalCasosRepository implements ICasosRepository {
     bool esFoto = false,
   }) async {
     final calculados = _plazosService.calcularPlazos(
-      jurisdiccion:      jurisdiccion,
+      jurisdiccion: jurisdiccion,
       fechaNotificacion: fechaNotif,
-      esFotomulta:       esFoto,
+      esFotomulta: esFoto,
     );
 
     final companions = calculados.map((p) {
       return PlazosCompanion(
-        casoId:           Value(casoId),
-        nombre:           Value(p.nombre),
-        norma:            Value(p.norma),
-        fechaInicio:      Value(p.fechaInicio),
+        casoId: Value(casoId),
+        nombre: Value(p.nombre),
+        norma: Value(p.norma),
+        fechaInicio: Value(p.fechaInicio),
         fechaVencimiento: Value(p.fechaVencimiento),
-        tipoPlazo:        const Value('habiles_adm'),
-        notificado:       const Value(false),
-        vencido:          Value(p.estado == EstadoPlazo.vencido),
+        tipoPlazo: const Value('habiles_adm'),
+        notificado: const Value(false),
+        vencido: Value(p.estado == EstadoPlazo.vencido),
       );
     }).toList();
 
