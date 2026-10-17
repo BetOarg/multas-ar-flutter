@@ -98,7 +98,7 @@ class AnalisisService {
     final oportunidades = <String>[];
 
     // ── Campos faltantes ────────────────────────────────────────
-    if (acta.numeroActa == null || acta.numeroActa!.isEmpty) {
+    if (acta.numeroActa == null || acta.numeroActa!.trim().isEmpty) {
       faltantes.add(const CampoFaltante(
         campo:      'Número de acta',
         norma:      'Art. 3 Ley 13.927 / Art. 9 Ley 1217',
@@ -106,7 +106,7 @@ class AnalisisService {
       ));
       oportunidades.add('Falta número de acta — posible nulidad formal');
     }
-    if (acta.patente == null || acta.patente!.isEmpty) {
+    if (acta.patente == null || acta.patente!.trim().isEmpty) {
       faltantes.add(const CampoFaltante(
         campo:     'Patente del vehículo',
         norma:     'Art. 3 inc. d) Ley 13.927',
@@ -121,21 +121,21 @@ class AnalisisService {
         esCritico: true,
       ));
     }
-    if (acta.normaInfringida == null || acta.normaInfringida!.isEmpty) {
+    if (acta.normaInfringida == null || acta.normaInfringida!.trim().isEmpty) {
       faltantes.add(const CampoFaltante(
         campo:     'Norma infringida',
         norma:     'Art. 3 inc. e) Ley 13.927 — Art. 18 CN',
         esCritico: true,
       ));
-      oportunidades.add('Falta norma — vulnera principio de tipicidad');
+      oportunidades.add('Falta norma infringida — verificar el acta original y la norma aplicable');
     }
-    if (acta.agente == null || acta.agente!.isEmpty) {
+    if (acta.agente == null || acta.agente!.trim().isEmpty) {
       faltantes.add(const CampoFaltante(
         campo:     'Identificación del agente',
         norma:     'Art. 3 inc. f) Ley 13.927',
         esCritico: true,
       ));
-      oportunidades.add('Falta firma o legajo del agente — posible nulidad absoluta');
+      oportunidades.add('Falta identificación del agente — verificar el acta original y el régimen aplicable');
     }
 
     // Los errores formales son datos declarados por el usuario, no
