@@ -36,21 +36,18 @@ void main() {
   // ── Días hábiles administrativos ─────────────────────────────
   group('calcularDiasHabilesAdmin', () {
     test('5 días hábiles desde lunes — llega viernes misma semana', () {
-      // Lunes 06/04/2026 + 5 días hábiles = Lunes 13/04/2026
-      // (viernes 10 es hábil, pero el test usa 5 hábiles exactos)
+      // El día inicial no se cuenta: martes 7 a lunes 13 = 5 hábiles.
       final inicio = DateTime(2026, 4, 6); // lunes
       final resultado = svc.sumarDiasHabilesAdmin(inicio, 5);
-      // L-M-M-J-V = 5 días → llega viernes 10/04
-      expect(resultado, DateTime(2026, 4, 10));
+      expect(resultado, DateTime(2026, 4, 13));
     });
 
     test('5 días hábiles desde lunes — saltea semana santa', () {
-      // Martes 31/03/2026 + 5 días hábiles (viernes 03/04 es feriado)
+      // El día inicial no se cuenta; 2 y 3 de abril son feriados.
       final inicio = DateTime(2026, 3, 31); // martes
       final resultado = svc.sumarDiasHabilesAdmin(inicio, 5);
-      // M(31)-X(01)-J(02 feriado Malvinas)-V(03 feriado VS) → salta
-      // continúa: L(06)-M(07) = 5 hábiles
-      expect(resultado, DateTime(2026, 4, 7));
+      // 01/04 (1), 06/04 (2), 07/04 (3), 08/04 (4), 09/04 (5).
+      expect(resultado, DateTime(2026, 4, 9));
     });
 
     test('45 días hábiles (PBA) — no cae en feriado', () {
