@@ -16,6 +16,7 @@ enum EstadoPlazo { vencido, urgente, proximo, vigente }
 class PlazoCalculado {
   final String nombre;
   final String norma;
+  final String tipoPlazo;
   final DateTime fechaInicio;
   final DateTime fechaVencimiento;
   final int diasRestantesVal;
@@ -24,6 +25,7 @@ class PlazoCalculado {
   const PlazoCalculado({
     required this.nombre,
     required this.norma,
+    required this.tipoPlazo,
     required this.fechaInicio,
     required this.fechaVencimiento,
     required this.diasRestantesVal,
@@ -141,6 +143,8 @@ class PlazosService {
     return [
       PlazoCalculado(
         nombre: 'Descargo administrativo',
+        tipoPlazo: 'habiles_adm',
+        tipoPlazo: 'habiles_adm',
         norma: 'Art. 8 Ley 1217 CABA — 5 días hábiles',
         fechaInicio: inicio,
         fechaVencimiento: venc,
@@ -167,6 +171,7 @@ class PlazosService {
       ),
       PlazoCalculado(
         nombre: 'Presentación ante JAITP',
+        tipoPlazo: 'corridos',
         norma: 'Art. 35 Ley 13.927 PBA — 30 días corridos',
         fechaInicio: inicio,
         fechaVencimiento: presentacion,
@@ -175,6 +180,7 @@ class PlazosService {
       ),
       PlazoCalculado(
         nombre: 'Caducidad habilitación para conducir',
+        tipoPlazo: 'corridos',
         norma: 'Art. 35 Ley 13.927 PBA — 90 días corridos',
         fechaInicio: inicio,
         fechaVencimiento: caducidadLic,
@@ -183,6 +189,7 @@ class PlazosService {
       ),
       PlazoCalculado(
         nombre: 'Recurso de apelación (fundado)',
+        tipoPlazo: 'habiles_jud',
         norma: 'Arts. 40-41 Ley 13.927 PBA — 5 días hábiles judiciales',
         fechaInicio: inicio,
         fechaVencimiento: apelacion,
@@ -195,6 +202,7 @@ class PlazosService {
       final notifFoto = sumarDiasHabilesAdmin(inicio, 60);
       lista.add(PlazoCalculado(
         nombre: 'Notificación fotomulta (término legal)',
+        tipoPlazo: 'habiles_adm',
         norma: 'Art. 28 Ley 13.927 PBA — 60 días hábiles',
         fechaInicio: inicio,
         fechaVencimiento: notifFoto,
@@ -211,6 +219,7 @@ class PlazosService {
     return [
       PlazoCalculado(
         nombre: 'Plazo general de descargo',
+        tipoPlazo: 'corridos',
         norma: 'Art. 70 Ley 24.449 — verificar normativa local',
         fechaInicio: inicio,
         fechaVencimiento: venc,
