@@ -146,7 +146,7 @@ class LocalCasosRepository implements ICasosRepository {
         norma: Value(p.norma),
         fechaInicio: Value(p.fechaInicio),
         fechaVencimiento: Value(p.fechaVencimiento),
-        tipoPlazo: const Value('habiles_adm'),
+        tipoPlazo: Value(p.tipoPlazo),
         notificado: const Value(false),
         vencido: Value(p.estado == EstadoPlazo.vencido),
       );
