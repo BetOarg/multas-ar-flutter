@@ -86,6 +86,13 @@ class NulidadesBloc extends Bloc<NulidadesEvent, NulidadesState> {
   ) async {
     final estadoActual = state;
     if (estadoActual is! NulidadesAnalizado) return;
+    // Nunca asociar el resultado de un caso con otro caso por un evento obsoleto.
+    if (estadoActual.casoId != event.casoId) {
+      emit(const NulidadesError(
+        mensaje: 'El análisis no corresponde al caso seleccionado. Vuelva a analizarlo.',
+      ));
+      return;
+    }
 
     emit(const NulidadesCargando());
     try {
@@ -104,7 +111,8 @@ class NulidadesBloc extends Bloc<NulidadesEvent, NulidadesState> {
           tipo:      const Value('nulidad_formal'),
           titulo:    const Value('Planteo de Nulidad Formal del Acta'),
           contenido: Value(contenido),
-          completo:  Value(_isEscritoCompleto(caso)),
+          // El borrador conserva campos de identidad, firma y fecha sin completar.
+          completo:  const Value(false),
           creadoEn:  Value(DateTime.now()),
           actualizadoEn: Value(DateTime.now()),
         ),
@@ -239,10 +247,4 @@ class NulidadesBloc extends Bloc<NulidadesEvent, NulidadesState> {
     return buf.toString();
   }
 
-  bool _isEscritoCompleto(dynamic caso) {
-    return caso.patente != null &&
-        caso.numeroActa != null &&
-        caso.fechaInfraccion != null &&
-        caso.jurisdiccion != null;
-  }
 }
