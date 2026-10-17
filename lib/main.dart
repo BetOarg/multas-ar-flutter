@@ -85,6 +85,7 @@ void main() async {
   // ── Repository ────────────────────────────────────────────────
   // Con Firebase activo → FirestoreCasosRepository
   final ICasosRepository casosRepo = LocalCasosRepository(
+    database:     db,
     casosDao:      casosDao,
     plazosDao:     plazosDao,
     escritosDao:   escritosDao,
