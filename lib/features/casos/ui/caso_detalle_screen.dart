@@ -22,7 +22,12 @@ class _CasoDetalleScreenState extends State<CasoDetalleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CasosBloc, CasosState>(
+    return BlocConsumer<CasosBloc, CasosState>(
+      listener: (context, state) {
+        if (state is CasosVacio && context.canPop()) {
+          context.pop();
+        }
+      },
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
@@ -81,7 +86,6 @@ class _CasoDetalleScreenState extends State<CasoDetalleScreen> {
             onPressed: () {
               Navigator.pop(ctx);
               context.read<CasosBloc>().add(CasoEliminar(casoId: widget.casoId));
-              context.pop();
             },
             child: const Text('Eliminar',
                 style: TextStyle(color: AppColors.danger)),
