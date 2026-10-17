@@ -135,6 +135,19 @@ NORMA: ART. 6.1.2 LEY 451 CABA
     });
   });
 
+  group('validación de fecha OCR', () {
+    test('rechaza fechas imposibles en el calendario', () {
+      final r = ActaParser.parsear('Fecha de infracción: 31/02/2026');
+      expect(r.fechaInfraccion, isNull);
+      expect(r.camposFaltantes, contains('fecha'));
+    });
+
+    test('rechaza día cero y mes fuera de rango', () {
+      expect(ActaParser.parsear('Fecha: 00/01/2026').fechaInfraccion, isNull);
+      expect(ActaParser.parsear('Fecha: 12/13/2026').fechaInfraccion, isNull);
+    });
+  });
+
   // ── Fotomulta ────────────────────────────────────────────────
   group('parsearFotomulta', () {
     test('detecta fotomulta por prefijo FM-', () {
