@@ -173,4 +173,36 @@ void main() {
       expect(svc.diasRestantes(futuro), greaterThan(0));
     });
   });
+
+  // ── Selección de plazos por jurisdicción ─────────────────────
+  group('calcularPlazos por jurisdicción', () {
+    test('CABA devuelve solo los plazos de CABA', () {
+      final resultado = svc.calcularPlazos(
+        jurisdiccion: 'CABA',
+        fechaNotificacion: DateTime(2026, 4, 6),
+      );
+      expect(resultado, hasLength(1));
+      expect(resultado.single.nombre, 'Descargo administrativo');
+      expect(resultado.single.norma, contains('Ley 1217 CABA'));
+    });
+
+    test('PBA devuelve sus plazos sin añadir los de otras jurisdicciones', () {
+      final resultado = svc.calcularPlazos(
+        jurisdiccion: 'PBA',
+        fechaNotificacion: DateTime(2026, 4, 6),
+      );
+      expect(resultado, hasLength(4));
+      expect(resultado.any((p) => p.norma.contains('Ley 1217 CABA')), false);
+    });
+
+    test('jurisdicción no específica usa el plazo general', () {
+      final resultado = svc.calcularPlazos(
+        jurisdiccion: 'Jurisdicción no configurada',
+        fechaNotificacion: DateTime(2026, 4, 6),
+      );
+      expect(resultado, hasLength(1));
+      expect(resultado.single.norma, contains('Ley 24.449'));
+    });
+  });
+
 }
