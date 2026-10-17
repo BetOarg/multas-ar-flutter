@@ -160,6 +160,17 @@ void main() {
 
   // ── Días restantes ───────────────────────────────────────────
   group('diasRestantes', () {
+
+    test('usa días de calendario y no la hora actual', () {
+      final ahora = DateTime.now();
+      final hoy = DateTime(ahora.year, ahora.month, ahora.day);
+      final manana = hoy.add(const Duration(days: 1));
+
+      expect(svc.diasRestantes(hoy), 0);
+      expect(svc.evaluarEstado(hoy), EstadoPlazo.urgente);
+      expect(svc.diasRestantes(manana), 1);
+      expect(svc.evaluarEstado(manana), EstadoPlazo.urgente);
+    });
     test('negativo si ya venció', () {
       final vencido = DateTime.now().subtract(const Duration(days: 5));
       expect(svc.diasRestantes(vencido), lessThan(0));
