@@ -163,8 +163,19 @@ void main() {
         camaraHomologada: false,
       );
       final r = svc.analizar(d);
-      expect(r.causalesDetectadas
-          .any((c) => c.id == 'pba_fotomulta_camara'), true);
+      expect(
+        r.causalesPotenciales.any((c) => c.id == 'pba_fotomulta_camara'),
+        isTrue,
+      );
+      expect(
+        r.causalesPotenciales
+            .firstWhere((c) => c.id == 'pba_fotomulta_camara').tipo,
+        TipoNulidad.relativa,
+      );
+      expect(
+        r.causalesDetectadas.any((c) => c.id == 'pba_fotomulta_camara'),
+        isFalse,
+      );
     });
 
     test('notificación tardía (>84 días) → causal potencial con alerta dual', () {
@@ -217,8 +228,11 @@ void main() {
         legajoAgente: '2222',
       );
       final r = svc.analizar(d);
-      expect(r.causalesPotenciales
-          .any((c) => c.id == 'caba_prescripcion_andrade'), true);
+      final causal = r.causalesPotenciales
+          .firstWhere((c) => c.id == 'caba_prescripcion_andrade');
+      expect(causal.tipo, TipoNulidad.relativa);
+      expect(r.causalesDetectadas
+          .any((c) => c.id == 'caba_prescripcion_andrade'), isFalse);
     });
   });
 
@@ -236,8 +250,11 @@ void main() {
         lugarInfraccion: 'La Plata',
       );
       final r = svc.analizar(d);
-      expect(r.causalesPotenciales
-          .any((c) => c.id == 'com_norma_incorrecta_jur'), true);
+      final causal = r.causalesPotenciales
+          .firstWhere((c) => c.id == 'com_norma_incorrecta_jur');
+      expect(causal.tipo, TipoNulidad.relativa);
+      expect(r.causalesDetectadas
+          .any((c) => c.id == 'com_norma_incorrecta_jur'), isFalse);
     });
   });
 
