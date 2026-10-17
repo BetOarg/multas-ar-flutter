@@ -43,6 +43,11 @@ class EscritosDao extends DatabaseAccessor<AppDatabase>
     );
   }
 
+  /// Eliminar todos los escritos vinculados a un caso.
+  Future<void> eliminarEscritosDeCaso(String casoId) async {
+    await (delete(escritos)..where((e) => e.casoId.equals(casoId))).go();
+  }
+
   /// Eliminar escrito
   Future<void> eliminarEscrito(int id) async {
     await (delete(escritos)..where((e) => e.id.equals(id))).go();
