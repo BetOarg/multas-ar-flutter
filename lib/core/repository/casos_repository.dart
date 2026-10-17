@@ -101,16 +101,17 @@ class LocalCasosRepository implements ICasosRepository {
 
     if (!recalcularPlazos) return;
 
-    // Consultar el registro persistido evita perder jurisdicción o fecha
-    // cuando el formulario actualiza solo uno de esos campos.
+    // Usar el registro persistido permite actualizar un único campo sin
+    // perder la jurisdicción, fecha o condición de fotomulta existentes.
     final actualizado = await _casosDao.getCasoPorId(id);
     await _plazosDao.eliminarPlazosDeCaso(id);
 
-    if (actualizado?.jurisdiccion != null &&
-        actualizado?.fechaNotificacion != null) {
+    if (actualizado != null &&
+        actualizado.jurisdiccion != null &&
+        actualizado.fechaNotificacion != null) {
       await _guardarPlazos(
         id,
-        actualizado!.jurisdiccion!,
+        actualizado.jurisdiccion!,
         actualizado.fechaNotificacion!,
         esFoto: actualizado.esFotomulta,
       );
