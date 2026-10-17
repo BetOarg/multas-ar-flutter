@@ -144,7 +144,6 @@ class PlazosService {
       PlazoCalculado(
         nombre: 'Descargo administrativo',
         tipoPlazo: 'habiles_adm',
-        tipoPlazo: 'habiles_adm',
         norma: 'Art. 8 Ley 1217 CABA — 5 días hábiles',
         fechaInicio: inicio,
         fechaVencimiento: venc,
@@ -163,6 +162,7 @@ class PlazosService {
     final lista = [
       PlazoCalculado(
         nombre: 'Descargo administrativo',
+        tipoPlazo: 'habiles_adm',
         norma: 'Art. 35 Ley 13.927 PBA — 45 días hábiles',
         fechaInicio: inicio,
         fechaVencimiento: descargo,
