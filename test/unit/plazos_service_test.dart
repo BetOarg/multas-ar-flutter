@@ -35,7 +35,7 @@ void main() {
 
   // ── Días hábiles administrativos ─────────────────────────────
   group('calcularDiasHabilesAdmin', () {
-    test('5 días hábiles desde lunes — llega viernes misma semana', () {
+    test('5 días hábiles desde lunes — llega el lunes siguiente', () {
       // El día inicial no se cuenta: martes 7 a lunes 13 = 5 hábiles.
       final inicio = DateTime(2026, 4, 6); // lunes
       final resultado = svc.sumarDiasHabilesAdmin(inicio, 5);
