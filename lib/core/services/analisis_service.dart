@@ -168,7 +168,13 @@ class AnalisisService {
     // ── Prescripción ────────────────────────────────────────────
     bool prescripto = false;
     DateTime? fechaPresc;
-    if (acta.fechaInfraccion != null && acta.tipoFalta != null) {
+    final jurisdiccionReconocida =
+        Jurisdiccion.todas.contains(acta.jurisdiccion) &&
+        acta.jurisdiccion != Jurisdiccion.otra;
+    final tipoFaltaReconocido = TipoFalta.todos.contains(acta.tipoFalta);
+    if (acta.fechaInfraccion != null &&
+        jurisdiccionReconocida &&
+        tipoFaltaReconocido) {
       fechaPresc = plazosService.calcularPrescripcion(
           acta.fechaInfraccion!, acta.jurisdiccion, acta.tipoFalta!);
       prescripto = DateTime.now().isAfter(fechaPresc);
