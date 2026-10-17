@@ -12,8 +12,8 @@ import '../database/tables/tables.dart';
 // (OTA). Usa versionado: solo actualiza si el servidor tiene
 // versión mayor a la almacenada en la DB.
 //
-// URL OTA configurada como constante: apuntar a GitHub raw o
-// endpoint propio en Fase 3.
+// URL OTA apunta al JSON versionado en assets/normativa del repositorio.
+ // Mantener el esquema JSON compatible con _actualizarDesdeJson.
 // ══════════════════════════════════════════════════════════════════
 
 class NormativaRepository {
