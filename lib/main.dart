@@ -87,6 +87,7 @@ void main() async {
   final ICasosRepository casosRepo = LocalCasosRepository(
     casosDao:      casosDao,
     plazosDao:     plazosDao,
+    escritosDao:   escritosDao,
     plazosService: plazosService,
   );
 
