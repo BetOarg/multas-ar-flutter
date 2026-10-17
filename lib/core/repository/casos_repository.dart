@@ -20,18 +20,21 @@ abstract class ICasosRepository {
 }
 
 class LocalCasosRepository implements ICasosRepository {
+  final AppDatabase _database;
   final CasosDao _casosDao;
   final PlazosDao _plazosDao;
-  final EscritosDao? _escritosDao;
+  final EscritosDao _escritosDao;
   final PlazosService _plazosService;
   final _uuid = const Uuid();
 
   LocalCasosRepository({
+    required AppDatabase database,
     required CasosDao casosDao,
     required PlazosDao plazosDao,
-    EscritosDao? escritosDao,
+    required EscritosDao escritosDao,
     required PlazosService plazosService,
-  })  : _casosDao = casosDao,
+  })  : _database = database,
+        _casosDao = casosDao,
         _plazosDao = plazosDao,
         _escritosDao = escritosDao,
         _plazosService = plazosService;
@@ -68,20 +71,22 @@ class LocalCasosRepository implements ICasosRepository {
       actualizadoEn: Value(now),
     );
 
-    await _casosDao.upsertCaso(companion);
+    await _database.transaction(() async {
+      await _casosDao.upsertCaso(companion);
 
-    final jur = datos.jurisdiccion.present ? datos.jurisdiccion.value : null;
-    final notif = datos.fechaNotificacion.present
-        ? datos.fechaNotificacion.value
-        : null;
-    if (jur != null && notif != null) {
-      await _guardarPlazos(
-        id,
-        jur,
-        notif,
-        esFoto: datos.esFotomulta.present && datos.esFotomulta.value,
-      );
-    }
+      final jur = datos.jurisdiccion.present ? datos.jurisdiccion.value : null;
+      final notif = datos.fechaNotificacion.present
+          ? datos.fechaNotificacion.value
+          : null;
+      if (jur != null && notif != null) {
+        await _guardarPlazos(
+          id,
+          jur,
+          notif,
+          esFoto: datos.esFotomulta.present && datos.esFotomulta.value,
+        );
+      }
+    });
     return id;
   }
 
@@ -94,37 +99,44 @@ class LocalCasosRepository implements ICasosRepository {
         datos.fechaNotificacion.present ||
         datos.esFotomulta.present;
 
-    final companion = datos.copyWith(
-      actualizadoEn: Value(DateTime.now()),
-    );
-    await _casosDao.actualizarCaso(companion);
-
-    if (!recalcularPlazos) return;
-
-    // Usar el registro persistido permite actualizar un único campo sin
-    // perder la jurisdicción, fecha o condición de fotomulta existentes.
-    final actualizado = await _casosDao.getCasoPorId(id);
-    await _plazosDao.eliminarPlazosDeCaso(id);
-
-    if (actualizado != null &&
-        actualizado.jurisdiccion != null &&
-        actualizado.fechaNotificacion != null) {
-      await _guardarPlazos(
-        id,
-        actualizado.jurisdiccion!,
-        actualizado.fechaNotificacion!,
-        esFoto: actualizado.esFotomulta,
+    await _database.transaction(() async {
+      final companion = datos.copyWith(
+        actualizadoEn: Value(DateTime.now()),
       );
-    }
+      final actualizadoCount = await _casosDao.actualizarCaso(companion);
+      if (!actualizadoCount) {
+        throw StateError('No existe el caso $id para actualizar.');
+      }
+
+      if (!recalcularPlazos) return;
+
+      // Leer dentro de la misma transacción evita perder campos existentes
+      // y mantiene caso/plazos consistentes si falla el recálculo.
+      final actualizado = await _casosDao.getCasoPorId(id);
+      await _plazosDao.eliminarPlazosDeCaso(id);
+
+      if (actualizado != null &&
+          actualizado.jurisdiccion != null &&
+          actualizado.fechaNotificacion != null) {
+        await _guardarPlazos(
+          id,
+          actualizado.jurisdiccion!,
+          actualizado.fechaNotificacion!,
+          esFoto: actualizado.esFotomulta,
+        );
+      }
+    });
   }
 
   @override
   Future<void> eliminarCaso(String id) async {
-    await _plazosDao.eliminarPlazosDeCaso(id);
-    if (_escritosDao != null) {
-      await _escritosDao!.eliminarEscritosDeCaso(id);
-    }
-    await _casosDao.eliminarCaso(id);
+    await _database.transaction(() async {
+      // La transacción evita dejar el caso sin plazos/escritos si falla
+      // cualquiera de los borrados dependientes.
+      await _plazosDao.eliminarPlazosDeCaso(id);
+      await _escritosDao.eliminarEscritosDeCaso(id);
+      await _casosDao.eliminarCaso(id);
+    });
   }
 
   Future<void> _guardarPlazos(
