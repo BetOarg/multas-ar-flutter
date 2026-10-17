@@ -3,6 +3,7 @@ import 'package:uuid/uuid.dart';
 import '../database/app_database.dart';
 import '../database/daos/casos_dao.dart';
 import '../database/daos/plazos_dao.dart';
+import '../database/daos/escritos_dao.dart';
 import '../database/tables/tables.dart';
 import '../services/plazos_service.dart';
 
@@ -30,15 +31,18 @@ abstract class ICasosRepository {
 class LocalCasosRepository implements ICasosRepository {
   final CasosDao     _casosDao;
   final PlazosDao    _plazosDao;
+  final EscritosDao? _escritosDao;
   final PlazosService _plazosService;
   final _uuid = const Uuid();
 
   LocalCasosRepository({
     required CasosDao     casosDao,
     required PlazosDao    plazosDao,
+    EscritosDao? escritosDao,
     required PlazosService plazosService,
   })  : _casosDao     = casosDao,
         _plazosDao    = plazosDao,
+        _escritosDao  = escritosDao,
         _plazosService = plazosService;
 
   @override
@@ -119,6 +123,9 @@ class LocalCasosRepository implements ICasosRepository {
   @override
   Future<void> eliminarCaso(String id) async {
     await _plazosDao.eliminarPlazosDeCaso(id);
+    if (_escritosDao != null) {
+      await _escritosDao!.eliminarEscritosDeCaso(id);
+    }
     await _casosDao.eliminarCaso(id);
   }
 
