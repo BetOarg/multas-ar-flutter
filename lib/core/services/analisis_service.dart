@@ -223,12 +223,13 @@ class AnalisisService {
     if (acta.jurisdiccion == Jurisdiccion.pba && acta.esFotomulta) {
       alertas.add(const AlertaLegal(
         tipo: TipoAlerta.advertencia,
-        mensaje: 'En PBA, la Ley 13.927 prevé despachar la notificación '
-                 'de la fotomulta dentro de 60 días hábiles desde el hecho. '
-                 'Verificar fecha de comisión, constancia de despacho y '
-                 'notificación efectiva. Un eventual incumplimiento no '
-                 'determina por sí solo la nulidad automática.',
-        norma:  'Ley 13.927 PBA, art. 35 inc. g)',
+        mensaje: 'En PBA, el art. 6 de la Ley 13.927 establece que la '
+                 'notificación de infracciones detectadas por cinemómetros '
+                 'fijos automáticos debe realizarse dentro de 60 días hábiles '
+                 'desde la comisión y prevé nulidad absoluta por incumplimiento. '
+                 'Verificar que el dispositivo y el caso estén comprendidos, '
+                 'las fechas y la constancia de notificación antes de concluir.',
+        norma:  'Art. 6 Ley 13.927 PBA — verificar alcance y constancias',
       ));
     }
 
