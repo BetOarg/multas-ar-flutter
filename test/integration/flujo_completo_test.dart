@@ -241,28 +241,16 @@ Inspector: López 8901
   });
 
   // ══════════════════════════════════════════════════════════════
-  // CASO 5: Acta Mendoza — prescripción tripartita
-  // ══════════════════════════════════════════════════════════════
-  group('Caso 5 — Mendoza prescripción Art. 94 Ley 9024', () {
-    test('leve prescribe en 2 años', () {
-      final hecho = DateTime(2024, 6, 1);
-      final p = plazos.calcularPrescripcion(
-          hecho, Jurisdiccion.mendoza, TipoFalta.leve);
-      expect(p.year, equals(2026));
-    });
-
-    test('grave prescribe en 3 años', () {
-      final hecho = DateTime(2023, 6, 1);
-      final p = plazos.calcularPrescripcion(
-          hecho, Jurisdiccion.mendoza, TipoFalta.grave);
-      expect(p.year, equals(2026));
-    });
-
-    test('gravísima prescribe en 4 años', () {
-      final hecho = DateTime(2022, 6, 1);
-      final p = plazos.calcularPrescripcion(
-          hecho, Jurisdiccion.mendoza, TipoFalta.gravisima);
-      expect(p.year, equals(2026));
+  // CASO 5: Mendoza — no usar reglas sin validar fuente local
+  group('Caso 5 — Mendoza requiere verificación normativa', () {
+    test('no calcula automáticamente una fecha sin regla validada', () {
+      for (final tipo in TipoFalta.todos) {
+        expect(
+          plazos.calcularPrescripcion(
+              DateTime(2022, 6, 1), Jurisdiccion.mendoza, tipo),
+          isNull,
+        );
+      }
     });
   });
 }
