@@ -91,12 +91,13 @@
     },
     {
       "jurisdiccion": "PBA",
-      "categoria": "plazo",
+      "categoria": "advertencia",
       "titulo": "Recurso de apelación judicial",
-      "contenido": "5 días hábiles desde la notificación de la condena. DEBE fundarse en el mismo escrito — si no se funda, queda desierto.",
-      "norma_base": "Arts. 40-41 Ley 13.927 PBA",
+      "contenido": "Los recursos de revocatoria y apelación deben interponerse dentro de los cinco (5) días de notificada la resolución y fundarse en el mismo escrito. Verificar el cómputo del plazo y el procedimiento aplicable en el expediente.",
+      "norma_base": "Art. 40 Ley 13.927 PBA — verificar cómputo y procedimiento",
       "es_alta_importancia": true,
-      "orden": 5
+      "orden": 5,
+      "fuente_url": "https://normas.gba.gob.ar/documentos/0YqDnfd0.html"
     },
     {
       "jurisdiccion": "PBA",
