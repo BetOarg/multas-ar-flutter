@@ -254,6 +254,16 @@ class AnalisisService {
         esFotomulta:       acta.esFotomulta,
       );
 
+      if (plazos.isEmpty) {
+        alertas.add(const AlertaLegal(
+          tipo: TipoAlerta.info,
+          mensaje: 'No se calculó un vencimiento automático: el plazo depende '
+              'de la jurisdicción, el procedimiento y la notificación efectiva. '
+              'Verificar la citación y la norma vigente; la ausencia de cálculo '
+              'no significa que no exista un plazo.',
+        ));
+      }
+
       // Alerta si hay plazos urgentes o vencidos
       final urgentes = plazos
           .where((p) =>
