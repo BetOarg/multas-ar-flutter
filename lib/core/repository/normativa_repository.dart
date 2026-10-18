@@ -97,7 +97,9 @@ class NormativaRepository {
     final feriadosJson = json['feriados'] as List<dynamic>?;
     if (feriadosJson != null) {
       await _seedFeriados(feriadosJson.cast<Map<String, dynamic>>());
-    } else {
+    } else if ((await _dao.getFeriadosPorAnio(2026)).isEmpty) {
+      // No duplicar el seed de respaldo cada vez que se aplique una OTA
+      // que no incluya una lista explícita de feriados.
       await _seedFeriados2026();
     }
   }
@@ -113,7 +115,7 @@ class NormativaRepository {
         jurisdiccion:  Value(f['jurisdiccion'] as String?),
       );
     }).toList();
-    await _dao.insertarFeriados(companions);
+    await _dao.reemplazarFeriados(companions);
   }
 
   /// Feriados nacionales 2026 como fallback si no vienen en el JSON
