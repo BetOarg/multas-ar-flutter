@@ -211,12 +211,11 @@ class AnalisisService {
       if (anios >= 2) {
         alertas.add(const AlertaLegal(
           tipo: TipoAlerta.advertencia,
-          mensaje: '⚠️ ALERTA DUAL — PRESCRIPCIÓN CABA: '
-                   'Ley 451 establece 5 años, pero el Fallo Andrade '
-                   '(PCyF N°15, 30/05/2023) aplica 2 años vía '
-                   'Art. 89 Ley 24.449. Verificar estado en alzada '
-                   'antes de invocar.',
-          norma:  'Fallo Andrade — Juzgado PCyF N°15 CABA (30/05/2023)',
+          mensaje: 'La prescripción en CABA requiere revisión del régimen '
+                   'local vigente, los criterios jurisprudenciales aplicables, '
+                   'las interrupciones y el expediente. No se aplica de forma '
+                   'automática un plazo de 2 o 5 años.',
+          norma:  'Verificar Ley 451 CABA, Ley 24.449 y jurisprudencia vigente',
         ));
       }
     }
@@ -224,12 +223,12 @@ class AnalisisService {
     if (acta.jurisdiccion == Jurisdiccion.pba && acta.esFotomulta) {
       alertas.add(const AlertaLegal(
         tipo: TipoAlerta.advertencia,
-        mensaje: '⚠️ ALERTA DUAL — FOTOMULTAS PBA: '
-                 'Art. 28 Ley 13.927 establece 60 días hábiles para notificar. '
-                 'La Cámara de San Martín Sala I (2018, Exp. 37.639) '
-                 'lo considera plazo ordenatorio. '
-                 'Oponer acreditando perjuicio concreto.',
-        norma:  'Art. 28 Ley 13.927 PBA',
+        mensaje: 'En PBA, la Ley 13.927 prevé despachar la notificación '
+                 'de la fotomulta dentro de 60 días hábiles desde el hecho. '
+                 'Verificar fecha de comisión, constancia de despacho y '
+                 'notificación efectiva. Un eventual incumplimiento no '
+                 'determina por sí solo la nulidad automática.',
+        norma:  'Ley 13.927 PBA, art. 35 inc. g)',
       ));
     }
 
@@ -238,9 +237,10 @@ class AnalisisService {
         acta.tieneNovedad == 'plan_pagos') {
       alertas.add(const AlertaLegal(
         tipo: TipoAlerta.peligro,
-        mensaje: '🚨 PLAN DE PAGOS PBA: la adhesión al plan de pagos '
-                 'implica reconocimiento irrevocable de deuda y RENUNCIA '
-                 'a todos los recursos. No gestionar sin asesoramiento legal.',
+        mensaje: 'La adhesión a un plan de pagos puede tener efectos sobre '
+                 'el reconocimiento de la deuda o las vías de impugnación según '
+                 'el régimen y sus condiciones. Revisar el instrumento concreto '
+                 'antes de adherir; no se presume una renuncia universal.',
         norma:  NormasBase.art35PlanPagos,
       ));
     }
