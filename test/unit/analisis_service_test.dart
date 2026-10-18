@@ -135,7 +135,7 @@ void main() {
 
   // ── Prescripción alcanzada ───────────────────────────────────
   group('deteccionPrescripcion', () {
-    test('detecta prescripción PBA leve (2 años)', () {
+    test('advierte sobre posible prescripción base PBA leve (2 años)', () {
       final acta = DatosActa(
         jurisdiccion: Jurisdiccion.pba,
         numeroActa: '1111',
@@ -148,7 +148,9 @@ void main() {
       final resultado = svc.analizar(acta);
       expect(resultado.posiblePrescripcion, true);
       expect(
-        resultado.alertas.any((a) => a.tipo == TipoAlerta.peligro),
+        resultado.alertas.any((a) =>
+            a.tipo == TipoAlerta.advertencia &&
+            a.mensaje.contains('No confirma prescripción')),
         true,
       );
     });
