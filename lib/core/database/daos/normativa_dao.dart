@@ -46,8 +46,15 @@ class NormativaDao extends DatabaseAccessor<AppDatabase>
   /// Actualizar normativa desde JSON (actualizaciones OTA)
   Future<void> actualizarDesdeJson(
       List<NormativaEntradasCompanion> entradas) async {
-    await batch((b) {
-      b.insertAllOnConflictUpdate(normativaEntradas, entradas);
+    // La tabla no tiene una clave única de contenido: un upsert por id
+    // autogenerado duplicaría todas las entradas en cada actualización OTA.
+    // Reemplazar la instantánea completa de forma atómica evita duplicados
+    // y elimina entradas obsoletas.
+    await transaction(() async {
+      await delete(normativaEntradas).go();
+      await batch((b) {
+        b.insertAll(normativaEntradas, entradas);
+      });
     });
   }
 
@@ -93,8 +100,16 @@ class NormativaDao extends DatabaseAccessor<AppDatabase>
         .get();
   }
 
-  /// Insertar feriados en bulk (seed anual)
+  /// Insertar feriados adicionales (por ejemplo, el seed de respaldo).
   Future<void> insertarFeriados(List<FeriadosCompanion> lista) async {
-    await batch((b) => b.insertAllOnConflictUpdate(feriados, lista));
+    await batch((b) => b.insertAll(feriados, lista));
+  }
+
+  /// Reemplazar la lista completa de feriados recibida por OTA.
+  Future<void> reemplazarFeriados(List<FeriadosCompanion> lista) async {
+    await transaction(() async {
+      await delete(feriados).go();
+      await batch((b) => b.insertAll(feriados, lista));
+    });
   }
 }
