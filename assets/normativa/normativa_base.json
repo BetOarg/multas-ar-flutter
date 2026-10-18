@@ -1,7 +1,7 @@
 {
-  "version": 1,
-  "generado": "2026-10-01",
-  "advertencia": "Verificar vigencia normativa al momento de uso. Fuente: textos legales públicos.",
+  "version": 2,
+  "generado": "2026-10-18",
+  "advertencia": "Base normativa preliminar. No constituye asesoramiento jurídico. Verificar jurisdicción, texto consolidado vigente, reglamentación y notificación del caso antes de calcular plazos o afirmar prescripción/nulidad. Las entradas marcadas como pendientes no deben utilizarse como reglas automáticas.",
   "entradas": [
     {
       "jurisdiccion": "CABA",
@@ -23,10 +23,10 @@
     },
     {
       "jurisdiccion": "CABA",
-      "categoria": "plazo",
-      "titulo": "Descargo administrativo",
-      "contenido": "5 días hábiles administrativos desde la notificación fehaciente",
-      "norma_base": "Art. 8 Ley 1217 CABA",
+      "categoria": "advertencia",
+      "titulo": "Plazo de impugnación — requiere verificación",
+      "contenido": "La referencia a 5 días hábiles y al art. 8 de la Ley 1217 no debe usarse como regla automática sin verificar el texto consolidado vigente y la vía procedimental concreta.",
+      "norma_base": "Ley 1217 CABA — verificar texto consolidado y procedimiento",
       "es_alta_importancia": true,
       "orden": 3
     },
@@ -45,7 +45,7 @@
       "jurisdiccion": "CABA",
       "categoria": "advertencia",
       "titulo": "Notificación por email",
-      "contenido": "Desde la reforma de la Ley 1217 (t.c. Ley 6.764/2024), la notificación por correo electrónico es fehaciente. El plazo corre desde la recepción.",
+      "contenido": "La validez y el inicio del plazo dependen del régimen de notificación aplicable y de las constancias de recepción. Verificar el texto consolidado vigente y el medio utilizado en el caso concreto antes de tratar el correo electrónico como notificación fehaciente.",
       "norma_base": "Ley 1217 CABA (t.c. Ley 6.764/2024)",
       "es_alta_importancia": true,
       "orden": 5
@@ -61,30 +61,33 @@
     },
     {
       "jurisdiccion": "PBA",
-      "categoria": "plazo",
-      "titulo": "Presentación ante juzgado",
-      "contenido": "30 días corridos desde el labrado del acta para presentarse ante el JAITP",
-      "norma_base": "Art. 35 Ley 13.927 PBA",
+      "categoria": "advertencia",
+      "titulo": "Plazo para presentarse ante juzgado — requiere verificación",
+      "contenido": "No utilizar como regla automática el plazo de 30 días desde el labrado sin verificar el procedimiento aplicable, el texto normativo vigente y la notificación concreta.",
+      "norma_base": "Ley 13.927 PBA — verificar artículos y reglamentación",
       "es_alta_importancia": true,
-      "orden": 2
+      "orden": 2,
+      "fuente_url": "https://normas.gba.gob.ar/documentos/0YqDnfd0.html"
     },
     {
       "jurisdiccion": "PBA",
-      "categoria": "plazo",
-      "titulo": "Descargo administrativo",
-      "contenido": "45 días hábiles administrativos desde la notificación fehaciente",
+      "categoria": "advertencia",
+      "titulo": "Plazo de descargo — requiere verificación",
+      "contenido": "El art. 35 regula el emplazamiento para presentar descargo después del plazo de pago voluntario, pero el texto oficial consultado no confirma por sí solo un plazo general de 45 días hábiles. No calcular automáticamente: revisar reglamentación aplicable y notificación del caso.",
       "norma_base": "Art. 35 Ley 13.927 PBA",
       "es_alta_importancia": true,
-      "orden": 3
+      "orden": 3,
+      "fuente_url": "https://normas.gba.gob.ar/documentos/0YqDnfd0.html"
     },
     {
       "jurisdiccion": "PBA",
-      "categoria": "plazo",
-      "titulo": "Caducidad habilitación para conducir",
-      "contenido": "90 días corridos desde la boleta de citación sin presentarse ante el juzgado",
-      "norma_base": "Art. 35 Ley 13.927 PBA",
+      "categoria": "advertencia",
+      "titulo": "Consecuencia por falta de comparecencia — requiere verificación",
+      "contenido": "No afirmar una caducidad automática a los 90 días sin verificar la boleta de citación, la reglamentación vigente y las circunstancias del caso.",
+      "norma_base": "Ley 13.927 PBA — verificar reglamentación aplicable",
       "es_alta_importancia": true,
-      "orden": 4
+      "orden": 4,
+      "fuente_url": "https://normas.gba.gob.ar/documentos/0YqDnfd0.html"
     },
     {
       "jurisdiccion": "PBA",
@@ -109,8 +112,8 @@
     {
       "jurisdiccion": "PBA",
       "categoria": "advertencia",
-      "titulo": "Plan de pagos — RENUNCIA A RECURSOS",
-      "contenido": "La adhesión al plan de pagos implica reconocimiento irrevocable de deuda, renuncia a todos los recursos y causal de interrupción de la prescripción. Informar siempre al cliente ANTES de cualquier gestión de pago.",
+      "titulo": "Plan de pagos — verificar efectos antes de adherir",
+      "contenido": "Antes de adherir a un plan o realizar pago voluntario, verificar sus términos y efectos sobre reconocimiento, allanamiento, recursos y prescripción según el régimen y el caso. No afirmar una renuncia universal a todos los recursos sin respaldo específico.",
       "norma_base": "Art. 35 Ley 13.927 PBA",
       "es_alta_importancia": true,
       "orden": 7
@@ -164,10 +167,11 @@
       "jurisdiccion": "nacional",
       "categoria": "ley",
       "titulo": "Ley Nacional de Tránsito",
-      "contenido": "Ley 24.449 y Decreto Reglamentario 779/95 — modificado por Decreto 196/2025",
+      "contenido": "Ley 24.449 y Decreto Reglamentario 779/95, con sus modificatorias. Revisar también el Decreto 796/2026, publicado en el Boletín Oficial, que modifica el art. 28 de la reglamentación.",
       "norma_base": "Ley 24.449",
       "es_alta_importancia": true,
-      "orden": 1
+      "orden": 1,
+      "fuente_url": "https://www.boletinoficial.gob.ar/detalleAviso/primera/346383/20260826"
     },
     {
       "jurisdiccion": "nacional",
@@ -186,6 +190,23 @@
       "norma_base": "Art. 89 Ley 24.449",
       "es_alta_importancia": true,
       "orden": 3
+    }
+  ],
+  "fuentes_oficiales": [
+    {
+      "jurisdiccion": "PBA",
+      "descripcion": "Ley 13.927, texto oficial provincial",
+      "url": "https://normas.gba.gob.ar/documentos/0YqDnfd0.html"
+    },
+    {
+      "jurisdiccion": "nacional",
+      "descripcion": "Ley 24.449, texto actualizado en Infoleg",
+      "url": "https://servicios.infoleg.gob.ar/infolegInternet/resaltaranexos/0-4999/818/texact.htm"
+    },
+    {
+      "jurisdiccion": "nacional",
+      "descripcion": "Decreto 796/2026, Boletín Oficial de la República Argentina",
+      "url": "https://www.boletinoficial.gob.ar/detalleAviso/primera/346383/20260826"
     }
   ]
 }
