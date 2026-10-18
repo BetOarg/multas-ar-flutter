@@ -220,7 +220,7 @@ void main() {
 
   // ── Plan de pagos PBA ────────────────────────────────────────
   group('alertaPlanPagosPBA', () {
-    test('PBA plan de pagos genera alerta crítica', () {
+    test('PBA plan de pagos genera advertencia no categórica', () {
       final acta = DatosActa(
         jurisdiccion: Jurisdiccion.pba,
         numeroActa: '3333',
@@ -234,7 +234,7 @@ void main() {
       final resultado = svc.analizar(acta);
       expect(
         resultado.alertas.any((a) =>
-            a.tipo == TipoAlerta.peligro &&
+            a.tipo == TipoAlerta.advertencia &&
             a.mensaje.contains('plan de pagos')),
         true,
       );
