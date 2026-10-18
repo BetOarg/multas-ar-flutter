@@ -152,14 +152,10 @@ Inspector: López 8901
       expect(andrade.jurisprudencia, contains('alzada'));
     });
 
-    test('Plazos: prescripción CABA 5 años desde el hecho', () {
-      final hecho      = DateTime(2023, 1, 10);
-      final prescripcion =
-          plazos.calcularPrescripcion(hecho, Jurisdiccion.caba, TipoFalta.leve);
-
-      expect(prescripcion.year, equals(2028));
-      expect(prescripcion.month, equals(1));
-      expect(prescripcion.day, equals(10));
+    test('Plazos: CABA requiere revisión normativa', () {
+      final prescripcion = plazos.calcularPrescripcion(
+          DateTime(2023, 1, 10), Jurisdiccion.caba, TipoFalta.leve);
+      expect(prescripcion, isNull);
     });
   });
 
