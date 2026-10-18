@@ -149,6 +149,36 @@ class _CasoDetalleScreenState extends State<CasoDetalleScreen> {
             const SizedBox(height: 8),
           ],
 
+          if (plazos.isEmpty) ...[
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.surface3,
+                border: Border.all(color: AppColors.border),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.info_outline,
+                      size: 18, color: AppColors.indigoLight),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      caso.fechaNotificacion == null
+                          ? 'No se muestran vencimientos: falta la fecha de notificación. Revisá la citación y el expediente; el plazo puede depender de la notificación efectiva.'
+                          : 'No se calcularon vencimientos automáticos porque la regla aplicable requiere verificación. Esto no significa que no exista un plazo: revisá la citación y la normativa vigente.',
+                      style: const TextStyle(
+                          fontSize: 12, color: AppColors.text3),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
+
           // Botón nulidades
           SizedBox(width: double.infinity,
             child: OutlinedButton.icon(
