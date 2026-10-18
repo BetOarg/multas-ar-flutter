@@ -172,6 +172,21 @@ void main() {
 
   // ── Datos no confirmados y campos del formulario ──────────────
   group('datos no confirmados', () {
+    test('informa que no puede fijar plazos si falta notificación', () {
+      final resultado = svc.analizar(DatosActa(
+        jurisdiccion: Jurisdiccion.pba,
+        fechaInfraccion: DateTime(2026, 1, 5),
+        esFotomulta: true,
+      ));
+      expect(
+        resultado.alertas.any((a) =>
+          a.tipo == TipoAlerta.info &&
+          a.mensaje.contains('falta la fecha de notificación')),
+        true,
+      );
+      expect(resultado.plazos, isEmpty);
+    });
+
     test('no calcula prescripción si la gravedad no está determinada', () {
       final acta = DatosActa(
         jurisdiccion: Jurisdiccion.pba,
