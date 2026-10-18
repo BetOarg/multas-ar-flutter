@@ -98,40 +98,48 @@ void main() {
 
   // ── Prescripción ─────────────────────────────────────────────
   group('calcularPrescripcion', () {
-    test('prescripción CABA — 5 años', () {
-      final hecho = DateTime(2021, 6, 15);
-      final prescribe = svc.calcularPrescripcion(
-          hecho, Jurisdiccion.caba, TipoFalta.leve);
-      expect(prescribe.year, 2026);
-      expect(prescribe.month, 6);
-      expect(prescribe.day, 15);
+    test('no calcula automáticamente prescripción CABA por controversia normativa', () {
+      expect(
+        svc.calcularPrescripcion(
+            DateTime(2021, 6, 15), Jurisdiccion.caba, TipoFalta.leve),
+        isNull,
+      );
     });
 
-    test('prescripción PBA leve — 2 años (Ley 24.449)', () {
-      final hecho = DateTime(2024, 3, 10);
+    test('prescripción base PBA leve — 2 años (art. 89 Ley 24.449)', () {
       final prescribe = svc.calcularPrescripcion(
-          hecho, Jurisdiccion.pba, TipoFalta.leve);
-      expect(prescribe.year, 2026);
-      expect(prescribe.month, 3);
-      expect(prescribe.day, 10);
+          DateTime(2024, 3, 10), Jurisdiccion.pba, TipoFalta.leve);
+      expect(prescribe, DateTime(2026, 3, 10));
     });
 
-    test('prescripción Mendoza grave — 3 años', () {
-      final hecho = DateTime(2023, 8, 20);
+    test('prescripción base PBA grave — 5 años (art. 89 Ley 24.449)', () {
       final prescribe = svc.calcularPrescripcion(
-          hecho, Jurisdiccion.mendoza, TipoFalta.grave);
-      expect(prescribe.year, 2026);
-      expect(prescribe.month, 8);
-      expect(prescribe.day, 20);
+          DateTime(2021, 8, 20), Jurisdiccion.pba, TipoFalta.grave);
+      expect(prescribe, DateTime(2026, 8, 20));
     });
 
-    test('prescripción Mendoza gravísima — 4 años', () {
-      final hecho = DateTime(2022, 11, 5);
-      final prescribe = svc.calcularPrescripcion(
-          hecho, Jurisdiccion.mendoza, TipoFalta.gravisima);
-      expect(prescribe.year, 2026);
-      expect(prescribe.month, 11);
-      expect(prescribe.day, 5);
+    test('no calcula gravísima sin regla validada', () {
+      expect(
+        svc.calcularPrescripcion(
+            DateTime(2022, 11, 5), Jurisdiccion.pba, TipoFalta.gravisima),
+        isNull,
+      );
+    });
+
+    test('no calcula prescripción Mendoza sin verificar régimen local', () {
+      expect(
+        svc.calcularPrescripcion(
+            DateTime(2023, 8, 20), Jurisdiccion.mendoza, TipoFalta.grave),
+        isNull,
+      );
+    });
+
+    test('fecha del 29 de febrero se ajusta al 28 en año no bisiesto', () {
+      expect(
+        svc.calcularPrescripcion(
+            DateTime(2024, 2, 29), Jurisdiccion.pba, TipoFalta.leve),
+        DateTime(2026, 2, 28),
+      );
     });
   });
 
