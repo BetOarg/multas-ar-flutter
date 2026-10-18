@@ -177,17 +177,28 @@ class AnalisisService {
         tipoFaltaReconocido) {
       fechaPresc = plazosService.calcularPrescripcion(
           acta.fechaInfraccion!, acta.jurisdiccion, acta.tipoFalta!);
-      prescripto = DateTime.now().isAfter(fechaPresc);
+      if (fechaPresc != null) {
+        prescripto = DateTime.now().isAfter(fechaPresc);
 
-      if (prescripto) {
+        if (prescripto) {
+          alertas.add(AlertaLegal(
+            tipo: TipoAlerta.advertencia,
+            mensaje: 'Posible prescripción teórica desde ${_fmt(fechaPresc)} '
+                'según el plazo base del art. 89 Ley 24.449. '
+                'No confirma prescripción: revisar actos interruptivos, '
+                'estado procesal, normativa local y expediente con un letrado.',
+            norma: NormasBase.art89Prescrip,
+          ));
+          oportunidades.add(
+              'Solicitar revisión de prescripción y posibles actos interruptivos');
+        }
+      } else {
         alertas.add(AlertaLegal(
-          tipo:    TipoAlerta.peligro,
-          mensaje: '🚨 POSIBLE PRESCRIPCIÓN: la acción podría estar '
-                   'extinguida desde ${_fmt(fechaPresc)}. '
-                   'Verificar con letrado.',
-          norma:   NormasBase.art89Prescrip,
+          tipo: TipoAlerta.info,
+          mensaje: 'No se calcula automáticamente la prescripción para '
+              '${acta.jurisdiccion}: requiere verificar la normativa local '
+              'vigente y los criterios aplicables al expediente.',
         ));
-        oportunidades.add('Interponer prescripción como defensa principal');
       }
     }
 
