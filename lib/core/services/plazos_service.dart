@@ -132,116 +132,21 @@ class PlazosService {
   bool _esFeriado(DateTime d) => feriados.any(
         (f) => f.year == d.year && f.month == d.month && f.day == d.day);
 
+  /// No devuelve vencimientos automáticos hasta validar cada regla por
+  /// jurisdicción, procedimiento y fecha efectiva de notificación.
+  ///
+  /// En PBA, por ejemplo, el art. 35 vincula el descargo al emplazamiento
+  /// posterior al vencimiento del pago voluntario; no fija un plazo universal
+  /// de 45 días desde la notificación. El plazo de 60 días hábiles para
+  /// despachar la notificación de una fotomulta se cuenta desde el hecho,
+  /// dato que este método no recibe.
+  ///
+  /// Se conserva la firma por compatibilidad con los llamadores. Una lista
+  /// vacía significa "sin cálculo fiable", no que el usuario carezca de plazo.
   List<PlazoCalculado> calcularPlazos({
     required String jurisdiccion,
     required DateTime fechaNotificacion,
     bool esFotomulta = false,
-  }) {
-    final plazos = <PlazoCalculado>[];
+  }) => const [];
 
-    switch (jurisdiccion) {
-      case 'CABA':
-        plazos.addAll(_plazosCaba(fechaNotificacion));
-        break;
-      case 'PBA':
-        plazos.addAll(_plazosPba(fechaNotificacion, esFotomulta));
-        break;
-      default:
-        plazos.addAll(_plazosGeneral(fechaNotificacion));
-        break;
-    }
-
-    return plazos;
-  }
-
-  List<PlazoCalculado> _plazosCaba(DateTime inicio) {
-    final venc = sumarDiasHabilesAdmin(inicio, 5);
-    return [
-      PlazoCalculado(
-        nombre: 'Descargo administrativo',
-        tipoPlazo: 'habiles_adm',
-        norma: 'Art. 8 Ley 1217 CABA — 5 días hábiles',
-        fechaInicio: inicio,
-        fechaVencimiento: venc,
-        diasRestantesVal: diasRestantes(venc),
-        estado: evaluarEstado(venc),
-      ),
-    ];
-  }
-
-  List<PlazoCalculado> _plazosPba(DateTime inicio, bool esFoto) {
-    final descargo = sumarDiasHabilesAdmin(inicio, 45);
-    final presentacion = sumarDiasCorridos(inicio, 30);
-    final caducidadLic = sumarDiasCorridos(inicio, 90);
-    final apelacion = sumarDiasHabilesJud(inicio, 5);
-
-    final lista = [
-      PlazoCalculado(
-        nombre: 'Descargo administrativo',
-        tipoPlazo: 'habiles_adm',
-        norma: 'Art. 35 Ley 13.927 PBA — 45 días hábiles',
-        fechaInicio: inicio,
-        fechaVencimiento: descargo,
-        diasRestantesVal: diasRestantes(descargo),
-        estado: evaluarEstado(descargo),
-      ),
-      PlazoCalculado(
-        nombre: 'Presentación ante JAITP',
-        tipoPlazo: 'corridos',
-        norma: 'Art. 35 Ley 13.927 PBA — 30 días corridos',
-        fechaInicio: inicio,
-        fechaVencimiento: presentacion,
-        diasRestantesVal: diasRestantes(presentacion),
-        estado: evaluarEstado(presentacion),
-      ),
-      PlazoCalculado(
-        nombre: 'Caducidad habilitación para conducir',
-        tipoPlazo: 'corridos',
-        norma: 'Art. 35 Ley 13.927 PBA — 90 días corridos',
-        fechaInicio: inicio,
-        fechaVencimiento: caducidadLic,
-        diasRestantesVal: diasRestantes(caducidadLic),
-        estado: evaluarEstado(caducidadLic),
-      ),
-      PlazoCalculado(
-        nombre: 'Recurso de apelación (fundado)',
-        tipoPlazo: 'habiles_jud',
-        norma: 'Arts. 40-41 Ley 13.927 PBA — 5 días hábiles judiciales',
-        fechaInicio: inicio,
-        fechaVencimiento: apelacion,
-        diasRestantesVal: diasRestantes(apelacion),
-        estado: evaluarEstado(apelacion),
-      ),
-    ];
-
-    if (esFoto) {
-      final notifFoto = sumarDiasHabilesAdmin(inicio, 60);
-      lista.add(PlazoCalculado(
-        nombre: 'Notificación fotomulta (término legal)',
-        tipoPlazo: 'habiles_adm',
-        norma: 'Art. 28 Ley 13.927 PBA — 60 días hábiles',
-        fechaInicio: inicio,
-        fechaVencimiento: notifFoto,
-        diasRestantesVal: diasRestantes(notifFoto),
-        estado: evaluarEstado(notifFoto),
-      ));
-    }
-
-    return lista;
-  }
-
-  List<PlazoCalculado> _plazosGeneral(DateTime inicio) {
-    final venc = sumarDiasCorridos(inicio, 30);
-    return [
-      PlazoCalculado(
-        nombre: 'Plazo general de descargo',
-        tipoPlazo: 'corridos',
-        norma: 'Art. 70 Ley 24.449 — verificar normativa local',
-        fechaInicio: inicio,
-        fechaVencimiento: venc,
-        diasRestantesVal: diasRestantes(venc),
-        estado: evaluarEstado(venc),
-      ),
-    ];
-  }
 }
