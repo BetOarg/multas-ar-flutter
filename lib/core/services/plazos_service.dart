@@ -63,30 +63,36 @@ class PlazosService {
   DateTime sumarDiasCorridos(DateTime inicio, int dias) =>
       inicio.add(Duration(days: dias));
 
-  DateTime calcularPrescripcion(
+  /// Fecha teórica de prescripción solo para el régimen base del art. 89
+  /// de la Ley 24.449. No determina prescripción efectiva: deben revisarse
+  /// actos interruptivos, estado procesal y reglas locales aplicables.
+  /// Retorna null cuando la combinación jurisdicción/tipo no está validada.
+  DateTime? calcularPrescripcion(
       DateTime hecho, String jurisdiccion, String tipoFalta) {
     final anios = _aniosPrescrip(jurisdiccion, tipoFalta);
-    return DateTime(hecho.year + anios, hecho.month, hecho.day);
+    if (anios == null) return null;
+
+    // Conserva una fecha válida en años no bisiestos (29 de febrero → 28).
+    final anioDestino = hecho.year + anios;
+    final esBisiesto = anioDestino % 4 == 0 &&
+        (anioDestino % 100 != 0 || anioDestino % 400 == 0);
+    final dia = hecho.month == 2 && hecho.day == 29 && !esBisiesto
+        ? 28
+        : hecho.day;
+    return DateTime(hecho.year + anios, hecho.month, dia);
   }
 
-  int _aniosPrescrip(String jur, String tipo) {
-    switch (jur) {
-      case 'CABA':
-        return 5; // Verificar texto vigente y jurisprudencia aplicable.
-      case 'Mendoza':
-        return switch (tipo) {
-          'gravisima' => 4,
-          'grave' => 3,
-          _ => 2,
-        };
-      case 'Neuquén':
-        return 3;
-      default:
-        return switch (tipo) {
-          'grave' => 5,
-          _ => 2,
-        };
-    }
+  int? _aniosPrescrip(String jur, String tipo) {
+    // CABA tiene una controversia entre el régimen local y criterios
+    // jurisprudenciales sobre la aplicación supletoria del art. 89.
+    // Mendoza y otras jurisdicciones requieren verificación específica.
+    if (jur != 'PBA' && jur != 'nacional') return null;
+
+    return switch (tipo) {
+      'leve' => 2,
+      'grave' => 5,
+      _ => null,
+    };
   }
 
   /// Compara fechas de calendario: la hora actual no debe alterar el día
@@ -116,10 +122,11 @@ class PlazosService {
       !_esFeriado(d);
 
   bool _esHabilJud(DateTime d) {
-    if (!_esHabilAdmin(d)) return false;
-    if (d.month == 1) return false;
-    if (d.month == 7) return false;
-    return true;
+    // No excluir enero/julio completos: los recesos judiciales varían por
+    // jurisdicción y año. Este cálculo es solo calendario base; para un
+    // vencimiento judicial real debe incorporarse el calendario oficial
+    // del órgano competente.
+    return _esHabilAdmin(d);
   }
 
   bool _esFeriado(DateTime d) => feriados.any(
