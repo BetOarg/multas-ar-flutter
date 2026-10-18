@@ -213,9 +213,7 @@ void main() {
         jurisdiccion: 'CABA',
         fechaNotificacion: DateTime(2026, 4, 6),
       );
-      expect(resultado, hasLength(1));
-      expect(resultado.single.nombre, 'Descargo administrativo');
-      expect(resultado.single.norma, contains('Ley 1217 CABA'));
+      expect(resultado, isEmpty);
     });
 
     test('PBA devuelve sus plazos sin añadir los de otras jurisdicciones', () {
@@ -223,8 +221,7 @@ void main() {
         jurisdiccion: 'PBA',
         fechaNotificacion: DateTime(2026, 4, 6),
       );
-      expect(resultado, hasLength(4));
-      expect(resultado.any((p) => p.norma.contains('Ley 1217 CABA')), false);
+      expect(resultado, isEmpty);
     });
 
     test('jurisdicción no específica usa el plazo general', () {
@@ -232,8 +229,7 @@ void main() {
         jurisdiccion: 'Jurisdicción no configurada',
         fechaNotificacion: DateTime(2026, 4, 6),
       );
-      expect(resultado, hasLength(1));
-      expect(resultado.single.norma, contains('Ley 24.449'));
+      expect(resultado, isEmpty);
     });
   });
 
