@@ -108,20 +108,20 @@ abstract class NormasBase {
 
   // CABA
   static const ley1217       = 'Ley 1217 CABA (t.c. Ley 6.764/2024)';
-  static const art8Descargo  = 'Art. 8 Ley 1217 — Plazo descargo: 5 días hábiles';
+  static const art8Descargo  = 'Ley 1217 CABA — verificar plazo y vía procedimental aplicable';
   static const ley451        = 'Ley 451 CABA — Código de Faltas';
 
   // PBA
   static const ley13927      = 'Ley 13.927 PBA';
   static const ley15002      = 'Ley 15.002 PBA (modificatoria)';
   static const art3Nulidad   = 'Art. 3 Ley 13.927 — Nulidad formal del acta';
-  static const art35Descargo = 'Art. 35 Ley 13.927 — Descargo: 45 días hábiles';
-  static const art35Caducidad = 'Art. 35 Ley 13.927 — Caducidad habilitación: 90 días';
-  static const art35PlanPagos = 'Art. 35 Ley 13.927 — Plan de pagos = renuncia a recursos';
+  static const art35Descargo = 'Art. 35 Ley 13.927 — descargo tras vencimiento del pago voluntario; verificar emplazamiento';
+  static const art35Caducidad = 'Art. 38 Ley 13.927 — supuestos específicos de boleta de citación y licencia retenida';
+  static const art35PlanPagos = 'Ley 13.927 — verificar efectos del plan de pagos y sus condiciones concretas';
   static const art35Conductor = 'Art. 35 inc. f Ley 13.927 — Denuncia conductor real';
   static const art40Fundamento = 'Art. 40 Ley 13.927 — Recurso debe fundarse en mismo escrito';
-  static const art41Apelacion  = 'Art. 41 Ley 13.927 — Apelación: 5 días hábiles';
-  static const art6Ruit        = 'Art. 6 Ley 13.927 — Caducidad RUIT: 10 años';
+  static const art41Apelacion  = 'Art. 40 Ley 13.927 — recurso dentro de 5 días de notificada la resolución';
+  static const art6Ruit        = 'Art. 5 Ley 13.927 — caducidad de anotaciones de antecedentes en RUIT: 10 años';
 
   // Mendoza
   static const ley9024        = 'Ley 9024 Mendoza';
@@ -133,6 +133,10 @@ abstract class NormasBase {
   static const ley16986       = 'Ley 16.986 — Reglamentación amparo';
 }
 
+/// Referencias numéricas históricas. No usar como reglas automáticas:
+/// los plazos y sus fechas de inicio deben validarse por jurisdicción,
+/// procedimiento, notificación efectiva y texto normativo vigente.
+@Deprecated('No usar como fuente de cálculo legal automático')
 abstract class PlazosClave {
   static const int descargoCabaDiasHabiles  = 5;
   static const int descargoPbaDiasHabiles   = 45;
