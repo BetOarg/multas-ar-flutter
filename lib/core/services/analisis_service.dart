@@ -236,12 +236,12 @@ class AnalisisService {
     if (acta.jurisdiccion == Jurisdiccion.pba &&
         acta.tieneNovedad == 'plan_pagos') {
       alertas.add(const AlertaLegal(
-        tipo: TipoAlerta.peligro,
+        tipo: TipoAlerta.advertencia,
         mensaje: 'La adhesión a un plan de pagos puede tener efectos sobre '
                  'el reconocimiento de la deuda o las vías de impugnación según '
                  'el régimen y sus condiciones. Revisar el instrumento concreto '
                  'antes de adherir; no se presume una renuncia universal.',
-        norma:  NormasBase.art35PlanPagos,
+        norma:  'Art. 35 Ley 13.927 PBA — verificar términos y efectos del plan',
       ));
     }
 
@@ -282,6 +282,14 @@ class AnalisisService {
           norma:   p.norma,
         ));
       }
+    } else {
+      alertas.add(const AlertaLegal(
+        tipo: TipoAlerta.info,
+        mensaje: 'No se generaron fechas límite: falta la fecha de notificación '
+            'o constancia equivalente. Revisar la citación y el expediente; '
+            'el plazo aplicable puede depender del procedimiento y la fecha '
+            'de notificación efectiva.',
+      ));
     }
 
     return ResultadoAnalisis(
