@@ -65,7 +65,7 @@ class OcrChannel(
                         }
                     }
                 }
-                "isAvailable" -> result.success(true)
+                "isAvailable" -> result.success(modelsAvailable())
                 else -> result.notImplemented()
             }
         }
@@ -86,6 +86,26 @@ class OcrChannel(
                 }
             lines.joinToString("\n").trim()
         }
+
+    // La disponibilidad solo es verdadera si están presentes todos los
+    // recursos necesarios. Evita anunciar PaddleOCR como operativo cuando
+    // la distribución no incluye los modelos; Flutter podrá usar ML Kit.
+    private fun modelsAvailable(): Boolean {
+        val required = listOf(
+            "models/det.onnx",
+            "models/cls.onnx",
+            "models/rec.onnx",
+            "models/ppocr_keys.txt",
+        )
+        return required.all { asset ->
+            try {
+                context.assets.open(asset).use { }
+                true
+            } catch (_: Exception) {
+                false
+            }
+        }
+    }
 
     // ── Carga lazy de modelos ─────────────────────────────────
     private fun ensureModelsLoaded() {
