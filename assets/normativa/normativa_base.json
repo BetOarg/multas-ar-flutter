@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "generado": "2026-10-18",
   "advertencia": "Base normativa preliminar. No constituye asesoramiento jurídico. Verificar jurisdicción, texto consolidado vigente, reglamentación y notificación del caso antes de calcular plazos o afirmar prescripción/nulidad. Las entradas marcadas como pendientes no deben utilizarse como reglas automáticas.",
   "entradas": [
@@ -101,12 +101,10 @@
     {
       "jurisdiccion": "PBA",
       "categoria": "plazo",
-      "titulo": "Notificación de fotomultas",
-      "contenido": "60 días hábiles desde el labrado del acta para notificar al infractor",
-      "norma_base": "Art. 28 Ley 13.927 PBA",
+      "titulo": "Notificación de infracciones por cinemómetros fijos automáticos",
+      "contenido": "El art. 6 de la Ley 13.927 prevé que la notificación se realice dentro de 60 días hábiles desde la comisión y establece nulidad absoluta por incumplimiento. Verificar que el dispositivo y el supuesto estén comprendidos, la fecha del hecho, la constancia de notificación y el texto vigente antes de concluir sobre el caso concreto.",
+      "norma_base": "Art. 6 Ley 13.927 PBA",
       "es_alta_importancia": true,
-      "tiene_alerta_dual": true,
-      "alerta_dual_detalle": "Cámara Apelación Gral. San Martín, Sala I, 2018 (Exp. 37.639): el plazo es ordenatorio, no perentorio. No opera caducidad automática — oponer nulidad acreditando perjuicio concreto.",
       "orden": 6
     },
     {
