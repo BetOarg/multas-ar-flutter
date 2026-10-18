@@ -74,6 +74,22 @@ void main() {
     });
   });
 
+  group('calendario judicial provisional', () {
+    test('no excluye enero completo sin calendario oficial del tribunal', () {
+      expect(
+        svc.sumarDiasHabilesJud(DateTime(2026, 1, 5), 1),
+        DateTime(2026, 1, 6),
+      );
+    });
+
+    test('no excluye julio completo sin calendario oficial del tribunal', () {
+      expect(
+        svc.sumarDiasHabilesJud(DateTime(2026, 7, 6), 1),
+        DateTime(2026, 7, 7),
+      );
+    });
+  });
+
   // ── Días corridos ────────────────────────────────────────────
   group('calcularDiasCorridos', () {
     test('30 días corridos desde fecha base', () {
