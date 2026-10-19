@@ -14,17 +14,15 @@ build/
 *.dill
 
 # ── Android ───────────────────────────────────────────────────────
-**/android/**/gradle-wrapper.jar
 **/android/.gradle
 **/android/captures/
-**/android/gradlew
-**/android/gradlew.bat
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
 **/android/app/debug.keystore
 
 # ── SEGURIDAD CRÍTICA: keystore y credenciales de firma ──────────
 android/key.properties
+android/app/key.properties
 android/app/*.jks
 android/app/*.keystore
 **/release.keystore
