@@ -280,7 +280,7 @@ class _EmptyState extends StatelessWidget {
           ElevatedButton.icon(
             icon: const Icon(Icons.search, size: 18),
             label: const Text('Analizar multa'),
-            onPressed: () => context.go(AppRouter.analisis),
+            onPressed: () => context.go('/analisis'),
           ),
         ],
       ),
