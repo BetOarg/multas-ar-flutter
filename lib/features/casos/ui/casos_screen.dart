@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../bloc/casos_bloc.dart';
 import '../../../shared/theme/app_theme.dart';
-import '../../../shared/router/app_router.dart';
 
 class CasosScreen extends StatelessWidget {
   const CasosScreen({super.key});
