@@ -55,8 +55,7 @@ void main() {
 
     expect(await casosDao.getCasoPorId(id), isNotNull);
     final plazos = await plazosDao.getPlazosDeCaso(id);
-    expect(plazos, hasLength(1));
-    expect(plazos.single.tipoPlazo, 'habiles_adm');
+    expect(plazos, isEmpty, reason: 'CABA no tiene un vencimiento automático validado.');
   });
 
   test('editar fecha de notificación recalcula plazos sin perder jurisdicción',
@@ -73,9 +72,7 @@ void main() {
     final plazos = await plazosDao.getPlazosDeCaso(id);
     expect(guardado?.jurisdiccion, 'CABA');
     expect(guardado?.fechaNotificacion, nuevaFecha);
-    expect(plazos, hasLength(1));
-    expect(plazos.single.fechaInicio, nuevaFecha);
-    expect(plazos.single.tipoPlazo, 'habiles_adm');
+    expect(plazos, isEmpty, reason: 'No se calcula un vencimiento automático para CABA sin regla validada.');
   });
 
   test('eliminar caso elimina plazos y escritos en la misma operación', () async {
