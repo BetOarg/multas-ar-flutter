@@ -76,7 +76,7 @@ class _ModelosGrid extends StatelessWidget {
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: activo
-                    ? AppColors.indigo.withOpacity(0.2)
+                    ? AppColors.indigo.withValues(alpha: 0.2)
                     : AppColors.surface3,
                 border: Border.all(
                   color: activo
@@ -110,7 +110,7 @@ class _ModelosGrid extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 10,
                       color: activo
-                          ? AppColors.indigoLight.withOpacity(0.7)
+                          ? AppColors.indigoLight.withValues(alpha: 0.7)
                           : AppColors.text3,
                     ),
                   ),
@@ -291,10 +291,10 @@ class _CamposObligatorios extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppColors.warning.withOpacity(0.12),
+                      color: AppColors.warning.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(6),
                       border: Border.all(
-                          color: AppColors.warning.withOpacity(0.35)),
+                          color: AppColors.warning.withValues(alpha: 0.35)),
                     ),
                     child: Text(
                       c,
