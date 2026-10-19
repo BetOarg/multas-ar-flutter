@@ -68,7 +68,6 @@ jobs:
             "android/gradlew.bat" \
             "android/gradle/wrapper/gradle-wrapper.properties" \
             "android/gradle/wrapper/gradle-wrapper.jar" \
-            "ios/Podfile" \
             "ios/Runner.xcodeproj/project.pbxproj" \
             "RECOVERY_NOTES.md" \
             "NATIVE_FILE_INVENTORY.txt"; do
@@ -79,6 +78,12 @@ jobs:
           done
           if [ ! -f "$root/android/settings.gradle" ] && [ ! -f "$root/android/settings.gradle.kts" ]; then
             echo "::error::Missing Android settings.gradle or settings.gradle.kts"
+            missing=1
+          fi
+          # Newer Flutter stable templates use Swift Package Manager and may
+          # not generate a Podfile. Accept either supported iOS dependency setup.
+          if [ ! -f "$root/ios/Podfile" ] && [ ! -f "$root/ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift" ]; then
+            echo "::error::Missing iOS dependency configuration (Podfile or generated Flutter SPM package)"
             missing=1
           fi
           if [ "$missing" -ne 0 ]; then
