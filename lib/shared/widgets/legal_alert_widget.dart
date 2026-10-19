@@ -69,20 +69,20 @@ class LegalAlertWidget extends StatelessWidget {
     switch (tipo) {
       case TipoAlerta.peligro:
         return _AlertConfig(
-          bg: AppColors.danger.withOpacity(0.1),
-          border: AppColors.danger.withOpacity(0.3),
+          bg: AppColors.danger.withValues(alpha: 0.1),
+          border: AppColors.danger.withValues(alpha: 0.3),
           icon: '🚨',
         );
       case TipoAlerta.advertencia:
         return _AlertConfig(
-          bg: AppColors.warning.withOpacity(0.1),
-          border: AppColors.warning.withOpacity(0.3),
+          bg: AppColors.warning.withValues(alpha: 0.1),
+          border: AppColors.warning.withValues(alpha: 0.3),
           icon: '⚠️',
         );
       case TipoAlerta.info:
         return _AlertConfig(
-          bg: AppColors.indigo.withOpacity(0.1),
-          border: AppColors.indigo.withOpacity(0.3),
+          bg: AppColors.indigo.withValues(alpha: 0.1),
+          border: AppColors.indigo.withValues(alpha: 0.3),
           icon: 'ℹ️',
         );
     }
