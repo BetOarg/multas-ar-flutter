@@ -5,7 +5,6 @@ import 'package:multas_ar/core/database/app_database.dart';
 import 'package:multas_ar/core/database/daos/casos_dao.dart';
 import 'package:multas_ar/core/database/daos/escritos_dao.dart';
 import 'package:multas_ar/core/database/daos/plazos_dao.dart';
-import 'package:multas_ar/core/database/tables/tables.dart';
 import 'package:multas_ar/core/repository/casos_repository.dart';
 import 'package:multas_ar/core/services/plazos_service.dart';
 
