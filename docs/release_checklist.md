@@ -167,3 +167,11 @@ flutter build apk --release --split-per-abi
 > ℹ️ Para la versión v1.0 no es necesario Google Play Billing ni
 > ninguna SDK adicional de Google. La app cumple las políticas de
 > Play sin módulos extra.
+
+## Seguimiento nativo — 2026-10-19
+
+- Se eliminó la asignación explícita de la firma debug al tipo `release` en `android/app/build.gradle`.
+- La firma de release ahora lee `android/app/key.properties` y selecciona `signingConfigs.release` solo si ese archivo existe; si falta, emite una advertencia y no configura la firma debug.
+- Commit: [f633527](https://github.com/BetOarg/multas-ar-flutter/commit/f633527139cfc6b28f0846c9ce233cc0822f4464).
+- **Pendiente de validar:** sintaxis y resolución Gradle en runner real; no hay evidencia de build Android exitoso. La ausencia del scaffold Gradle completo continúa bloqueando la compilación reproducible.
+- **No publicar** hasta configurar y verificar la clave de producción, completar el scaffold Android/iOS y obtener builds nativos verdes.
