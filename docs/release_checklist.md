@@ -173,6 +173,10 @@ flutter build apk --release --split-per-abi
 
 ## Seguimiento nativo — 2026-10-19
 
+- Commit `699e724`: se retiraron las reglas de `.gitignore` que impedían versionar `android/gradlew`, `android/gradlew.bat` y `gradle-wrapper.jar`; también se añadió `android/app/key.properties` a las exclusiones de secretos.
+- Esto corrige las reglas de seguimiento, pero no restaura los archivos wrapper ausentes: todavía deben generarse, revisarse y subirse como archivos de código del proyecto.
+
+
 - Se eliminó la asignación explícita de la firma debug al tipo `release` en `android/app/build.gradle`.
 - La firma de release ahora lee `android/app/key.properties` y selecciona `signingConfigs.release` solo si ese archivo existe; si falta, emite una advertencia y no configura la firma debug.
 - Commit: [f633527](https://github.com/BetOarg/multas-ar-flutter/commit/f633527139cfc6b28f0846c9ce233cc0822f4464).
