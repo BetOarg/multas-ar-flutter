@@ -5,7 +5,7 @@
 > Los workflows `Analyze and test` de push y PR pasaron en el HEAD `12664f2acf28ec03eaa2df0b9b6cade7fbff3b5e`
 > (análisis estático, generación de Drift y suite Flutter). Esto no valida los builds nativos.
 > La rama aún no contiene el scaffold completo de Android (settings Gradle y wrapper)
-> ni el proyecto Xcode/Podfile de iOS. Se quitó la asignación explícita de firma debug
+> ni el proyecto Xcode y la configuración de dependencias iOS (Podfile o Swift Package Manager, según la versión de Flutter). Se quitó la asignación explícita de firma debug
 > en `android/app/build.gradle`, pero todavía no se ha validado una compilación nativa
 > ni una firma de producción. La presencia de los modelos PaddleOCR también está pendiente de verificación.
 > No generar ni subir un AAB de producción hasta cerrar estos bloqueos y ejecutar
@@ -46,7 +46,7 @@ android/app/*.keystore
 
 ### Scaffold nativo — bloqueo previo al build
 - [ ] Generar y revisar la estructura Android con Flutter estable: `android/settings.gradle`, `android/gradlew`, `android/gradlew.bat` y `android/gradle/wrapper/gradle-wrapper.properties`.
-- [ ] Generar y revisar la estructura iOS: `ios/Podfile`, `ios/Runner.xcodeproj/project.pbxproj` y archivos auxiliares Flutter requeridos.
+- [ ] Generar y revisar la estructura iOS: `ios/Runner.xcodeproj/project.pbxproj` y la configuración de dependencias/plugins compatible con Flutter (Podfile si usa CocoaPods o configuración Swift Package Manager si corresponde).
 - [ ] Ejecutar build Android en CI y compilar iOS en macOS/Xcode; no basta con `flutter analyze` ni con los tests Dart.
 - [ ] Revisar el artefacto del workflow `Generate native scaffold proposal`; es una referencia aislada, no una integración.
 - [ ] Revisar el workflow `Native scaffold integration smoke test`: genera un scaffold temporal, superpone el código Android existente solo en el runner y ejecuta `flutter pub get`, `flutter analyze` y build APK debug.
