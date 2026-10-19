@@ -48,6 +48,13 @@ android/app/*.keystore
 - [ ] Generar y revisar la estructura Android con Flutter estable: `android/settings.gradle`, `android/gradlew`, `android/gradlew.bat` y `android/gradle/wrapper/gradle-wrapper.properties`.
 - [ ] Generar y revisar la estructura iOS: `ios/Podfile`, `ios/Runner.xcodeproj/project.pbxproj` y archivos auxiliares Flutter requeridos.
 - [ ] Ejecutar build Android en CI y compilar iOS en macOS/Xcode; no basta con `flutter analyze` ni con los tests Dart.
+- [ ] Revisar el artefacto del workflow `Generate native scaffold proposal`; es una referencia aislada, no una integración.
+- [ ] Revisar el workflow `Native scaffold integration smoke test`: genera un scaffold temporal, superpone el código Android existente solo en el runner y ejecuta `flutter pub get`, `flutter analyze` y build APK debug.
+- [ ] Confirmar que el APK debug compila y resolver cualquier incompatibilidad reportada antes de incorporar configuración Gradle al repositorio.
+- [ ] Validar iOS por separado en macOS/Xcode conservando el registro de `OcrPlugin.swift` y `AppDelegate.swift`.
+- [ ] Generar y revisar la estructura Android con Flutter estable: `android/settings.gradle`, `android/gradlew`, `android/gradlew.bat` y `android/gradle/wrapper/gradle-wrapper.properties`.
+- [ ] Generar y revisar la estructura iOS: `ios/Podfile`, `ios/Runner.xcodeproj/project.pbxproj` y archivos auxiliares Flutter requeridos.
+- [ ] Ejecutar build Android en CI y compilar iOS en macOS/Xcode; no basta con `flutter analyze` ni con los tests Dart.
 
 ### Código
 - [ ] `flutter analyze` sin errores
