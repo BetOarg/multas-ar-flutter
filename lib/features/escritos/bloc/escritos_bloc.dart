@@ -29,8 +29,6 @@ class ModeloEscrito {
 }
 
 class EscritosBloc extends Bloc<EscritosEvent, EscritosState> {
-  final ICasosRepository _repo;
-
   static const modelos = [
     ModeloEscrito(
       id: 'descargo_pba',
@@ -219,8 +217,7 @@ class EscritosBloc extends Bloc<EscritosEvent, EscritosState> {
   ];
 
   EscritosBloc({required ICasosRepository casosRepository})
-      : _repo = casosRepository,
-        super(const EscritosInitial()) {
+      : super(const EscritosInitial()) {
     on<SeleccionarModeloEvent>(_onSeleccionar);
     on<LimpiarEscritoEvent>(_onLimpiar);
   }
