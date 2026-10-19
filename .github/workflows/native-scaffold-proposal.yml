@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - "fix/**"
-    paths:
-      - ".github/workflows/native-scaffold-proposal.yml"
   workflow_dispatch:
 
 permissions:
@@ -58,6 +56,22 @@ jobs:
           comparison baseline, not a ready-to-merge implementation.
           EOF
           find scaffold_candidate/android scaffold_candidate/ios -maxdepth 4 -type f | sort > scaffold_candidate/NATIVE_FILE_INVENTORY.txt
+
+      - name: Validate generated scaffold structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/native-scaffold-proposal/scaffold_candidate"
+          test -f "$root/android/settings.gradle" -o -f "$root/android/settings.gradle.kts"
+          test -f "$root/android/gradlew"
+          test -f "$root/android/gradlew.bat"
+          test -f "$root/android/gradle/wrapper/gradle-wrapper.properties"
+          test -f "$root/android/gradle/wrapper/gradle-wrapper.jar"
+          test -f "$root/ios/Podfile"
+          test -f "$root/ios/Runner.xcodeproj/project.pbxproj"
+          test -f "$root/RECOVERY_NOTES.md"
+          test -s "$root/NATIVE_FILE_INVENTORY.txt"
+          echo "Generated scaffold structure is complete; integration into the app is not implied."
 
       - name: Upload scaffold proposal artifact
         uses: actions/upload-artifact@v4
