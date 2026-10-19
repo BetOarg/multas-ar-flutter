@@ -272,7 +272,7 @@ class _OcrResultadoCard extends StatelessWidget {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: AppColors.indigo.withOpacity(0.35)),
+        side: BorderSide(color: AppColors.indigo.withValues(alpha: 0.35)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -492,7 +492,7 @@ class _FormularioCard extends StatelessWidget {
                     label: Text(e),
                     selected: activo,
                     onSelected: (_) => onErrorFormalToggled(e),
-                    selectedColor: AppColors.warning.withOpacity(0.2),
+                    selectedColor: AppColors.warning.withValues(alpha: 0.2),
                     checkmarkColor: AppColors.warning,
                     labelStyle: TextStyle(
                       color: activo ? AppColors.warning : AppColors.text2,
@@ -550,7 +550,7 @@ class _FormularioCard extends StatelessWidget {
         label: Text(label),
         onPressed: onTap,
         backgroundColor:
-            activo ? AppColors.indigo.withOpacity(0.2) : AppColors.surface3,
+            activo ? AppColors.indigo.withValues(alpha: 0.2) : AppColors.surface3,
         side: BorderSide(
             color: activo ? AppColors.indigo : AppColors.border),
         labelStyle: TextStyle(
@@ -609,10 +609,10 @@ class _ResultadoSection extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                       side: BorderSide(
-                        color: AppColors.success.withOpacity(0.3),
+                        color: AppColors.success.withValues(alpha: 0.3),
                       ),
                     ),
-                    color: AppColors.success.withOpacity(0.08),
+                    color: AppColors.success.withValues(alpha: 0.08),
                     child: Padding(
                       padding: const EdgeInsets.all(12),
                       child: Text(
