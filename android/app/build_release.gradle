@@ -1,115 +1,24 @@
-// ══════════════════════════════════════════════════════════════════
-// BUILD.GRADLE — Configuración de firma de release
+// REFERENCIA HISTÓRICA — NO copiar este archivo completo sobre build.gradle.
 //
-// INSTRUCCIONES:
-// 1. Generar keystore con scripts/keystore_setup.sh
-// 2. Copiar este bloque al build.gradle principal (reemplaza
-//    signingConfig signingConfigs.debug en buildTypes.release)
-// 3. Nunca subir key.properties ni el .jks a git
-// ══════════════════════════════════════════════════════════════════
-
-// Agregar al inicio del archivo build.gradle (antes de android {}):
-/*
-def keystorePropertiesFile = rootProject.file("app/key.properties")
-def keystoreProperties = new Properties()
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-}
-*/
-
-// Dentro de android { ... }, agregar signingConfigs:
-/*
-signingConfigs {
-    release {
-        if (keystorePropertiesFile.exists()) {
-            keyAlias        keystoreProperties['keyAlias']
-            keyPassword     keystoreProperties['keyPassword']
-            storeFile       file(keystoreProperties['storeFile'])
-            storePassword   keystoreProperties['storePassword']
-        }
-    }
-}
-*/
-
-// En buildTypes.release, reemplazar signingConfig signingConfigs.debug por:
-/*
-signingConfig signingConfigs.release
-*/
-
-// ── build.gradle COMPLETO para producción ─────────────────────
-// Copiar este archivo como build.gradle cuando el keystore esté listo:
-
-/*
-plugins {
-    id "com.android.application"
-    id "kotlin-android"
-    id "dev.flutter.flutter-gradle-plugin"
-}
-
-def keystorePropertiesFile = rootProject.file("app/key.properties")
-def keystoreProperties = new Properties()
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-}
-
-android {
-    namespace "com.betOarg.multas_ar"
-    compileSdk flutter.compileSdkVersion
-    ndkVersion "27.0.12077973"
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-        coreLibraryDesugaringEnabled true
-    }
-
-    kotlinOptions { jvmTarget = "17" }
-
-    defaultConfig {
-        applicationId "com.betOarg.multas_ar"
-        minSdkVersion 26
-        targetSdkVersion 35
-        versionCode flutter.versionCode
-        versionName flutter.versionName
-        multiDexEnabled true
-        ndk { abiFilters "arm64-v8a", "armeabi-v7a", "x86_64" }
-    }
-
-    signingConfigs {
-        release {
-            if (keystorePropertiesFile.exists()) {
-                keyAlias        keystoreProperties['keyAlias']
-                keyPassword     keystoreProperties['keyPassword']
-                storeFile       file(keystoreProperties['storeFile'])
-                storePassword   keystoreProperties['storePassword']
-            }
-        }
-    }
-
-    buildTypes {
-        release {
-            signingConfig signingConfigs.release
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"),
-                          "proguard-rules.pro"
-        }
-        debug {
-            applicationIdSuffix ".debug"
-            versionNameSuffix "-debug"
-        }
-    }
-
-    androidResources { noCompress "onnx", "bin" }
-}
-
-flutter { source "../.." }
-
-dependencies {
-    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.1.3"
-    implementation "com.microsoft.onnxruntime:onnxruntime-android:1.18.0"
-    implementation "com.google.mlkit:text-recognition:16.0.1"
-    implementation "com.google.mlkit:text-recognition-latin:16.0.1"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-}
-*/
+// La configuración activa está en android/app/build.gradle.
+// Desde el commit f633527, release ya no asigna signingConfigs.debug.
+// La firma de producción se configura leyendo android/app/key.properties
+// (ruta relativa al proyecto Android: app/key.properties).
+//
+// Formato esperado de android/app/key.properties (no subir a Git):
+// storeFile=multas-ar-release.jks
+// storePassword=...
+// keyAlias=...
+// keyPassword=...
+//
+// La ruta storeFile se resuelve desde el directorio de proyecto del módulo
+// app. Mantener el keystore en una ruta conocida y verificarla en CI.
+//
+// Antes de publicar:
+// 1. Completar el scaffold Android/Gradle.
+// 2. Verificar que key.properties y el keystore están fuera del control de versiones.
+// 3. Ejecutar un build release real y comprobar certificado y package ID.
+// 4. No considerar la ausencia de firma como validación de release.
+//
+// Este archivo es solo una nota para evitar copiar una plantilla desactualizada.
+// No contiene un build.gradle completo ni sustituye la configuración activa.
