@@ -4,7 +4,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
 import '../database/app_database.dart';
 import '../database/daos/normativa_dao.dart';
-import '../database/tables/tables.dart';
 
 // ══════════════════════════════════════════════════════════════════
 // NORMATIVA REPOSITORY
