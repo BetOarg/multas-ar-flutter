@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../bloc/casos_bloc.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../../shared/widgets/legal_alert_widget.dart';
-import '../../../shared/widgets/plazo_card_widget.dart';
 
 class CasoDetalleScreen extends StatefulWidget {
   final String casoId;
@@ -145,7 +144,21 @@ class _CasoDetalleScreenState extends State<CasoDetalleScreen> {
             const Text('⏱️  Plazos', style: TextStyle(
                 fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.text3)),
             const SizedBox(height: 8),
-            ...plazos.map((p) => PlazoCardWidget(plazo: p)),
+            ...plazos.map((p) => Card(
+              child: ListTile(
+                leading: Icon(
+                  p.vencido ? Icons.warning_amber_rounded : Icons.schedule,
+                  color: p.vencido ? AppColors.danger : AppColors.indigoLight,
+                ),
+                title: Text(p.nombre),
+                subtitle: Text('${p.norma}\nVencimiento: ${_fmt(p.fechaVencimiento)}'),
+                isThreeLine: true,
+                trailing: Icon(
+                  p.vencido ? Icons.error_outline : Icons.info_outline,
+                  color: p.vencido ? AppColors.danger : AppColors.text3,
+                ),
+              ),
+            )),
             const SizedBox(height: 8),
           ],
 
