@@ -398,7 +398,7 @@ class _FormularioCard extends StatelessWidget {
               // Jurisdicción
               _label('Jurisdicción *'),
               DropdownButtonFormField<String>(
-                value: jurisdiccion,
+                initialValue: jurisdiccion,
                 decoration: const InputDecoration(hintText: 'Seleccionar...'),
                 items: jurisdicciones
                     .map((j) => DropdownMenuItem(value: j, child: Text(j)))
@@ -440,7 +440,7 @@ class _FormularioCard extends StatelessWidget {
               // Tipo de falta
               _label('Tipo de falta'),
               DropdownButtonFormField<String>(
-                value: tipoFalta,
+                initialValue: tipoFalta,
                 decoration: const InputDecoration(hintText: 'Sin determinar'),
                 items: tiposFalta
                     .map((t) => DropdownMenuItem(
@@ -454,7 +454,7 @@ class _FormularioCard extends StatelessWidget {
               // Estado procesal
               _label('Estado procesal actual *'),
               DropdownButtonFormField<String>(
-                value: estadoProcesal,
+                initialValue: estadoProcesal,
                 decoration: const InputDecoration(hintText: 'Sin determinar'),
                 items: {
                   'admin': 'Instancia administrativa — sin descargo',
@@ -512,7 +512,7 @@ class _FormularioCard extends StatelessWidget {
                 onChanged: onVaJudicialChanged,
                 title: const Text('¿Planificás la vía judicial?',
                     style: TextStyle(fontSize: 13, color: AppColors.text)),
-                activeColor: AppColors.indigo,
+                activeThumbColor: AppColors.indigo,
                 contentPadding: EdgeInsets.zero,
               ),
               if (vaJudicial)
@@ -525,7 +525,7 @@ class _FormularioCard extends StatelessWidget {
                       'Generalmente requerido antes de acudir a la justicia.',
                       style:
                           TextStyle(fontSize: 11, color: AppColors.text3)),
-                  activeColor: AppColors.success,
+                  activeThumbColor: AppColors.success,
                   contentPadding: EdgeInsets.zero,
                 ),
             ],
