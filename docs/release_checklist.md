@@ -1,11 +1,24 @@
 # Release Checklist — Multas Argentina Pro
 ## Google Play Store v1.0.0
 
+> **Estado verificado (2026-10-19): NO APTO PARA RELEASE.**
+> El workflow `Analyze and test` pasó en el HEAD `57ace9196dbe2a868a4ee101f7b64677efaa32d6`
+> (análisis estático y suite Flutter). Esto no valida los builds nativos.
+> La rama aún no contiene el scaffold completo de Android (settings Gradle y wrapper)
+> ni el proyecto Xcode/Podfile de iOS. El build de Android además usa firma debug
+> en `build.gradle`, y los modelos PaddleOCR no están incluidos.
+> No generar ni subir un AAB de producción hasta cerrar estos bloqueos y ejecutar
+> builds nativos reales.
+
+---
+
 ---
 
 ## PRE-BUILD
 
 ### Keystore y firma
+- [ ] **Bloqueo previo:** completar scaffold Android/Gradle antes de configurar la firma.
+- [ ] Sustituir `signingConfig signingConfigs.debug` en `android/app/build.gradle` por la configuración release verificada.
 - [ ] Ejecutar `scripts/keystore_setup.sh` y generar `multas-ar-release.jks`
 - [ ] Guardar keystore + contraseñas en gestor de secretos (1Password, etc.)
 - [ ] Confirmar que `android/key.properties` existe y NO está en git
@@ -29,6 +42,11 @@ android/app/*.keystore
 - [ ] `assets/models/rec.onnx` presente
 - [ ] `assets/models/ppocr_keys.txt` presente
 - [ ] Tamaño total de modelos < 80 MB (límite APK inicial)
+
+### Scaffold nativo — bloqueo previo al build
+- [ ] Generar y revisar la estructura Android con Flutter estable: `android/settings.gradle`, `android/gradlew`, `android/gradlew.bat` y `android/gradle/wrapper/gradle-wrapper.properties`.
+- [ ] Generar y revisar la estructura iOS: `ios/Podfile`, `ios/Runner.xcodeproj/project.pbxproj` y archivos auxiliares Flutter requeridos.
+- [ ] Ejecutar build Android en CI y compilar iOS en macOS/Xcode; no basta con `flutter analyze` ni con los tests Dart.
 
 ### Código
 - [ ] `flutter analyze` sin errores
