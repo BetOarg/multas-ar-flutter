@@ -269,7 +269,7 @@ class _OpcionTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           color: activo
-              ? AppColors.indigo.withOpacity(0.15)
+              ? AppColors.indigo.withValues(alpha: 0.15)
               : AppColors.surface3,
           border: Border.all(
             color: activo ? AppColors.indigo : AppColors.border,
