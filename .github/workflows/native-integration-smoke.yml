@@ -56,6 +56,9 @@ jobs:
           if [ -d "$GITHUB_WORKSPACE/assets" ]; then
             cp -a "$GITHUB_WORKSPACE/assets" "$candidate/assets"
           fi
+          # The current Flutter template uses Kotlin DSL; remove that app-level
+          # file so Gradle exercises the repository's actual Groovy build.gradle.
+          rm -f "$candidate/android/app/build.gradle.kts"
           cp "$GITHUB_WORKSPACE/android/app/build.gradle" "$candidate/android/app/build.gradle"
           if [ -f "$GITHUB_WORKSPACE/android/app/proguard-rules.pro" ]; then
             cp "$GITHUB_WORKSPACE/android/app/proguard-rules.pro" "$candidate/android/app/proguard-rules.pro"
