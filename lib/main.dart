@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
-import 'core/constants/legal_constants.dart';
 import 'core/database/app_database.dart';
 import 'core/database/daos/casos_dao.dart';
 import 'core/database/daos/escritos_dao.dart';
