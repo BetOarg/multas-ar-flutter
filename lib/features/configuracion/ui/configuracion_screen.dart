@@ -103,7 +103,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
             _SectionCard(
               titulo: '📍  Jurisdicción principal',
               child: DropdownButtonFormField<String>(
-                value: _jurPrincipal,
+                initialValue: _jurPrincipal,
                 decoration: const InputDecoration(
                   hintText: 'Seleccionar jurisdicción...',
                 ),
