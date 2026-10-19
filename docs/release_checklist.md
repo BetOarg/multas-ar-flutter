@@ -174,6 +174,7 @@ flutter build apk --release --split-per-abi
 ## Seguimiento nativo — 2026-10-19
 
 - Commit `699e724`: se retiraron las reglas de `.gitignore` que impedían versionar `android/gradlew`, `android/gradlew.bat` y `gradle-wrapper.jar`; también se añadió `android/app/key.properties` a las exclusiones de secretos.
+- Commit `c39b2a7`: el workflow de propuesta de scaffold se ejecuta en cada push a `fix/**` y valida que el scaffold aislado generado incluya wrapper Android, configuración Gradle, Podfile y proyecto Xcode antes de publicar el artefacto. Aún no integra esos archivos en la app ni demuestra compilación de la aplicación.
 - Esto corrige las reglas de seguimiento, pero no restaura los archivos wrapper ausentes: todavía deben generarse, revisarse y subirse como archivos de código del proyecto.
 
 
