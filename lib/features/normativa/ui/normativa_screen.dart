@@ -149,7 +149,7 @@ class _NormativaScreenState extends State<NormativaScreen> {
                           horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
                         color: activo
-                            ? AppColors.indigo.withOpacity(0.2)
+                            ? AppColors.indigo.withValues(alpha: 0.2)
                             : AppColors.surface3,
                         border: Border.all(
                           color: activo
