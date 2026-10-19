@@ -12,8 +12,8 @@ class CampoFaltanteWidget extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.danger.withOpacity(0.08),
-        border: Border.all(color: AppColors.danger.withOpacity(0.3)),
+        color: AppColors.danger.withValues(alpha: 0.08),
+        border: Border.all(color: AppColors.danger.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -36,7 +36,7 @@ class CampoFaltanteWidget extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: AppColors.danger.withOpacity(0.2),
+                    color: AppColors.danger.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Text(
