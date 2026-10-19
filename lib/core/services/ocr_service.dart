@@ -156,7 +156,7 @@ class ActaParser {
     final norma = _reNorma.firstMatch(texto)?.group(0)?.trim();
     if (norma == null || norma.isEmpty) faltantes.add('norma infringida');
 
-    final agente = _reAgente.firstMatch(texto)?.group(1)?.trim();
+    final agenteMatch = _reAgente.firstMatch(texto);\n    final agente = agenteMatch == null\n        ? null\n        : '${agenteMatch.group(1)?.trim() ?? ''} ${agenteMatch.group(2) ?? agenteMatch.group(3) ?? ''}'.trim();
     if (agente == null || agente.isEmpty) faltantes.add('agente');
 
     return OcrResult(
