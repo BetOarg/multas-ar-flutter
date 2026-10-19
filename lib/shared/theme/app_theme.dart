@@ -64,7 +64,7 @@ abstract class AppTheme {
         // Bottom Navigation
         navigationBarTheme: NavigationBarThemeData(
           backgroundColor: AppColors.surface,
-          indicatorColor: AppColors.indigo.withOpacity(0.2),
+          indicatorColor: AppColors.indigo.withValues(alpha: 0.2),
           labelTextStyle: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
               return const TextStyle(
@@ -150,7 +150,7 @@ abstract class AppTheme {
         // Chip
         chipTheme: ChipThemeData(
           backgroundColor: AppColors.surface3,
-          selectedColor: AppColors.indigo.withOpacity(0.2),
+          selectedColor: AppColors.indigo.withValues(alpha: 0.2),
           labelStyle:
               const TextStyle(color: AppColors.text2, fontSize: 12),
           side: const BorderSide(color: AppColors.border),
