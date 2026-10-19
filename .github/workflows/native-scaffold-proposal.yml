@@ -62,18 +62,34 @@ jobs:
         run: |
           set -euo pipefail
           root="$RUNNER_TEMP/native-scaffold-proposal/scaffold_candidate"
-          test -f "$root/android/settings.gradle" -o -f "$root/android/settings.gradle.kts"
-          test -f "$root/android/gradlew"
-          test -f "$root/android/gradlew.bat"
-          test -f "$root/android/gradle/wrapper/gradle-wrapper.properties"
-          test -f "$root/android/gradle/wrapper/gradle-wrapper.jar"
-          test -f "$root/ios/Podfile"
-          test -f "$root/ios/Runner.xcodeproj/project.pbxproj"
-          test -f "$root/RECOVERY_NOTES.md"
-          test -s "$root/NATIVE_FILE_INVENTORY.txt"
+          missing=0
+          for path in \
+            "android/gradlew" \
+            "android/gradlew.bat" \
+            "android/gradle/wrapper/gradle-wrapper.properties" \
+            "android/gradle/wrapper/gradle-wrapper.jar" \
+            "ios/Podfile" \
+            "ios/Runner.xcodeproj/project.pbxproj" \
+            "RECOVERY_NOTES.md" \
+            "NATIVE_FILE_INVENTORY.txt"; do
+            if [ ! -f "$root/$path" ]; then
+              echo "::error::Missing scaffold file: $path"
+              missing=1
+            fi
+          done
+          if [ ! -f "$root/android/settings.gradle" ] && [ ! -f "$root/android/settings.gradle.kts" ]; then
+            echo "::error::Missing Android settings.gradle or settings.gradle.kts"
+            missing=1
+          fi
+          if [ "$missing" -ne 0 ]; then
+            echo "Generated scaffold file inventory:"
+            find "$root/android" "$root/ios" -maxdepth 5 -type f | sort || true
+            exit 1
+          fi
           echo "Generated scaffold structure is complete; integration into the app is not implied."
 
       - name: Upload scaffold proposal artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: native-scaffold-proposal
