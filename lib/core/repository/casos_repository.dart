@@ -4,7 +4,6 @@ import '../database/app_database.dart';
 import '../database/daos/casos_dao.dart';
 import '../database/daos/plazos_dao.dart';
 import '../database/daos/escritos_dao.dart';
-import '../database/tables/tables.dart';
 import '../services/plazos_service.dart';
 
 abstract class ICasosRepository {
