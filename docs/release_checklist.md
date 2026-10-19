@@ -52,9 +52,6 @@ android/app/*.keystore
 - [ ] Revisar el workflow `Native scaffold integration smoke test`: genera un scaffold temporal, superpone el código Android existente solo en el runner y ejecuta `flutter pub get`, `flutter analyze` y build APK debug.
 - [ ] Confirmar que el APK debug compila y resolver cualquier incompatibilidad reportada antes de incorporar configuración Gradle al repositorio.
 - [ ] Validar iOS por separado en macOS/Xcode conservando el registro de `OcrPlugin.swift` y `AppDelegate.swift`.
-- [ ] Generar y revisar la estructura Android con Flutter estable: `android/settings.gradle`, `android/gradlew`, `android/gradlew.bat` y `android/gradle/wrapper/gradle-wrapper.properties`.
-- [ ] Generar y revisar la estructura iOS: `ios/Podfile`, `ios/Runner.xcodeproj/project.pbxproj` y archivos auxiliares Flutter requeridos.
-- [ ] Ejecutar build Android en CI y compilar iOS en macOS/Xcode; no basta con `flutter analyze` ni con los tests Dart.
 
 ### Código
 - [ ] `flutter analyze` sin errores
@@ -177,6 +174,16 @@ flutter build apk --release --split-per-abi
 > ℹ️ Para la versión v1.0 no es necesario Google Play Billing ni
 > ninguna SDK adicional de Google. La app cumple las políticas de
 > Play sin módulos extra.
+
+## Diagnóstico CI — 2026-10-19
+
+- El workflow `Flutter checks` terminó verde en los runs `39338450647` y `39338446492`: análisis, generación Drift y tests Flutter completados.
+- La propuesta de scaffold terminó verde en el run `39338446398`; esto valida solo la plantilla aislada.
+- El smoke test Android falló en el run `39338446581` porque `android/app/build.gradle` declaraba un artefacto inexistente para ML Kit: `com.google.mlkit:text-recognition-latin:16.0.1`. El artefacto Latin correcto ya está cubierto por `com.google.mlkit:text-recognition:16.0.1`; se eliminó la dependencia incorrecta.
+- El mismo build reportó que los plugins requieren NDK `28.2.13676358`; se alineó `ndkVersion` con esa versión.
+- [ ] Esperar y revisar los workflows disparados por estos cambios. No marcar el smoke test verde hasta que termine `flutter build apk --debug`.
+- Las ejecuciones canceladas corresponden a commits reemplazados durante las correcciones; no equivalen a pruebas fallidas del HEAD actual.
+- El build de release, la firma de producción y la compilación iOS siguen pendientes.
 
 ## Seguimiento nativo — 2026-10-19
 
