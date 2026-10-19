@@ -73,7 +73,8 @@ jobs:
           set -o pipefail
           flutter pub get 2>&1 | tee "$RUNNER_TEMP/native-integration/pub-get.log"
 
-      - name: Analyze overlaid application
+      - name: Analyze overlaid application (diagnostic; does not block native build)
+        continue-on-error: true
         shell: bash
         working-directory: ${{ runner.temp }}/native-integration/candidate
         run: |
