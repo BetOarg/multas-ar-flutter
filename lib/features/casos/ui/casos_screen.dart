@@ -51,7 +51,7 @@ class CasosScreen extends StatelessWidget {
               itemCount: state.casos.length,
               itemBuilder: (_, i) {
                 final caso = state.casos[i];
-                final estadoCfg = _estadoLabel[caso.estadoProcesal] ??
+                final estadoCfg = _estadoLabel[(caso.estado ?? 'admin')] ??
                     ('Desconocido', AppColors.text3);
                 return _CasoCard(
                   caso: caso,
@@ -70,7 +70,7 @@ class CasosScreen extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.go(AppRouter.analisis),
+        onPressed: () => context.go('/analisis'),
         backgroundColor: AppColors.indigo,
         icon: const Icon(Icons.add, color: Colors.white),
         label: const Text('Nuevo caso',
