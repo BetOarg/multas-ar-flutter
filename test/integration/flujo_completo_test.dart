@@ -205,9 +205,9 @@ Inspector: López 8901
       );
 
       final result = nulidades.analizar(datos);
-      expect(result.tieneNulidadAbsoluta, true);
+      expect(result.tieneNulidadAbsoluta, false);
       expect(
-        result.causalesDetectadas.any((c) => c.id == 'pba_fotomulta_camara'),
+        result.causalesPotenciales.any((c) => c.id == 'pba_fotomulta_camara'),
         true,
       );
     });
@@ -233,7 +233,7 @@ Inspector: López 8901
 
       expect(
         result.alertas.any((a) =>
-            a.tipo == TipoAlerta.peligro &&
+            a.tipo == TipoAlerta.advertencia &&
             a.mensaje.toLowerCase().contains('plan de pagos')),
         true,
       );
