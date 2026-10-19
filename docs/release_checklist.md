@@ -2,15 +2,13 @@
 ## Google Play Store v1.0.0
 
 > **Estado verificado (2026-10-19): NO APTO PARA RELEASE.**
-> El workflow `Analyze and test` pasó en el HEAD `57ace9196dbe2a868a4ee101f7b64677efaa32d6`
-> (análisis estático y suite Flutter). Esto no valida los builds nativos.
+> Los workflows `Analyze and test` de push y PR pasaron en el HEAD `12664f2acf28ec03eaa2df0b9b6cade7fbff3b5e`
+> (análisis estático, generación de Drift y suite Flutter). Esto no valida los builds nativos.
 > La rama aún no contiene el scaffold completo de Android (settings Gradle y wrapper)
 > ni el proyecto Xcode/Podfile de iOS. El build de Android además usa firma debug
 > en `build.gradle`, y los modelos PaddleOCR no están incluidos.
 > No generar ni subir un AAB de producción hasta cerrar estos bloqueos y ejecutar
 > builds nativos reales.
-
----
 
 ---
 
