@@ -105,13 +105,13 @@ class AnalisisBloc extends Bloc<AnalisisEvent, AnalisisState> {
       final now = DateTime.now();
       final id = await _casosRepository.crearCaso(CasosCompanion.insert(
         id: event.id ?? _generarId(),
-        jurisdiccion: event.jurisdiccion,
-        numeroActa: event.numeroActa,
-        fechaNotificacion: event.fechaNotificacion,
-        tipoFalta: event.tipoFalta,
-        patente: event.patente,
-        estado: event.estadoProcesal ?? 'admin',
-        normaInfringida: event.normaImputada,
+        jurisdiccion: Value(event.jurisdiccion),
+        numeroActa: Value(event.numeroActa),
+        fechaNotificacion: Value(event.fechaNotificacion),
+        tipoFalta: Value(event.tipoFalta),
+        patente: Value(event.patente),
+        estado: Value(event.estadoProcesal ?? 'admin'),
+        normaInfringida: Value(event.normaImputada),
         creadoEn: now,
         actualizadoEn: now,
       ));
