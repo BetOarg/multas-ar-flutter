@@ -38,7 +38,7 @@ void main() {
 
   Widget _buildApp(Widget child) {
     return MaterialApp(
-      theme: AppTheme.dark(),
+      theme: AppTheme.dark,
       home: BlocProvider(
         create: (_) => AnalisisBloc(
           ocrService:     mockOcr,
