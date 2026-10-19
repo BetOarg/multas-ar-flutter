@@ -1,6 +1,11 @@
 name: Generate native scaffold proposal
 
 on:
+  push:
+    branches:
+      - "fix/**"
+    paths:
+      - ".github/workflows/native-scaffold-proposal.yml"
   workflow_dispatch:
 
 permissions:
