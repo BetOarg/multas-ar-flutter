@@ -89,6 +89,6 @@ dependencies {
     implementation "com.google.mlkit:text-recognition:16.0.1"
     implementation "com.google.mlkit:text-recognition-latin:16.0.1"
 
-    // Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    // Coroutines utilizadas directamente por OcrChannel.kt
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1"
 }
