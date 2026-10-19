@@ -79,9 +79,9 @@ class PlazoCardWidget extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: cfg.accent.withOpacity(0.15),
+                  color: cfg.accent.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: cfg.accent.withOpacity(0.4)),
+                  border: Border.all(color: cfg.accent.withValues(alpha: 0.4)),
                 ),
                 child: Text(
                   cfg.label,
@@ -104,29 +104,29 @@ class PlazoCardWidget extends StatelessWidget {
     switch (plazo.estado) {
       case EstadoPlazo.vencido:
         return _PlazoConfig(
-          bg: AppColors.danger.withOpacity(0.07),
-          border: AppColors.danger.withOpacity(0.3),
+          bg: AppColors.danger.withValues(alpha: 0.07),
+          border: AppColors.danger.withValues(alpha: 0.3),
           accent: AppColors.danger,
           label: 'VENCIDO hace ${plazo.diasRestantes.abs()}d',
         );
       case EstadoPlazo.urgente:
         return _PlazoConfig(
-          bg: AppColors.danger.withOpacity(0.05),
-          border: AppColors.danger.withOpacity(0.25),
+          bg: AppColors.danger.withValues(alpha: 0.05),
+          border: AppColors.danger.withValues(alpha: 0.25),
           accent: AppColors.danger,
           label: '⚡ ${plazo.diasRestantes}d',
         );
       case EstadoPlazo.proximo:
         return _PlazoConfig(
-          bg: AppColors.warning.withOpacity(0.07),
-          border: AppColors.warning.withOpacity(0.3),
+          bg: AppColors.warning.withValues(alpha: 0.07),
+          border: AppColors.warning.withValues(alpha: 0.3),
           accent: AppColors.warning,
           label: '${plazo.diasRestantes}d',
         );
       case EstadoPlazo.vigente:
         return _PlazoConfig(
-          bg: AppColors.success.withOpacity(0.05),
-          border: AppColors.success.withOpacity(0.2),
+          bg: AppColors.success.withValues(alpha: 0.05),
+          border: AppColors.success.withValues(alpha: 0.2),
           accent: AppColors.success,
           label: '${plazo.diasRestantes}d',
         );
