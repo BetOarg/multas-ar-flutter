@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: native-integration-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   android-scaffold-smoke:
     name: Test existing Android app against generated Flutter scaffold
