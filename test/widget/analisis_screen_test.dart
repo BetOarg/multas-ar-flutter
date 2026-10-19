@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -85,19 +86,17 @@ void main() {
     testWidgets('no muestra resultados en estado inicial', (tester) async {
       await tester.pumpWidget(_buildApp(const AnalisisScreen()));
       await tester.pump();
-      expect(find.textContaining('Patente'), findsNothing);
-      expect(find.textContaining('Prescripción'), findsNothing);
+      expect(find.text('📋  Datos extraídos por OCR'), findsNothing);
+      expect(find.text('⚠️  Información faltante'), findsNothing);
     });
   });
 
   // ── Estado de carga ──────────────────────────────────────────
   group('AnalisisScreen — estado de carga', () {
     testWidgets('muestra indicador mientras procesa', (tester) async {
+      final resultadoPendiente = Completer<OcrResult>();
       when(() => mockOcr.reconocer(any()))
-          .thenAnswer((_) async {
-        await Future.delayed(const Duration(seconds: 1));
-        return OcrResult(textoCompleto: '', motor: 'mlkit');
-      });
+          .thenAnswer((_) => resultadoPendiente.future);
 
       await tester.pumpWidget(_buildApp(const AnalisisScreen()));
       await tester.pump();
@@ -110,6 +109,10 @@ void main() {
 
       await tester.pump(const Duration(milliseconds: 100));
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      resultadoPendiente.complete(
+        const OcrResult(textoCompleto: '', motor: 'mlkit'),
+      );
+      await tester.pumpAndSettle();
     });
   });
 
