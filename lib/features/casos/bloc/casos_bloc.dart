@@ -46,7 +46,7 @@ class CasosBloc extends Bloc<CasosEvent, CasosState> {
       }
       final plazos = _plazosDao == null
           ? <Plazo>[]
-          : await _plazosDao!.getPlazosDeCaso(event.casoId);
+          : await _plazosDao.getPlazosDeCaso(event.casoId);
       emit(CasoDetalleCargado(
         caso: caso,
         plazos: plazos,
