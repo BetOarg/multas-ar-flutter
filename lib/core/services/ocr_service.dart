@@ -136,8 +136,8 @@ class ActaParser {
   static final _reFecha    = RegExp(r'(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})');
   static final _reNumActa  = RegExp(r'(?:N[°º]?|NÚMERO|NUMERO|ACTA)[:\s#]*([0-9\-]{4,20})', caseSensitive: false);
   static final _reFotomulta = RegExp(r'\b(FM[-\s]|FOTOMULTA|FOTO\s*MULTA)\b', caseSensitive: false);
-  static final _reAgente = RegExp(r'(?:AGENTE|INSPECTOR)[:\\s]*([A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+(?:[ \\t]+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+){0,3}).{0,35}?(?:LEG(?:AJO)?\\.?\\s*(?:N[°º]\\s*)?[:#]?\\s*([0-9]{3,8})|N[°º]\\s*AGENTE[:\\s]*([0-9]{3,8}))', caseSensitive: false);
-  static final _reNorma = RegExp(r'(?:ART[.\\s]*\\d+(?:[.\\w()/-]*)(?:\\s+INC\\.?\\s*[a-z0-9]+)?[\\s\\w()./-]{0,35}?(?:LEY|LN)[.\\s]*[\\d.]+|LEY[\\s]*[\\d.]+)', caseSensitive: false);
+  static final _reAgente = RegExp(r'(?:AGENTE|INSPECTOR)[:\s]*([A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+(?:[ \t]+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+){0,3}).{0,35}?(?:LEG(?:AJO)?\.?\s*(?:N[°º]\s*)?[:#]?\s*([0-9]{3,8})|N[°º]\s*AGENTE[:\s]*([0-9]{3,8}))', caseSensitive: false);
+  static final _reNorma = RegExp(r'(?:ART[.\s]*\d+(?:[.\w()/-]*)(?:\s+INC\.?\s*[a-z0-9]+)?[\s\w()./-]{0,35}?(?:LEY|LN)[.\s]*[\d.]+|LEY[\s]*[\d.]+)', caseSensitive: false);
   static final _reGeo      = RegExp(r'(?:LUGAR|DOMICILIO|CALLE|AV\.|RUTA|KM|AVENIDA)[:\s]+(.{5,80})', caseSensitive: false);
 
   static OcrResult parsear(String texto, {String motor = 'unknown'}) {
@@ -154,6 +154,10 @@ class ActaParser {
     if (numActa == null || numActa.isEmpty) faltantes.add('número de acta');
 
     final norma = _reNorma.firstMatch(texto)?.group(0)?.trim();
+    final agenteMatch = _reAgente.firstMatch(texto);
+    final agente = agenteMatch == null
+        ? null
+        : '${agenteMatch.group(1)?.trim() ?? ''} ${agenteMatch.group(2) ?? agenteMatch.group(3) ?? ''}'.trim();
     if (norma == null || norma.isEmpty) faltantes.add('norma infringida');
 
     if (agente == null || agente.isEmpty) faltantes.add('agente');
