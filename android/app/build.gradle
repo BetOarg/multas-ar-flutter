@@ -13,7 +13,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace "com.betOarg.multas_ar"
     compileSdk flutter.compileSdkVersion
-    ndkVersion "27.0.12077973"  // requerido por ONNX Runtime
+    ndkVersion "28.2.13676358"  // requerido por plugins Android; compatible con ONNX Runtime
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -87,7 +87,6 @@ dependencies {
 
     // ML Kit (fallback OCR)
     implementation "com.google.mlkit:text-recognition:16.0.1"
-    implementation "com.google.mlkit:text-recognition-latin:16.0.1"
 
     // Coroutines utilizadas directamente por OcrChannel.kt
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1"
