@@ -43,8 +43,13 @@ jobs:
           set -euo pipefail
           candidate="$RUNNER_TEMP/native-integration/candidate"
           cp "$GITHUB_WORKSPACE/pubspec.yaml" "$candidate/pubspec.yaml"
-          rm -rf "$candidate/lib"
+          rm -rf "$candidate/lib" "$candidate/test"
           cp -a "$GITHUB_WORKSPACE/lib" "$candidate/lib"
+          # Do not let Flutter's generated example test refer to a non-existent
+          # MyApp class; this workflow validates native integration, not tests.
+          if [ -d "$GITHUB_WORKSPACE/test" ]; then
+            cp -a "$GITHUB_WORKSPACE/test" "$candidate/test"
+          fi
           if [ -f "$GITHUB_WORKSPACE/analysis_options.yaml" ]; then
             cp "$GITHUB_WORKSPACE/analysis_options.yaml" "$candidate/analysis_options.yaml"
           fi
@@ -72,6 +77,13 @@ jobs:
         run: |
           set -o pipefail
           flutter pub get 2>&1 | tee "$RUNNER_TEMP/native-integration/pub-get.log"
+
+      - name: Generate Drift sources
+        shell: bash
+        working-directory: ${{ runner.temp }}/native-integration/candidate
+        run: |
+          set -o pipefail
+          dart run build_runner build --delete-conflicting-outputs 2>&1 | tee "$RUNNER_TEMP/native-integration/build-runner.log"
 
       - name: Analyze overlaid application (diagnostic; does not block native build)
         continue-on-error: true
