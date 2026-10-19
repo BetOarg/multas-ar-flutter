@@ -103,11 +103,11 @@ class CasosScreen extends StatelessWidget {
                         label: Text(e.value.$1),
                         selected: false,
                         onSelected: (_) => Navigator.pop(context),
-                        selectedColor: e.value.$2.withOpacity(0.2),
+                        selectedColor: e.value.$2.withValues(alpha: 0.2),
                         labelStyle: TextStyle(
                             color: e.value.$2, fontSize: 12),
                         side: BorderSide(
-                            color: e.value.$2.withOpacity(0.4)),
+                            color: e.value.$2.withValues(alpha: 0.4)),
                       ))
                   .toList(),
             ),
@@ -165,10 +165,10 @@ class _CasoCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: estadoColor.withOpacity(0.15),
+                      color: estadoColor.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                          color: estadoColor.withOpacity(0.4)),
+                          color: estadoColor.withValues(alpha: 0.4)),
                     ),
                     child: Text(
                       estadoLabel,
