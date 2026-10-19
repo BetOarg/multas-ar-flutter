@@ -134,7 +134,7 @@ class MultasArgentinaApp extends StatelessWidget {
         return MaterialApp.router(
           title: 'Multas Argentina Pro',
           debugShowCheckedModeBanner: false,
-          theme: AppTheme.dark(),
+          theme: AppTheme.dark,
           routerConfig: router,
         );
       },
