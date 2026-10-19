@@ -5,8 +5,9 @@
 > Los workflows `Analyze and test` de push y PR pasaron en el HEAD `12664f2acf28ec03eaa2df0b9b6cade7fbff3b5e`
 > (análisis estático, generación de Drift y suite Flutter). Esto no valida los builds nativos.
 > La rama aún no contiene el scaffold completo de Android (settings Gradle y wrapper)
-> ni el proyecto Xcode/Podfile de iOS. El build de Android además usa firma debug
-> en `build.gradle`, y los modelos PaddleOCR no están incluidos.
+> ni el proyecto Xcode/Podfile de iOS. Se quitó la asignación explícita de firma debug
+> en `android/app/build.gradle`, pero todavía no se ha validado una compilación nativa
+> ni una firma de producción. La presencia de los modelos PaddleOCR también está pendiente de verificación.
 > No generar ni subir un AAB de producción hasta cerrar estos bloqueos y ejecutar
 > builds nativos reales.
 
@@ -16,12 +17,14 @@
 
 ### Keystore y firma
 - [ ] **Bloqueo previo:** completar scaffold Android/Gradle antes de configurar la firma.
-- [ ] Sustituir `signingConfig signingConfigs.debug` en `android/app/build.gradle` por la configuración release verificada.
+- [x] Eliminar la asignación explícita de `signingConfigs.debug` al tipo `release` (commit `f633527`).
+- [ ] Ejecutar una compilación nativa con la configuración Gradle completa y confirmar que release no usa firma debug.
+- [ ] Validar que `android/app/key.properties` contiene las cuatro propiedades requeridas y que la ruta del keystore resuelve correctamente.
 - [ ] Ejecutar `scripts/keystore_setup.sh` y generar `multas-ar-release.jks`
 - [ ] Guardar keystore + contraseñas en gestor de secretos (1Password, etc.)
-- [ ] Confirmar que `android/key.properties` existe y NO está en git
+- [ ] Confirmar que `android/app/key.properties` existe y NO está en git
 - [ ] Confirmar que `android/app/multas-ar-release.jks` NO está en git
-- [ ] Copiar bloque de `build_release.gradle` al `build.gradle` definitivo
+- [ ] No copiar ciegamente `build_release.gradle`: es una plantilla histórica; mantener `android/app/build.gradle` como fuente de verdad y verificar la configuración en CI.
 
 ### .gitignore — verificar que contiene
 ```
