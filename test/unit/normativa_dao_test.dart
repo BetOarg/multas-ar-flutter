@@ -3,7 +3,6 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:multas_ar/core/database/app_database.dart';
 import 'package:multas_ar/core/database/daos/normativa_dao.dart';
-import 'package:multas_ar/core/database/tables/tables.dart';
 
 void main() {
   late AppDatabase database;
