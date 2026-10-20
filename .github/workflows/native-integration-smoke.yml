@@ -230,6 +230,14 @@ jobs:
           set -o pipefail
           dart run build_runner build --delete-conflicting-outputs 2>&1 | tee "$RUNNER_TEMP/native-integration-ios/build-runner.log"
 
+      - name: Install iOS CocoaPods dependencies
+        shell: bash
+        working-directory: ${{ runner.temp }}/native-integration-ios/candidate
+        run: |
+          set -euo pipefail
+          cd ios
+          pod install --repo-update 2>&1 | tee "$RUNNER_TEMP/native-integration-ios/pod-install.log"
+
       - name: Validate Flutter iOS generated settings before build
         shell: bash
         working-directory: ${{ runner.temp }}/native-integration-ios/candidate
