@@ -28,6 +28,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
+        android:allowBackup="false"
         android:label="Multas Argentina"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
