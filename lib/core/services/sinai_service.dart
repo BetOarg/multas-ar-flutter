@@ -10,7 +10,8 @@
 //
 // ESTADO ACTUAL:
 //   - El SINAI no expone API REST pública documentada.
-//   - La consulta se realiza mediante scraping del formulario HTML.
+//   - Esta versión no consulta portales automáticamente ni realiza scraping.
+//   - Solo ofrece URLs para apertura manual por decisión del usuario.
 //   - PBA usa su propio portal: multastransito.gba.gob.ar
 //   - CABA: tramitación online GCBA (buscaminfracciones.buenosaires.gob.ar)
 //
@@ -39,7 +40,8 @@ class InfraccionOnline {
   });
 }
 
-/// Resultado de la consulta online
+/// Resultado de una consulta iniciada explícitamente por el usuario en un portal externo.
+/// Este servicio no ejecuta solicitudes HTTP ni extrae datos automáticamente.
 class ResultadoConsultaOnline {
   final bool exito;
   final List<InfraccionOnline> infracciones;
