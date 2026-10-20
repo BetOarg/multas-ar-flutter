@@ -55,6 +55,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  # CocoaPods is required by the current iOS plugins; avoid mixed SPM/Pods linking.
+  disable-swift-package-manager: true
 
   assets:
     - assets/normativa/
