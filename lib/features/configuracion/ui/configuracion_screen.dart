@@ -164,9 +164,9 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
                       label: 'Almacenamiento',
                       valor: 'Local — SQLite vía Drift. Sin sincronización remota (v1.0)'),
                   _InfoTile(
-                      icon: Icons.psychology_outlined,
-                      label: 'IA',
-                      valor: 'Anthropic Claude Sonnet — análisis de imagen (requiere conexión)'),
+                      icon: Icons.privacy_tip_outlined,
+                      label: 'Privacidad',
+                      valor: 'Procesamiento local. Sin cuentas, sincronización ni envío automático de datos.'),
                 ],
               ),
             ),
