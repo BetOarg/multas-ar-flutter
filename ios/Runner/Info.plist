@@ -40,12 +40,7 @@
   <key>NSMicrophoneUsageDescription</key>
   <string>Multas Argentina no utiliza el micrófono.</string>
 
-  <!-- ── Notificaciones locales ──────────────────────────────── -->
-  <key>UIBackgroundModes</key>
-  <array>
-    <string>fetch</string>
-    <string>remote-notification</string>
-  </array>
+  <!-- Notificaciones locales sin modos de recepción remota. -->
 
   <!-- ── Configuración de la app ────────────────────────────── -->
   <key>UIApplicationSupportsIndirectInputEvents</key>
