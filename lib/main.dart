@@ -29,7 +29,7 @@ import 'shared/theme/app_theme.dart';
 //   1. Flutter bindings + orientación
 //   2. Timezone
 //   3. Base de datos Drift
-//   4. Seed / OTA normativa
+//   4. Carga inicial de normativa desde assets locales (sin OTA)
 //   5. Notificaciones locales
 //   6. DI: MultiRepositoryProvider + AuthBloc wrapper
 //   7. GoRouter con guard de autenticación
