@@ -2,12 +2,10 @@
 ## Google Play Store v1.0.0
 
 > **Estado verificado (2026-10-19): NO APTO PARA RELEASE.**
-> Los workflows `Analyze and test` de push y PR pasaron en el HEAD `12664f2acf28ec03eaa2df0b9b6cade7fbff3b5e`
-> (análisis estático, generación de Drift y suite Flutter). Esto no valida los builds nativos.
-> La rama aún no contiene el scaffold completo de Android (settings Gradle y wrapper)
-> ni el proyecto Xcode y la configuración de dependencias iOS (Podfile o Swift Package Manager, según la versión de Flutter). Se quitó la asignación explícita de firma debug
-> en `android/app/build.gradle`, pero todavía no se ha validado una compilación nativa
-> ni una firma de producción. La presencia de los modelos PaddleOCR también está pendiente de verificación.
+> En el HEAD `38af75e3dbb4184fb8ec04a386c0d93e219bba79` terminaron verdes: Flutter checks (run `39339560982`), integración Android sobre scaffold temporal (run `39339561001`) y propuesta de scaffold (run `39339560942`).
+> El smoke test sí compiló un APK debug, pero usando un scaffold temporal generado por Flutter; no es una compilación del proyecto nativo versionado.
+> La inspección del árbol del repositorio confirma que faltan el wrapper/settings Gradle, el proyecto Xcode y los binarios PaddleOCR (`det.onnx`, `cls.onnx`, `rec.onnx`, `ppocr_keys.txt`); solo existe `assets/models/README.md`.
+> Todavía no se ha validado una compilación nativa desde el repositorio ni una firma de producción.
 > No generar ni subir un AAB de producción hasta cerrar estos bloqueos y ejecutar
 > builds nativos reales.
 
@@ -181,7 +179,7 @@ flutter build apk --release --split-per-abi
 - La propuesta de scaffold terminó verde en el run `39338446398`; esto valida solo la plantilla aislada.
 - El smoke test Android falló en el run `39338446581` porque `android/app/build.gradle` declaraba un artefacto inexistente para ML Kit: `com.google.mlkit:text-recognition-latin:16.0.1`. El artefacto Latin correcto ya está cubierto por `com.google.mlkit:text-recognition:16.0.1`; se eliminó la dependencia incorrecta.
 - El mismo build reportó que los plugins requieren NDK `28.2.13676358`; se alineó `ndkVersion` con esa versión.
-- [ ] Esperar y revisar los workflows disparados por estos cambios. No marcar el smoke test verde hasta que termine `flutter build apk --debug`.
+- [x] Revisar los workflows disparados por los cambios: en el HEAD `38af75e3`, Flutter checks, smoke test Android sobre scaffold temporal y propuesta de scaffold terminaron verdes. El smoke test ejecutó `flutter build apk --debug` correctamente, pero no integra el scaffold en el repositorio.
 - Las ejecuciones canceladas corresponden a commits reemplazados durante las correcciones; no equivalen a pruebas fallidas del HEAD actual.
 - El build de release, la firma de producción y la compilación iOS siguen pendientes.
 
@@ -197,3 +195,14 @@ flutter build apk --release --split-per-abi
 - Commit: [f633527](https://github.com/BetOarg/multas-ar-flutter/commit/f633527139cfc6b28f0846c9ce233cc0822f4464).
 - **Pendiente de validar:** sintaxis y resolución Gradle en runner real; no hay evidencia de build Android exitoso. La ausencia del scaffold Gradle completo continúa bloqueando la compilación reproducible.
 - **No publicar** hasta configurar y verificar la clave de producción, completar el scaffold Android/iOS y obtener builds nativos verdes.
+
+
+## Verificación posterior — HEAD 38af75e3 — 2026-10-19
+
+- [x] Flutter checks: run [39339560982](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39339560982) — análisis, generación Drift y tests verdes.
+- [x] Android integration smoke test: run [39339561001](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39339561001) — dependencias, generación Drift y APK debug verdes sobre scaffold temporal.
+- [x] Scaffold proposal: run [39339560942](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39339560942) — propuesta aislada generada y artefacto disponible hasta el 2026-10-26.
+- [ ] Integrar y revisar los archivos nativos Android/iOS en la rama, preservando el registro de plugins OCR y permisos.
+- [ ] Verificar los cuatro assets de PaddleOCR: el árbol actual solo contiene `assets/models/README.md`; los archivos de modelo no están presentes.
+- [ ] Ejecutar build Android desde el scaffold ya integrado y build iOS en macOS/Xcode.
+- [ ] Configurar y validar firma release; después generar y verificar el AAB.
