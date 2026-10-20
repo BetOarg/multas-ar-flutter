@@ -94,14 +94,15 @@ Generá escritos completos listos para presentar:
 ─────────────────────────────────────────
 CABA · PBA · Córdoba · Santa Fe · Mendoza
 Tucumán · Salta · Neuquén · Nacional (ANSV)
-Actualización automática desde internet.
+Normativa precargada y consultable sin conexión.
 
 ─────────────────────────────────────────
 🔒 PRIVACIDAD
 ─────────────────────────────────────────
-• Todos los datos se guardan localmente en tu dispositivo
+• Los datos de actas y casos se procesan y guardan localmente en tu dispositivo
+• Sin API de OCR/IA en la nube ni sincronización remota
 • Sin publicidad, sin rastreo, sin analíticas
-• El análisis con IA (opcional) usa Anthropic Claude
+• OCR y análisis local, sin envío de actas a servidores
 
 ─────────────────────────────────────────
 ⚠️ AVISO LEGAL
@@ -207,13 +208,14 @@ En Play Console → Seguridad de datos, declarar:
 
 | Tipo de dato | Recopilado | Compartido | Cifrado | Eliminable |
 |---|---|---|---|---|
-| Fotos/imágenes | Sí (local) | Solo con Anthropic (IA, opcional) | Sí | Sí |
+| Fotos/imágenes | Sí (local) | No | Según almacenamiento del dispositivo | Sí |
 | Datos de app (actas) | Sí (local) | No | Sí | Sí |
 | Datos de diagnóstico | No | No | — | — |
 
 **Prácticas de seguridad:**
-- ✅ Los datos se transmiten cifrados (HTTPS/TLS)
-- ✅ Los datos pueden ser eliminados por el usuario
+- ✅ La app no debe transmitir datos de actas o perfiles a servidores
+- ⚠️ Verificar en pruebas de red que no exista tráfico saliente de datos personales
+- ⚠️ Confirmar que la función de eliminación borre todos los datos locales
 - ✅ Los datos no se venden
 - ✅ Seguimos las Políticas del Programa para Desarrolladores de Google Play
 
