@@ -252,3 +252,12 @@ flutter build apk --release --split-per-abi
 - [ ] La base SQLite/Drift no está cifrada a nivel de archivo; comunicarlo con precisión y evaluar cifrado solo si el requisito de amenaza lo exige.
 
 **Estado de release:** NO APTO. Los tests Dart verdes no compensan el build iOS rojo ni sustituyen builds nativos integrados y verificación de privacidad en dispositivos reales.
+
+
+## Verificación CI más reciente — 2026-10-20
+
+- [x] Flutter checks en `01139121338cc7f636ae874662b80c3570e85cfa`: [run 39460002637](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39460002637) — success.
+- [x] Propuesta de scaffold: [run 39460002658](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39460002658) — success; el artefacto sigue siendo una referencia aislada.
+- [x] Smoke de integración Android+iOS: [run 39460002545](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39460002545) — success sobre scaffold Flutter temporal generado por el workflow.
+- [ ] **Bloqueo de release sin resolver:** estos resultados no prueban que el scaffold nativo esté integrado en el árbol versionado de la app. Siguen pendientes la integración revisada de Android/iOS, los modelos OCR binarios, compilaciones reales desde el repositorio y las pruebas de privacidad en dispositivos físicos.
+- [ ] Confirmar que el correo de soporte publicado es real y está bajo control del responsable antes de publicar.
