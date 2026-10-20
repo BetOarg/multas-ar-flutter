@@ -55,7 +55,7 @@ android/app/*.keystore
 - [ ] `flutter analyze` sin errores
 - [ ] `dart run build_runner build` ejecutado (código Drift generado)
 - [ ] `flutter test test/unit/ test/integration/` — todos pasan
-- [ ] API key Anthropic NO hardcodeada (se ingresa en configuración)
+- [x] No se configura ni requiere API key de Anthropic ni otro servicio de IA/OCR en la nube; mantener la revisión de dependencias y tráfico de red como bloqueo de release.
 - [ ] `debugShowCheckedModeBanner: false` en MaterialApp
 - [ ] Logs de debug eliminados o detrás de `kDebugMode`
 
@@ -115,7 +115,7 @@ flutter build apk --release --split-per-abi
 
 ### Seguridad de datos (Data Safety)
 - [ ] Completar formulario (ver tabla en `play_store_listing.md`)
-- [ ] Declarar: fotos procesadas localmente + Anthropic opcional
+- [ ] Declarar en Data Safety únicamente los flujos confirmados: procesamiento OCR local, almacenamiento local y cualquier exportación/compartición iniciada expresamente por el usuario. No declarar Anthropic ni IA remota opcional.
 - [ ] Declarar: sin venta de datos, sin analíticas
 
 ### Precios y distribución
@@ -239,3 +239,15 @@ flutter build apk --release --split-per-abi
 - [ ] No declarar privacidad verificada ni publicar hasta completar las pruebas anteriores.
 
 **Alcance:** abrir un portal en el navegador o compartir/exportar un documento puede transferir información solo si el usuario lo elige. La app no debe rellenar automáticamente URLs con patentes ni enviar contenido en segundo plano.
+
+
+## Verificación CI y privacidad — 2026-10-20 (HEAD f89baee)
+
+- [x] Flutter checks: run [39446233198](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39446233198) — verde.
+- [x] Propuesta de scaffold nativo: run [39446233225](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39446233225) — verde; es una plantilla aislada, no una compilación de la app integrada.
+- [ ] Native scaffold integration smoke test: run [39446233151](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39446233151) — rojo en iOS con `Framework 'Pods_Runner' not found`; Android terminó verde. Quitar la segunda generación del scaffold no resolvió el error. No marcar iOS como validado; inspeccionar la integración CocoaPods/Xcode generada y sus configuraciones de build antes de otra corrección.
+- [ ] Confirmar que el contacto de privacidad publicado en `docs/privacy_policy.html` existe y está operativo; el correo actual es un marcador pendiente de verificación.
+- [ ] Pruebas en dispositivo real pendientes: tráfico de red, OCR offline, exclusión de backups, borrado local, exportación/compartición y revisión de dependencias.
+- [ ] La base SQLite/Drift no está cifrada a nivel de archivo; comunicarlo con precisión y evaluar cifrado solo si el requisito de amenaza lo exige.
+
+**Estado de release:** NO APTO. Los tests Dart verdes no compensan el build iOS rojo ni sustituyen builds nativos integrados y verificación de privacidad en dispositivos reales.
