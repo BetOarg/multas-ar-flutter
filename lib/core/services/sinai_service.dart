@@ -15,8 +15,8 @@
 //   - PBA usa su propio portal: multastransito.gba.gob.ar
 //   - CABA: tramitación online GCBA (buscaminfracciones.buenosaires.gob.ar)
 //
-// ADVERTENCIA: Los portales gubernamentales cambian su estructura
-// con frecuencia. Verificar URLs y selectores antes de cada release.
+// Nota: los portales externos pueden cambiar sus URLs. Verificar los enlaces
+// de navegación manual antes de cada release; no hay scraping ni selectores.
 // ══════════════════════════════════════════════════════════════════
 
 /// Infracción encontrada en consulta online
