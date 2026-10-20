@@ -75,3 +75,13 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es/).
 - **AuthBloc**: gestión completa del ciclo de vida de autenticación
 - **Guard de autenticación**: GoRouter redirige a /auth si no hay sesión
 - **7 tests** AuthBloc: verificación, email exitoso/fallido, Google, modo local, logout
+
+
+## Privacidad local estricta (trabajo en curso)
+
+- Eliminada la actualización automática de normativa por Internet.
+- Eliminada la dependencia de red directa desde Android mediante el permiso INTERNET.
+- Retirada la referencia a análisis remoto con Anthropic en la configuración.
+- La URL de consulta CABA ya no incluye automáticamente la patente.
+- Actualizada la política de privacidad y la ficha de tienda.
+- Pendiente: validar builds nativos, tráfico de red y flujos de exportación en dispositivos reales.
