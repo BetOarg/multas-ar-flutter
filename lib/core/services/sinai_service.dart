@@ -1,5 +1,3 @@
-import 'package:http/http.dart' as http;
-
 // ══════════════════════════════════════════════════════════════════
 // SINAI / DVE SERVICE
 // Proporciona URLs públicas para apertura manual. No envía patentes ni datos del acta.
@@ -76,10 +74,7 @@ abstract class UrlsConsulta {
 // SERVICIO PRINCIPAL
 // ══════════════════════════════════════════════════════════════════
 class SinaiService {
-  final http.Client _client;
-
-  SinaiService({http.Client? client})
-      : _client = client ?? http.Client();
+  SinaiService();
 
   // ── Consulta PBA ─────────────────────────────────────────────
   /// Abre la URL del portal PBA para consulta manual.
@@ -153,5 +148,4 @@ class SinaiService {
     return resultados;
   }
 
-  void dispose() => _client.close();
 }
