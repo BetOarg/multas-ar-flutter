@@ -12,7 +12,7 @@ Asistente legal para análisis de infracciones de tránsito en Argentina.
 | OCR Android | Canal nativo PaddleOCR/ONNX (requiere modelos; no verificado en build) |
 | OCR iOS | Apple Vision Framework (implementación presente; build iOS no verificado) |
 | OCR Fallback | google_mlkit_text_recognition |
-| Análisis IA | Integración Anthropic no acreditada en la configuración/dependencias inspeccionadas |
+| Análisis | Motor local de reglas y plazos; sin IA remota ni envío automático de datos |
 | Navegación | go_router |
 | Notificaciones | flutter_local_notifications |
 | Almacenamiento seguro | flutter_secure_storage para secretos compatibles; no implica cifrado de la base SQLite |
@@ -48,7 +48,7 @@ flutter test test/integration/
 
 ## Modelos PaddleOCR (Android)
 
-Los modelos no están incluidos actualmente en este repositorio. Antes de declarar PaddleOCR operativo, obtener modelos compatibles, revisar sus licencias y añadirlos en `assets/models/`:
+Los modelos se descargan y verifican durante la compilación Android desde una fuente fijada en Gradle; no se descargan durante el uso de la app. La inferencia debe validarse antes de declarar PaddleOCR operativo. Assets esperados:
 ```
 assets/models/
 ├── det.onnx          # Detección de regiones (960×960)
@@ -106,7 +106,7 @@ lib/
 
 ## Estado de verificación
 
-La presencia de código fuente no demuestra que una función esté lista para producción. En la revisión estática actual no se encontraron los modelos PaddleOCR ni los archivos esenciales del proyecto Gradle raíz y Xcode/Pods; tampoco hay workflows de CI. No se han ejecutado builds ni tests en un entorno Flutter en esta auditoría. La integración Anthropic, el cifrado real de SQLite y la sincronización Firebase deben verificarse antes de presentarse como capacidades disponibles.
+La presencia de código fuente no demuestra que una función esté lista para producción. La app está configurada para procesamiento local, sin llamada OTA automática ni permiso Android INTERNET. Aún deben verificarse los builds nativos reales, el OCR en dispositivos, el tráfico de red y la eliminación de datos. SQLite/Drift no debe describirse como cifrado a nivel de archivo sin una implementación y pruebas específicas.
 
 ## Roadmap
 
