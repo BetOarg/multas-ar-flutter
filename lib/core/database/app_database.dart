@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'tables/tables.dart';
@@ -91,6 +92,12 @@ class AppDatabase extends _$AppDatabase {
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dir  = await getApplicationDocumentsDirectory();
+    // La base existente permanece en Documents para no perder datos locales.
+    // En iOS se excluye el directorio completo de copias de seguridad.
+    if (Platform.isIOS) {
+      await const MethodChannel('com.betOarg.multas_ar/privacy')
+          .invokeMethod<void>('excludeFromBackup', {'path': dir.path});
+    }
     final file = File(p.join(dir.path, 'multas_ar.db'));
     return NativeDatabase.createInBackground(file);
   });
