@@ -179,7 +179,7 @@ jobs:
           # Regenerate project files after applying the app pubspec so Flutter
           # applies its current CocoaPods/SPM setting to the Xcode project itself.
           # Do this before overlaying app-owned Swift and plist files.
-          (cd "$candidate" && flutter create --platforms=ios --org com.betOarg --project-name multas_ar .)
+          (cd "$candidate" && flutter create --overwrite --platforms=ios --org com.betOarg --project-name multas_ar .)
           rm -rf "$candidate/lib"
           cp -a "$GITHUB_WORKSPACE/lib" "$candidate/lib"
           if [ -f "$GITHUB_WORKSPACE/analysis_options.yaml" ]; then
