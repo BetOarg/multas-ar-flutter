@@ -219,3 +219,22 @@ flutter build apk --release --split-per-abi
 - [ ] Verificar que el archivo LICENSE/NOTICE se distribuya con la app y la atribución quede accesible.
 - [ ] Corregir y repetir el smoke test iOS: run previo `39352013457` rojo por `Cannot find 'OcrPlugin' in scope`; el workflow fue actualizado para compilar el plugin en el scaffold temporal.
 - [ ] Seguir bloqueado para release hasta que los builds nativos reales del repositorio estén verdes.
+
+
+## Privacidad estricta: datos solo en el dispositivo — 2026-10-20
+
+- [x] Retirada de la llamada OTA automática a GitHub durante el arranque.
+- [x] Eliminada la implementación de descarga OTA de normativa del repositorio; la normativa se carga desde assets locales.
+- [x] Eliminado el permiso Android INTERNET para impedir conexiones de red directas desde el proceso de la app.
+- [x] Eliminada la excepción ATS específica de Anthropic en Info.plist.
+- [x] Retirado de Configuración el mensaje que anunciaba análisis de imagen con Anthropic.
+- [x] Eliminada la patente de la URL de consulta CABA generada por la app.
+- [x] Actualizada la política de privacidad y la ficha de tienda para no prometer IA remota ni actualizaciones automáticas.
+- [ ] Compilar Android e iOS desde el proyecto nativo integrado y confirmar que los cambios compilan.
+- [ ] Revisar todos los flujos de exportación/compartición: solo deben enviar archivos si el usuario inicia expresamente la acción.
+- [ ] Ejecutar prueba de tráfico de red en Android e iOS; confirmar que la app no transmite imágenes, texto OCR, patentes, datos de casos ni configuración.
+- [ ] Validar en dispositivos reales OCR local, consulta manual de portales, notificaciones y eliminación de datos.
+- [ ] Revisar que ninguna dependencia agregue telemetría o conexiones automáticas.
+- [ ] No declarar privacidad verificada ni publicar hasta completar las pruebas anteriores.
+
+**Alcance:** abrir un portal en el navegador o compartir/exportar un documento puede transferir información solo si el usuario lo elige. La app no debe rellenar automáticamente URLs con patentes ni enviar contenido en segundo plano.
