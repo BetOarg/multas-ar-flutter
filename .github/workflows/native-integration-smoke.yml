@@ -237,6 +237,27 @@ jobs:
           set -o pipefail
           flutter build ios --simulator --no-codesign --no-pub 2>&1 | tee "$RUNNER_TEMP/native-integration-ios/ios-simulator-build.log"
 
+      - name: Diagnose CocoaPods framework linkage
+        if: failure()
+        shell: bash
+        working-directory: ${{ runner.temp }}/native-integration-ios/candidate
+        run: |
+          set +e
+          out="$RUNNER_TEMP/native-integration-ios/cocoapods-linkage-diagnostics.log"
+          {
+            echo "=== Flutter config ==="
+            flutter config --list
+            echo "=== Podfile ==="
+            cat ios/Podfile
+            echo "=== Pods_Runner artifacts ==="
+            find ios/Pods -iname '*Pods_Runner*' -o -path '*/Target Support Files/Pods-Runner/*' 2>&1
+            echo "=== Xcode project linkage settings ==="
+            grep -nE 'Pods_Runner|baseConfigurationReference|OTHER_LDFLAGS|FRAMEWORK_SEARCH_PATHS|SWIFT_VERSION' ios/Runner.xcodeproj/project.pbxproj
+            echo "=== Generated CocoaPods xcconfig files ==="
+            find ios/Pods/Target\ Support\ Files/Pods-Runner -maxdepth 1 -type f -print -exec sed -n '1,180p' {} \; 2>&1
+            echo "=== Workspace and project files ==="
+            find ios -maxdepth 3 \( -name '*.xcworkspace' -o -name '*.xcscheme' -o -name 'Flutter-*.xcconfig' \) -print
+          } 2>&1 | tee "$out"
       - name: Upload iOS diagnostic logs
         if: always()
         uses: actions/upload-artifact@v4
