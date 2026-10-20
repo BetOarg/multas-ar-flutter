@@ -1,23 +1,16 @@
 import 'dart:convert';
 import 'package:drift/drift.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:http/http.dart' as http;
 import '../database/app_database.dart';
 import '../database/daos/normativa_dao.dart';
 
 // ══════════════════════════════════════════════════════════════════
 // NORMATIVA REPOSITORY
-// Carga normativa desde assets locales (seed) o desde URL remota
-// (OTA). Usa versionado: solo actualiza si el servidor tiene
-// versión mayor a la almacenada en la DB.
-//
-// URL OTA apunta al JSON versionado en assets/normativa del repositorio.
- // Mantener el esquema JSON compatible con _actualizarDesdeJson.
+// Carga normativa exclusivamente desde assets locales incluidos en la app.
+// No consulta servidores ni transmite datos durante el uso.
 // ══════════════════════════════════════════════════════════════════
 
 class NormativaRepository {
-  static const _urlOta =
-      'https://raw.githubusercontent.com/BetOarg/multas-ar-flutter/main/assets/normativa/normativa_base.json';
   static const _assetPath = 'assets/normativa/normativa_base.json';
 
   final NormativaDao _dao;
@@ -41,31 +34,6 @@ class NormativaRepository {
     } catch (e) {
       // No interrumpir la app si el asset falla
       assert(false, 'Error cargando normativa desde assets: $e');
-    }
-  }
-
-  // ── Actualización OTA ─────────────────────────────────────
-  /// Retorna [true] si hubo actualización, [false] si ya estaba
-  /// vigente o si hubo error de red.
-  Future<bool> actualizarOta({Duration timeout = const Duration(seconds: 10)}) async {
-    try {
-      final resp = await http
-          .get(Uri.parse(_urlOta))
-          .timeout(timeout);
-
-      if (resp.statusCode != 200) return false;
-
-      final json       = jsonDecode(resp.body) as Map<String, dynamic>;
-      final versionRemota = json['version'] as int? ?? 0;
-      final versionLocal  = await _dao.getVersionActual();
-
-      if (versionRemota <= versionLocal) return false;
-
-      await _actualizarDesdeJson(json);
-      return true;
-    } catch (_) {
-      // Sin conexión o timeout → continuar con versión local
-      return false;
     }
   }
 
