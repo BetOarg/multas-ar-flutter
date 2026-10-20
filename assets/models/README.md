@@ -10,7 +10,7 @@ Esta carpeta debe contener los cuatro recursos de PaddleOCR para habilitar el mo
 Los binarios no se incluyen en este repositorio. Sin ellos, el canal Android debe informar que PaddleOCR no está disponible y la aplicación debe recurrir al motor OCR alternativo (ML Kit). Antes de incorporar modelos, verificar licencia, procedencia, compatibilidad de entradas/salidas y tamaño de distribución. No renombrar modelos incompatibles para aparentar disponibilidad.
 
 
-## Fuente gratuita propuesta (pendiente de integración y validación)
+## Fuente gratuita integrada en Gradle (inferencia pendiente)
 
 Repositorio GitHub: https://github.com/gitakoos/ocr-models
 Release fijada: https://github.com/gitakoos/ocr-models/releases/tag/v1
@@ -22,4 +22,4 @@ Assets publicados y SHA-256 del README upstream:
 - rec_latin.onnx (destino local rec.onnx) — 995b0f5f28d2073896a78c03b5b863eae6af3744bafa0245b8522beea6994927
 - ppocrv5_latin_dict.txt (destino local ppocr_keys.txt) — ccbcc45730b3fbbd9050c5bc74db6a99067141ef1035e3d14889a84a6b9b1aff
 
-No incorporar los binarios al bundle hasta validar la compatibilidad de entradas/salidas y decodificación con OcrChannel.kt. El reconocimiento requiere entrada BGR normalizada a [-1, 1], tensor [N,3,48,W] y salida CTC [N,T,838]. La inferencia es local; no requiere API de pago ni llamadas a la nube.
+La tarea `downloadOcrModels` en `android/app/build.gradle` descarga estos recursos antes de `preBuild`, verifica SHA-256 y los instala en `android/app/src/main/assets/models`, que es la ruta que lee `OcrChannel.kt`. El build requiere acceso a GitHub; la app no descarga los modelos durante su ejecución. Antes de declarar PaddleOCR operativo, hay que validar preprocesamiento y decodificación: el reconocedor requiere entrada BGR normalizada a [-1, 1], tensor [N,3,48,W] y salida CTC [N,T,838]. La inferencia es local; no requiere API de pago ni llamadas OCR a la nube.
