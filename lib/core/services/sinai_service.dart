@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 
 // ══════════════════════════════════════════════════════════════════
 // SINAI / DVE SERVICE
-// Consulta de infracciones online por patente.
+// Proporciona URLs públicas para apertura manual. No envía patentes ni datos del acta.
 //
 // SINAI (Sistema de Notificación de Infracciones) — ANSV
 //   URL pública: https://www.argentina.gob.ar/transporte/ansv/sinai
@@ -101,7 +101,7 @@ class SinaiService {
     return ResultadoConsultaOnline(
       exito: true,
       fuente: 'CABA',
-      urlConsultada: '${UrlsConsulta.caba}?dominio=${patente.toUpperCase()}',
+      urlConsultada: UrlsConsulta.caba,
       errorMensaje: 'El portal CABA requiere validación manual.',
     );
   }
@@ -134,8 +134,7 @@ class SinaiService {
       resultados.add(ResultadoConsultaOnline(
         exito: true,
         fuente: 'CABA',
-        urlConsultada:
-            '${UrlsConsulta.caba}?dominio=${patente.toUpperCase()}',
+        urlConsultada: UrlsConsulta.caba,
       ));
     }
     // SINAI siempre disponible como respaldo
