@@ -78,6 +78,32 @@ jobs:
             echo "No repository files were modified by this workflow."
           } | tee "$RUNNER_TEMP/native-integration/TEST_SCOPE.txt"
 
+      - name: Fetch free PaddleOCR assets from pinned GitHub release
+        shell: bash
+        run: |
+          set -euo pipefail
+          candidate="$RUNNER_TEMP/native-integration/candidate"
+          mkdir -p "$candidate/assets/models" "$candidate/android/app/src/main/assets/models"
+          fetch_verified() {
+            local source="$1" target="$2" expected="$3"
+            curl --fail --location --retry 3 --silent --show-error \
+              "https://github.com/gitakoos/ocr-models/releases/download/v1/$source" -o "$RUNNER_TEMP/$source"
+            echo "$expected  $RUNNER_TEMP/$source" | shasum -a 256 -c -
+            cp "$RUNNER_TEMP/$source" "$candidate/assets/models/$target"
+            cp "$RUNNER_TEMP/$source" "$candidate/android/app/src/main/assets/models/$target"
+          }
+          fetch_verified det.onnx det.onnx d7fe3ea74652890722c0f4d02458b7261d9f5ae6c92904d05707c9eb155c7924
+          fetch_verified cls.onnx cls.onnx f4bb53707100c5f3d59ba834eb05bb400369f20aed35d4b26807b1bfadd2a70e
+          fetch_verified rec_latin.onnx rec.onnx 995b0f5f28d2073896a78c03b5b863eae6af3744bafa0245b8522beea6994927
+          fetch_verified ppocrv5_latin_dict.txt ppocr_keys.txt ccbcc45730b3fbbd9050c5bc74db6a99067141ef1035e3d14889a84a6b9b1aff
+          for name in LICENSE NOTICE; do
+            curl --fail --location --retry 3 --silent --show-error \
+              "https://raw.githubusercontent.com/gitakoos/ocr-models/main/$name" \
+              -o "$candidate/assets/models/$name"
+            cp "$candidate/assets/models/$name" "$candidate/android/app/src/main/assets/models/$name"
+          done
+          du -h "$candidate/assets/models/"*
+
       - name: Resolve Flutter dependencies
         shell: bash
         working-directory: ${{ runner.temp }}/native-integration/candidate
