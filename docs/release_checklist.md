@@ -1,3 +1,16 @@
+# Estado verificado — 2026-10-20, commit 46ac19a
+
+> **NO APTO PARA RELEASE.** Validación del último commit:
+> - Flutter checks: **VERDE**, run [39464215451](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39464215451).
+> - Smoke Android sobre scaffold temporal: **VERDE**, run [39464215333](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39464215333). No compila el árbol nativo versionado.
+> - Smoke iOS del scaffold temporal: **CANCELADO**; no hay resultado de build, run [39464215333](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39464215333).
+> - Restauración e integración del scaffold real: **CANCELADA**, run [39464215519](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39464215519). El job no ejecutó pasos; no añadió archivos.
+> - Confirmado que siguen ausentes `android/settings.gradle`, `android/gradlew`, `android/gradle/wrapper/gradle-wrapper.properties`, `ios/Podfile` y `ios/Runner.xcodeproj/project.pbxproj`.
+>
+> Por tanto, no se ha demostrado una compilación real de Android/iOS. Mantener bloqueada la publicación. No confundir smoke temporal con integración nativa real.
+
+---
+
 # Release Checklist — Multas Argentina Pro
 ## Google Play Store v1.0.0
 
