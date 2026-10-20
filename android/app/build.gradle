@@ -121,6 +121,18 @@ tasks.register("downloadOcrModels") {
             }
             logger.lifecycle("Downloaded and verified OCR model: ${model.target}")
         }
+        // Preserve the upstream Apache-2.0 license and model attribution notice.
+        ["LICENSE", "NOTICE"].each { name ->
+            def destination = file("${ocrModelsDir}/${name}")
+            def url = new URL("https://raw.githubusercontent.com/gitakoos/ocr-models/86b424bec2b9210e24db414d3ce7a534688fbc25/${name}")
+            def connection = url.openConnection()
+            connection.connectTimeout = 20000
+            connection.readTimeout = 30000
+            connection.setRequestProperty("User-Agent", "Multas-Argentina-Pro-build")
+            connection.getInputStream().withCloseable { input ->
+                destination.withOutputStream { output -> output << input }
+            }
+        }
     }
 }
 tasks.named("preBuild").configure { dependsOn("downloadOcrModels") }
