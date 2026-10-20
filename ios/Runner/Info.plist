@@ -76,23 +76,7 @@
   <key>UIMainStoryboardFile</key>
   <string>Main</string>
 
-  <!-- ── Seguridad de red ────────────────────────────────────── -->
-  <!-- Permitir HTTPS a api.anthropic.com únicamente -->
-  <key>NSAppTransportSecurity</key>
-  <dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <false/>
-    <key>NSExceptionDomains</key>
-    <dict>
-      <key>api.anthropic.com</key>
-      <dict>
-        <key>NSExceptionAllowsInsecureHTTPLoads</key>
-        <false/>
-        <key>NSIncludesSubdomains</key>
-        <true/>
-      </dict>
-    </dict>
-  </dict>
+  <!-- Sin integración de IA ni endpoints remotos en la app. -->
 
   <!-- ── Flutter ────────────────────────────────────────────── -->
   <key>CADisableMinimumFrameDurationOnPhone</key>
