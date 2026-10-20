@@ -157,6 +157,16 @@ jobs:
           channel: stable
           cache: true
 
+      - name: Force CocoaPods integration for iOS scaffold
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Flutter stable may enable Swift Package Manager in its generated
+          # Xcode project; this app's plugins require CocoaPods. Force one
+          # dependency integration mode before generating the native scaffold.
+          flutter config --no-enable-swift-package-manager
+          flutter config --list
+
       - name: Generate isolated Flutter iOS scaffold
         shell: bash
         run: |
