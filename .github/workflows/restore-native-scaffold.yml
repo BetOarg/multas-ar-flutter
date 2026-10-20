@@ -1,0 +1,151 @@
+name: Restore and validate native Flutter scaffold
+
+on:
+  push:
+    branches:
+      - "fix/**"
+    paths:
+      - ".github/workflows/restore-native-scaffold.yml"
+      - "android/**"
+      - "ios/**"
+      - "pubspec.yaml"
+      - "lib/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: restore-native-scaffold-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  restore-and-build:
+    name: Merge missing scaffold files without replacing app-owned native code
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Set up Flutter stable
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Generate isolated official scaffold
+        shell: bash
+        run: |
+          set -euo pipefail
+          flutter config --no-enable-swift-package-manager
+          mkdir -p "$RUNNER_TEMP/native-scaffold"
+          cd "$RUNNER_TEMP/native-scaffold"
+          flutter create \
+            --platforms=android,ios \
+            --org com.betOarg \
+            --project-name multas_ar \
+            candidate
+
+      - name: Add only missing native scaffold files
+        shell: bash
+        run: |
+          set -euo pipefail
+          export SCAFFOLD="$RUNNER_TEMP/native-scaffold/candidate"
+          export REPO="$GITHUB_WORKSPACE"
+          python3 - <<'PY'
+          import os
+          import shutil
+          from pathlib import Path
+
+          source = Path(os.environ["SCAFFOLD"])
+          target = Path(os.environ["REPO"])
+          excluded_exact = {
+              ".metadata",
+              "android/local.properties",
+              "android/app/build.gradle.kts",
+              "android/app/src/main/AndroidManifest.xml",
+              "ios/Runner/AppDelegate.swift",
+              "ios/Runner/Info.plist",
+          }
+          excluded_prefixes = (
+              "build/",
+              ".dart_tool/",
+              "ios/Flutter/ephemeral/",
+          )
+          excluded_names = {
+              "Generated.xcconfig",
+              "flutter_export_environment.sh",
+          }
+          added = []
+          for platform in ("android", "ios"):
+              root = source / platform
+              if not root.exists():
+                  raise SystemExit(f"Generated scaffold is missing {platform}/")
+              for item in sorted(root.rglob("*")):
+                  if not item.is_file():
+                      continue
+                  rel = item.relative_to(source).as_posix()
+                  if rel in excluded_exact:
+                      continue
+                  if any(rel.startswith(prefix) for prefix in excluded_prefixes):
+                      continue
+                  if item.name in excluded_names:
+                      continue
+                  destination = target / rel
+                  if destination.exists():
+                      continue
+                  destination.parent.mkdir(parents=True, exist_ok=True)
+                  shutil.copy2(item, destination)
+                  added.append(rel)
+          if not added:
+              print("No missing native scaffold files; existing project files were preserved.")
+          else:
+              print("Added missing scaffold files:")
+              print("\n".join(added))
+          PY
+
+      - name: Commit restored scaffold files if needed
+        id: commit_scaffold
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add android ios
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No scaffold changes to commit."
+          else
+            git commit -m "build: restore missing Flutter native scaffold"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Resolve Flutter dependencies
+        run: flutter pub get
+
+      - name: Generate Drift sources
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Analyze Dart code
+        run: flutter analyze
+
+      - name: Run Flutter tests
+        run: flutter test
+
+      - name: Build real Android debug APK
+        run: flutter build apk --debug
+
+      - name: Install iOS CocoaPods dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd ios
+          pod install --repo-update
+
+      - name: Build real iOS app without code signing
+        run: flutter build ios --no-codesign
