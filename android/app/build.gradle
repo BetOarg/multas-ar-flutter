@@ -72,6 +72,58 @@ android {
     androidResources {
         noCompress "onnx", "bin"
     }
+
+/*
+ * Free, on-device PaddleOCR models from the pinned GitHub release.
+ * Downloads are checksum-verified into Android native assets before build;
+ * model files are not checked into git and no paid OCR API/cloud is used.
+ */
+def ocrModelsDir = file("src/main/assets/models")
+def ocrModelAssets = [
+    [source: "det.onnx", target: "det.onnx", sha256: "d7fe3ea74652890722c0f4d02458b7261d9f5ae6c92904d05707c9eb155c7924"],
+    [source: "cls.onnx", target: "cls.onnx", sha256: "f4bb53707100c5f3d59ba834eb05bb400369f20aed35d4b26807b1bfadd2a70e"],
+    [source: "rec_latin.onnx", target: "rec.onnx", sha256: "995b0f5f28d2073896a78c03b5b863eae6af3744bafa0245b8522beea6994927"],
+    [source: "ppocrv5_latin_dict.txt", target: "ppocr_keys.txt", sha256: "ccbcc45730b3fbbd9050c5bc74db6a99067141ef1035e3d14889a84a6b9b1aff"],
+]
+tasks.register("downloadOcrModels") {
+    group = "build setup"
+    description = "Fetches free PaddleOCR assets from a pinned GitHub release and verifies SHA-256."
+    outputs.files(ocrModelAssets.collect { file("${ocrModelsDir}/${it.target}") })
+    doLast {
+        ocrModelsDir.mkdirs()
+        ocrModelAssets.each { model ->
+            def destination = file("${ocrModelsDir}/${model.target}")
+            def url = new URL("https://github.com/gitakoos/ocr-models/releases/download/v1/${model.source}")
+            if (destination.exists()) {
+                def existing = java.security.MessageDigest.getInstance("SHA-256").digest(destination.bytes).encodeHex().toString()
+                if (existing == model.sha256) {
+                    logger.lifecycle("OCR model already verified: ${model.target}")
+                    return
+                }
+            }
+            def temporary = file("${destination}.download")
+            def connection = url.openConnection()
+            connection.connectTimeout = 20000
+            connection.readTimeout = 120000
+            connection.setRequestProperty("User-Agent", "Multas-Argentina-Pro-build")
+            connection.getInputStream().withCloseable { input ->
+                temporary.withOutputStream { output -> output << input }
+            }
+            def actual = java.security.MessageDigest.getInstance("SHA-256").digest(temporary.bytes).encodeHex().toString()
+            if (actual != model.sha256) {
+                temporary.delete()
+                throw new GradleException("OCR model SHA-256 mismatch for ${model.source}: ${actual}")
+            }
+            if (destination.exists()) destination.delete()
+            if (!temporary.renameTo(destination)) {
+                temporary.delete()
+                throw new GradleException("Could not install OCR model ${destination}")
+            }
+            logger.lifecycle("Downloaded and verified OCR model: ${model.target}")
+        }
+    }
+}
+tasks.named("preBuild").configure { dependsOn("downloadOcrModels") }
 }
 
 flutter {
