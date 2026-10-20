@@ -55,7 +55,7 @@ void main() async {
   // ── Normativa ─────────────────────────────────────────────────
   final normativaRepo = NormativaRepository(normativaDao);
   await normativaRepo.inicializar();
-  normativaRepo.actualizarOta().ignore();
+  // Privacidad: la normativa se carga solo desde assets locales; sin llamadas de red automáticas.
 
   // ── Feriados ──────────────────────────────────────────────────
   final anio      = DateTime.now().year;
