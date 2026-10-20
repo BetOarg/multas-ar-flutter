@@ -222,6 +222,7 @@ flutter build apk --release --split-per-abi
 
 
 ## Privacidad estricta: datos solo en el dispositivo — 2026-10-20
+- [ ] Probar en dispositivos reales que la base de datos y archivos locales quedan excluidos de copias de seguridad del sistema en Android e iOS.
 
 - [x] Retirada de la llamada OTA automática a GitHub durante el arranque.
 - [x] Eliminada la implementación de descarga OTA de normativa del repositorio; la normativa se carga desde assets locales.
