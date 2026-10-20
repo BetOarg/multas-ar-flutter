@@ -206,3 +206,16 @@ flutter build apk --release --split-per-abi
 - [ ] Verificar los cuatro assets de PaddleOCR: el árbol actual solo contiene `assets/models/README.md`; los archivos de modelo no están presentes.
 - [ ] Ejecutar build Android desde el scaffold ya integrado y build iOS en macOS/Xcode.
 - [ ] Configurar y validar firma release; después generar y verificar el AAB.
+
+
+## OCR gratuito y local — 2026-10-20
+
+- Fuente de modelos: [gitakoos/ocr-models, release v1](https://github.com/gitakoos/ocr-models/releases/tag/v1), PP-OCRv5 Latin/ONNX bajo Apache-2.0.
+- Se añadió a `android/app/build.gradle` la tarea `downloadOcrModels`: obtiene los cuatro recursos desde la release fijada, valida SHA-256 y los instala en `android/app/src/main/assets/models`, donde `OcrChannel.kt` los busca. También descarga LICENSE y NOTICE desde el commit upstream fijado `86b424bec2b9210e24db414d3ce7a534688fbc25`.
+- El OCR no usa una API de pago ni envía imágenes a un servicio OCR en la nube. Android mantiene ML Kit como fallback; iOS utiliza Apple Vision integrado en el sistema.
+- Los binarios no se versionan en Git; el build necesita conexión a GitHub para descargarlos. Sin conexión o si falla la validación de hash, la compilación falla explícitamente.
+- [ ] Verificar en CI la tarea Gradle y los cuatro SHA-256.
+- [ ] Validar el preprocesamiento y decodificación del modelo con imágenes de actas argentinas; no declarar PaddleOCR listo hasta pasar pruebas de inferencia.
+- [ ] Verificar que el archivo LICENSE/NOTICE se distribuya con la app y la atribución quede accesible.
+- [ ] Corregir y repetir el smoke test iOS: run previo `39352013457` rojo por `Cannot find 'OcrPlugin' in scope`; el workflow fue actualizado para compilar el plugin en el scaffold temporal.
+- [ ] Seguir bloqueado para release hasta que los builds nativos reales del repositorio estén verdes.
