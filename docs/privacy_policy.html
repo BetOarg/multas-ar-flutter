@@ -6,153 +6,64 @@
   <title>Política de Privacidad — Multas Argentina Pro</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #0d1117; color: #c9d1d9;
-      max-width: 760px; margin: 0 auto;
-      padding: 40px 24px 80px;
-      line-height: 1.7; font-size: 15px;
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; max-width: 760px; margin: 0 auto; padding: 40px 24px 80px; line-height: 1.7; font-size: 15px; }
     h1 { color: #e6edf3; font-size: 1.6rem; margin-bottom: 8px; }
-    h2 { color: #e6edf3; font-size: 1.1rem; margin: 32px 0 10px;
-         padding-bottom: 6px; border-bottom: 1px solid #21262d; }
-    p  { color: #8b949e; margin-bottom: 12px; }
-    ul { color: #8b949e; padding-left: 20px; margin-bottom: 12px; }
-    li { margin-bottom: 6px; }
+    h2 { color: #e6edf3; font-size: 1.1rem; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #21262d; }
+    p, ul { color: #8b949e; margin-bottom: 12px; }
+    ul { padding-left: 20px; } li { margin-bottom: 6px; }
     .date { color: #6e7681; font-size: 13px; margin-bottom: 32px; }
-    .highlight {
-      background: #161b22; border: 1px solid #30363d;
-      border-radius: 8px; padding: 16px 20px; margin: 20px 0;
-      color: #c9d1d9;
-    }
+    .highlight { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px 20px; margin: 20px 0; color: #c9d1d9; }
     a { color: #58a6ff; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .badge {
-      display: inline-block; background: #1f6feb;
-      color: #fff; font-size: 11px; font-weight: 700;
-      padding: 2px 8px; border-radius: 20px;
-      letter-spacing: 0.04em; margin-right: 6px;
-    }
   </style>
 </head>
 <body>
-
 <h1>Política de Privacidad</h1>
-<h1 style="color:#4361ee; font-size:1.1rem; font-weight:500; margin-top:4px;">
-  Multas Argentina Pro
-</h1>
+<h1 style="color:#4361ee; font-size:1.1rem; font-weight:500; margin-top:4px;">Multas Argentina Pro</h1>
 <p class="date">Última actualización: octubre de 2026</p>
 
-<div class="highlight">
-  <strong>Resumen:</strong> Multas Argentina Pro almacena todos los datos
-  exclusivamente en tu dispositivo. No recopilamos ni transmitimos información
-  personal a servidores propios, excepto cuando elegís usar el análisis con IA
-  (que envía la imagen del acta a Anthropic).
-</div>
+<div class="highlight"><strong>Compromiso:</strong> las fotos de actas, patentes, nombres, DNI, domicilios, texto OCR, casos, escritos y configuración se procesan y almacenan localmente. La app no incorpora una API de OCR/IA en la nube, no sincroniza datos y no debe transmitir esos datos a servidores.</div>
 
-<h2>1. Quiénes somos</h2>
-<p>
-  Multas Argentina Pro es desarrollada por <strong>BetOarg</strong>
-  (Alberto Mario Lucchetta), Buenos Aires, Argentina.
-  Contacto: <a href="mailto:privacidad@multasargentina.app">privacidad@multasargentina.app</a>
-</p>
+<h2>1. Responsable y contacto</h2>
+<p>Multas Argentina Pro es desarrollada por BetOarg, Buenos Aires, Argentina. Contacto: <a href="mailto:privacidad@multasargentina.app">privacidad@multasargentina.app</a>.</p>
 
-<h2>2. Datos que procesamos y cómo</h2>
-
-<p><span class="badge">LOCAL</span>
-  Los siguientes datos se almacenan <em>únicamente en tu dispositivo</em>
-  usando SQLite cifrado y no salen nunca a ningún servidor:
-</p>
+<h2>2. Datos procesados</h2>
+<p>La aplicación puede procesar localmente:</p>
 <ul>
-  <li>Datos de actas de infracción ingresados manualmente o por OCR</li>
-  <li>Plazos calculados y alertas de vencimiento</li>
-  <li>Escritos jurídicos generados</li>
-  <li>Configuración de perfil (nombre, matrícula, jurisdicción preferida)</li>
-  <li>Imágenes de actas fotografiadas o seleccionadas de la galería</li>
+<li>Fotos o imágenes de actas seleccionadas por el usuario.</li>
+<li>Texto extraído mediante OCR, incluidos patente, fecha, número de acta y otros campos.</li>
+<li>Casos, plazos, alertas, escritos generados y datos de configuración profesional.</li>
+<li>Preferencias y datos necesarios para las funciones locales.</li>
+</ul>
+<p>Estos datos se almacenan en el dispositivo. No se envían automáticamente a servidores propios ni de terceros. La base de datos utiliza SQLite/Drift; no afirmamos que toda la base esté cifrada a nivel de archivo. Los datos sensibles de configuración guardados mediante flutter_secure_storage usan los mecanismos de protección disponibles en el sistema operativo.</p>
+
+<h2>3. OCR y análisis</h2>
+<p>El OCR está diseñado para ejecutarse en el dispositivo: PaddleOCR/ONNX en Android, Apple Vision en iOS y ML Kit como alternativa local. La disponibilidad y precisión de cada motor dependen de que la integración nativa y los modelos se hayan compilado y validado correctamente. No se utiliza una API remota de OCR ni de análisis con IA.</p>
+
+<h2>4. Conexiones externas y acciones del usuario</h2>
+<p>La aplicación no debe realizar llamadas de red automáticas ni enviar datos de actas, patentes, identificadores o perfiles. La normativa incluida se carga desde archivos locales de la aplicación; no se actualiza automáticamente por Internet.</p>
+<p>Si el usuario decide abrir un portal oficial en el navegador, el navegador y el sitio elegido quedan fuera del control de la aplicación y se aplican sus propias políticas. La app no debe adjuntar automáticamente la patente ni otros datos del caso a la dirección del portal. Del mismo modo, si el usuario exporta o comparte un documento mediante las funciones del sistema operativo, el destino elegido por el usuario puede recibir ese documento.</p>
+
+<h2>5. Permisos</h2>
+<ul>
+<li><strong>Cámara y galería:</strong> para capturar o seleccionar imágenes que se procesan localmente.</li>
+<li><strong>Notificaciones:</strong> para recordatorios locales de vencimientos.</li>
+<li><strong>Almacenamiento/archivos:</strong> para importar o exportar documentos cuando el usuario lo solicita.</li>
 </ul>
 
-<p><span class="badge" style="background:#e3b341; color:#000;">EXTERNO</span>
-  Los siguientes datos se envían a terceros <em>sólo cuando vos iniciás el
-  análisis con IA</em>:
-</p>
-<ul>
-  <li>
-    <strong>Imagen del acta</strong> → enviada a
-    <a href="https://www.anthropic.com/privacy" target="_blank">Anthropic, Inc.</a>
-    para análisis con Claude. Anthropic procesa la imagen y responde con el análisis;
-    no la almacena para entrenamiento (según su política comercial vigente).
-    La imagen puede contener datos personales del acta (nombre, DNI, patente).
-  </li>
-</ul>
+<h2>6. Publicidad, seguimiento y cuentas</h2>
+<p>No se incorporan anuncios, analíticas, seguimiento publicitario, sincronización en la nube ni cuentas remotas en esta versión. No vendemos ni compartimos datos con anunciantes.</p>
 
-<h2>3. Permisos de la app</h2>
-<ul>
-  <li><strong>Cámara:</strong> para fotografiar actas. Las fotos solo se guardan localmente.</li>
-  <li><strong>Galería:</strong> para seleccionar imágenes existentes.</li>
-  <li><strong>Internet:</strong> únicamente para el análisis con IA (Anthropic API)
-      y para actualizaciones de la base normativa desde GitHub.</li>
-  <li><strong>Notificaciones:</strong> para alertas de vencimiento de plazos.
-      Opcionales y configurables.</li>
-  <li><strong>Alarmas exactas:</strong> para programar las notificaciones de vencimiento
-      en el momento preciso (Android 13+).</li>
-</ul>
+<h2>7. Eliminación</h2>
+<p>Los datos locales pueden eliminarse desde las funciones de gestión de datos disponibles en la app o desinstalando la aplicación. Antes de publicar, debe comprobarse que la opción de eliminación anunciada en la interfaz exista y elimine realmente la base de datos, archivos e imágenes asociados.</p>
 
-<h2>4. No recopilamos ni vendemos datos</h2>
-<p>
-  Multas Argentina Pro <strong>no recopila datos de uso, analíticas, ni
-  telemetría</strong>. No usamos Firebase Analytics, Crashlytics, ni ninguna
-  SDK de rastreo de terceros. No vendemos ni compartimos datos personales
-  con anunciantes.
-</p>
+<h2>8. Menores</h2>
+<p>La aplicación está orientada a personas adultas que gestionan infracciones de tránsito.</p>
 
-<h2>5. Almacenamiento seguro</h2>
-<p>
-  Los datos de configuración sensibles (clave de API, datos profesionales)
-  se almacenan en el <em>Android Keystore / iOS Keychain</em> mediante
-  <code>flutter_secure_storage</code>, con cifrado respaldado por hardware
-  en dispositivos compatibles.
-</p>
-
-<h2>6. Menores de edad</h2>
-<p>
-  Esta app está destinada a mayores de 18 años (abogados, estudiantes de
-  derecho, conductores). No recopilamos datos de menores conscientemente.
-</p>
-
-<h2>7. Eliminación de datos</h2>
-<p>
-  Podés eliminar todos tus datos en cualquier momento desde la configuración
-  de la app (<em>Configuración → Eliminar todos los datos</em>) o
-  desinstalando la aplicación. Todos los datos locales se borran con la
-  desinstalación. Los datos enviados a Anthropic están sujetos a la política
-  de retención de Anthropic (ver su sitio oficial).
-</p>
-
-<h2>8. Cambios a esta política</h2>
-<p>
-  Si realizamos cambios materiales, lo notificaremos dentro de la app y
-  actualizaremos la fecha al inicio de este documento. El uso continuado
-  de la app después del cambio implica la aceptación de la nueva política.
-</p>
-
-<h2>9. Contacto</h2>
-<p>
-  Para consultas sobre privacidad o para ejercer derechos ARCO
-  (acceso, rectificación, cancelación, oposición):
-  <a href="mailto:privacidad@multasargentina.app">privacidad@multasargentina.app</a>
-</p>
+<h2>9. Cambios y contacto</h2>
+<p>Los cambios materiales en esta política se reflejarán en esta página. Para consultas de privacidad o para ejercer derechos de acceso, rectificación, actualización o supresión, escribí a <a href="mailto:privacidad@multasargentina.app">privacidad@multasargentina.app</a>.</p>
 
 <h2>10. Marco legal</h2>
-<p>
-  Esta política se rige por la
-  <strong>Ley 25.326 de Protección de los Datos Personales</strong>
-  (Argentina) y el
-  <strong>Reglamento General de Protección de Datos (RGPD)</strong>
-  para usuarios en la Unión Europea.
-  Ante cualquier reclamo podés acudir a la
-  <a href="https://www.argentina.gob.ar/aaip" target="_blank">
-  Agencia de Acceso a la Información Pública (AAIP)</a>.
-</p>
-
+<p>Esta política toma como referencia la Ley 25.326 de Protección de los Datos Personales de Argentina. La aplicación debe revisarse y validarse jurídicamente antes de su publicación.</p>
+<p>Referencia oficial: <a href="https://www.argentina.gob.ar/aaip" target="_blank" rel="noopener">Agencia de Acceso a la Información Pública (AAIP)</a>.</p>
 </body>
 </html>
