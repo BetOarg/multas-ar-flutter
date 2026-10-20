@@ -192,7 +192,7 @@ jobs:
           # The generated Xcode project does not know about an overlaid Swift
           # file. Combine the custom plugin into AppDelegate for this isolated
           # smoke test so Swift compiles the same source without editing pbxproj.
-          python3 -c 'from pathlib import Path; p=Path("'"$candidate"'/ios/Runner/AppDelegate.swift"); s=p.read_text(); p.write_text(s.replace("import UIKit\\n", "import UIKit\\nimport Vision\\n", 1))'
+          python3 -c 'from pathlib import Path; p=Path("'"$candidate"'/ios/Runner/AppDelegate.swift"); lines=p.read_text().splitlines(); lines=[line for line in lines if line.strip() != "import Vision"]; lines.insert(2, "import Vision"); p.write_text("\n".join(lines)+"\n")'
           tail -n +5 "$candidate/ios/Runner/OcrPlugin.swift" >> "$candidate/ios/Runner/AppDelegate.swift"
           rm "$candidate/ios/Runner/OcrPlugin.swift"
           {
