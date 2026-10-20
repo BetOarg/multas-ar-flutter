@@ -230,6 +230,28 @@ jobs:
           set -o pipefail
           dart run build_runner build --delete-conflicting-outputs 2>&1 | tee "$RUNNER_TEMP/native-integration-ios/build-runner.log"
 
+      - name: Validate Flutter iOS generated settings before build
+        shell: bash
+        working-directory: ${{ runner.temp }}/native-integration-ios/candidate
+        run: |
+          set -euo pipefail
+          settings="ios/Flutter/Generated.xcconfig"
+          if [ ! -f "$settings" ]; then
+            echo "::error::Flutter did not generate $settings after flutter pub get."
+            exit 1
+          fi
+          if ! grep -q '^FLUTTER_ROOT=' "$settings"; then
+            echo "::error::Generated.xcconfig exists but does not define FLUTTER_ROOT."
+            sed -n '1,120p' "$settings"
+            exit 1
+          fi
+          echo "Generated Flutter settings look valid:"
+          grep -E '^(FLUTTER_ROOT|FLUTTER_APPLICATION_PATH|COCOAPODS_PARALLEL_CODE_SIGN)=' "$settings" || true
+          echo "CocoaPods integration files:"
+          test -f "ios/Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
+          test -f "ios/Pods/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh"
+          echo "Pods Runner target support files are present."
+
       - name: Build iOS simulator app without signing
         shell: bash
         working-directory: ${{ runner.temp }}/native-integration-ios/candidate
