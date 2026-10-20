@@ -1,13 +1,14 @@
 # Release Checklist — Multas Argentina Pro
 ## Google Play Store v1.0.0
 
-> **Estado verificado (2026-10-19): NO APTO PARA RELEASE.**
-> En el HEAD `38af75e3dbb4184fb8ec04a386c0d93e219bba79` terminaron verdes: Flutter checks (run `39339560982`), integración Android sobre scaffold temporal (run `39339561001`) y propuesta de scaffold (run `39339560942`).
-> El smoke test sí compiló un APK debug, pero usando un scaffold temporal generado por Flutter; no es una compilación del proyecto nativo versionado.
-> La inspección del árbol del repositorio confirma que faltan el wrapper/settings Gradle, el proyecto Xcode y los binarios PaddleOCR (`det.onnx`, `cls.onnx`, `rec.onnx`, `ppocr_keys.txt`); solo existe `assets/models/README.md`.
-> Todavía no se ha validado una compilación nativa desde el repositorio ni una firma de producción.
-> No generar ni subir un AAB de producción hasta cerrar estos bloqueos y ejecutar
-> builds nativos reales.
+> **Estado verificado (2026-10-20): NO APTO PARA RELEASE.**
+> En el commit `0e5039beeefb0c59b81f9cbbdc2b2a0a66ca4233` terminaron verdes:
+> - Flutter checks: run [39457947628](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39457947628).
+> - Smoke nativo Android + iOS: run [39457947666](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39457947666).
+> - Propuesta de scaffold: run [39457947536](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39457947536).
+> El smoke test compila contra un scaffold temporal generado por Flutter; **no es una compilación del proyecto nativo versionado**.
+> El árbol del repositorio aún carece de archivos nativos esenciales, incluidos `android/settings.gradle`, `android/gradlew`, `android/gradle/wrapper/gradle-wrapper.properties`, `ios/Podfile` y `ios/Runner.xcodeproj/project.pbxproj`. También faltan los modelos PaddleOCR binarios (`det.onnx`, `cls.onnx`, `rec.onnx`, `ppocr_keys.txt`).
+> No se ha validado un build de producción firmado ni la privacidad en dispositivos físicos. Mantener bloqueada la publicación hasta integrar y compilar el scaffold real, resolver los modelos OCR y completar las pruebas de privacidad.
 
 ---
 
