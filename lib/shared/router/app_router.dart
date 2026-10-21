@@ -17,12 +17,8 @@ import '../../features/analisis/ui/analisis_screen.dart';
 import '../widgets/scaffold_with_nav.dart';
 
 // ══════════════════════════════════════════════════════════════════
-// APP ROUTER v3 — con guard de autenticación
-//
-// Si el usuario no está autenticado Y no eligió modo local:
-//   → redirige a /auth
-// En todos los demás casos (autenticado o modo local):
-//   → accede normalmente a las 5 tabs
+// APP ROUTER — local-only
+// La app abre directamente en Análisis y no requiere cuenta ni sesión.
 // ══════════════════════════════════════════════════════════════════
 
 GoRouter buildAppRouter() {
