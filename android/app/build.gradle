@@ -28,7 +28,7 @@ android {
 
     defaultConfig {
         applicationId "com.betOarg.multas_ar"
-        minSdkVersion 26          // Android 8.0+ — target ML Kit
+        minSdkVersion 26          // Android 8.0+ — baseline de la app
         targetSdkVersion 35       // Google Play requirement 2025
         versionCode flutter.versionCode
         versionName flutter.versionName
@@ -149,8 +149,6 @@ dependencies {
     // ONNX Runtime Android
     implementation "com.microsoft.onnxruntime:onnxruntime-android:1.18.0"
 
-    // ML Kit (fallback OCR)
-    implementation "com.google.mlkit:text-recognition:16.0.1"
 
     // Coroutines utilizadas directamente por OcrChannel.kt
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1"
