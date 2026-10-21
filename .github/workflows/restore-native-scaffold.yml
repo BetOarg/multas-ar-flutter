@@ -188,6 +188,23 @@ jobs:
           fi
           echo "VERIFIED: INTERNET permission is absent from the release APK."
 
+      - name: Configure CocoaPods modular headers for SQLite Swift dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path("ios/Podfile")
+          text = path.read_text()
+          if "use_modular_headers!" not in text:
+              marker = next((line for line in text.splitlines() if line.strip().startswith("platform :ios")), None)
+              if marker is None:
+                  raise SystemExit("Could not find iOS platform declaration in generated Podfile")
+              text = text.replace(marker, marker + "\\n\\nuse_modular_headers!", 1)
+              path.write_text(text)
+          print("Configured modular headers for Swift pods that depend on sqlite3.")
+          PY
+
       - name: Install iOS CocoaPods dependencies
         shell: bash
         run: |
