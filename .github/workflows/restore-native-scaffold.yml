@@ -150,6 +150,25 @@ jobs:
       - name: Build real Android debug APK
         run: flutter build apk --debug
 
+      - name: Configure ephemeral signing key for release-build validation only
+        shell: bash
+        run: |
+          set -euo pipefail
+          keytool -genkeypair -v \
+            -keystore "$RUNNER_TEMP/multas-ci-validation.jks" \
+            -storepass ci-only-pass -keypass ci-only-pass \
+            -alias ci-validation -keyalg RSA -keysize 2048 -validity 2 \
+            -dname "CN=CI Validation Only"
+          cat > android/app/key.properties <<EOF
+          storeFile=$RUNNER_TEMP/multas-ci-validation.jks
+          storePassword=ci-only-pass
+          keyAlias=ci-validation
+          keyPassword=ci-only-pass
+          EOF
+
+      - name: Build release Android App Bundle (temporary CI key; not for publishing)
+        run: flutter build appbundle --release
+
       - name: Verify merged Android manifest has no Internet permission
         shell: bash
         run: |
