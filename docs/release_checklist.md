@@ -1,13 +1,13 @@
-# Estado verificado — 2026-10-20, commit 46ac19a
+# Estado verificado — 2026-10-21
 
-> **NO APTO PARA RELEASE.** Validación del último commit:
-> - Flutter checks: **VERDE**, run [39464215451](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39464215451).
-> - Smoke Android sobre scaffold temporal: **VERDE**, run [39464215333](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39464215333). No compila el árbol nativo versionado.
-> - Smoke iOS del scaffold temporal: **CANCELADO**; no hay resultado de build, run [39464215333](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39464215333).
-> - Restauración e integración del scaffold real: **CANCELADA**, run [39464215519](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39464215519). El job no ejecutó pasos; no añadió archivos.
-> - Confirmado que siguen ausentes `android/settings.gradle`, `android/gradlew`, `android/gradle/wrapper/gradle-wrapper.properties`, `ios/Podfile` y `ios/Runner.xcodeproj/project.pbxproj`.
+> **NO APTO PARA RELEASE.**
+> - En el workflow de integración real [39464215519, intento 2](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39464215519), `flutter pub get`, generación Drift, análisis, tests y build APK Android debug terminaron **VERDE**.
+> - La compilación iOS real terminó **ROJO**.
+> - La inspección del proyecto Xcode encontró que `OcrPlugin.swift` no estaba registrado en `project.pbxproj`, aunque `AppDelegate.swift` lo registra. También detectó que el bundle ID iOS no coincidía con el ID de Android.
+> - Se corrigieron ambos puntos en los commits `33316d0` y `410f631`: registrar el archivo Swift en el target y alinear el identificador a `com.betOarg.multas_ar`. **Pendiente confirmar con una nueva compilación iOS**.
+> - La app debe seguir procesando los datos localmente: estos arreglos no agregan servicios remotos ni envíos de datos personales.
 >
-> Por tanto, no se ha demostrado una compilación real de Android/iOS. Mantener bloqueada la publicación. No confundir smoke temporal con integración nativa real.
+> Mantener bloqueada la publicación hasta que el build real iOS y el resto de las comprobaciones de OCR, privacidad y firma estén verdes.
 
 ---
 
