@@ -56,19 +56,23 @@ import Vision
                 let uiImage = UIImage(contentsOfFile: path),
                 let cgImage = uiImage.cgImage
             else {
-                result(FlutterError(
-                    code: "IMAGE_ERROR",
-                    message: "No se pudo cargar la imagen: \(path)",
-                    details: nil))
+                DispatchQueue.main.async {
+                    result(FlutterError(
+                        code: "IMAGE_ERROR",
+                        message: "No se pudo cargar la imagen: \(path)",
+                        details: nil))
+                }
                 return
             }
 
             let request = VNRecognizeTextRequest { req, err in
                 if let err = err {
-                    result(FlutterError(
-                        code: "VISION_ERROR",
-                        message: err.localizedDescription,
-                        details: nil))
+                    DispatchQueue.main.async {
+                        result(FlutterError(
+                            code: "VISION_ERROR",
+                            message: err.localizedDescription,
+                            details: nil))
+                    }
                     return
                 }
 
@@ -112,10 +116,12 @@ import Vision
             do {
                 try handler.perform([request])
             } catch {
-                result(FlutterError(
-                    code: "HANDLER_ERROR",
-                    message: error.localizedDescription,
-                    details: nil))
+                DispatchQueue.main.async {
+                    result(FlutterError(
+                        code: "HANDLER_ERROR",
+                        message: error.localizedDescription,
+                        details: nil))
+                }
             }
         }
     }
