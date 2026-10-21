@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../../core/services/nulidades_service.dart';
 import '../../core/database/daos/plazos_dao.dart';
 import '../../features/analisis/bloc/analisis_bloc.dart';
-import '../../features/auth/bloc/auth_bloc.dart';
-import '../../features/auth/ui/auth_screen.dart';
 import '../../features/casos/bloc/casos_bloc.dart';
 import '../../features/casos/ui/casos_screen.dart';
 import '../../features/casos/ui/caso_detalle_screen.dart';
@@ -27,31 +25,11 @@ import '../widgets/scaffold_with_nav.dart';
 //   → accede normalmente a las 5 tabs
 // ══════════════════════════════════════════════════════════════════
 
-GoRouter buildAppRouter(AuthState authState) {
-  final bool accesoBloqueado =
-      authState is AuthInicial || authState is AuthNoAutenticado;
-
+GoRouter buildAppRouter() {
   return GoRouter(
-    initialLocation: accesoBloqueado ? '/auth' : '/analisis',
+    initialLocation: '/analisis',
     debugLogDiagnostics: false,
-    redirect: (context, state) {
-      final enAuth = state.matchedLocation == '/auth';
-      if (accesoBloqueado && !enAuth) return '/auth';
-      if (!accesoBloqueado && enAuth) return '/analisis';
-      return null;
-    },
     routes: [
-      // ── Pantalla de auth ───────────────────────────────────────
-      GoRoute(
-        path: '/auth',
-        pageBuilder: (context, state) => NoTransitionPage(
-          child: BlocProvider.value(
-            value: context.read<AuthBloc>(),
-            child: const AuthScreen(),
-          ),
-        ),
-      ),
-
       // ── Tabs principales (autenticado o modo local) ────────────
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) =>
