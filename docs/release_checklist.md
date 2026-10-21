@@ -1,15 +1,14 @@
 # Estado verificado — 2026-10-21
 
 > **NO APTO PARA RELEASE.**
-> - En el workflow de integración real [39464215519, intento 2](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39464215519), `flutter pub get`, generación Drift, análisis, tests y build APK Android debug terminaron **VERDE**.
-> - La compilación iOS real terminó **ROJO**.
-> - La inspección del proyecto Xcode encontró que `OcrPlugin.swift` no estaba registrado en `project.pbxproj`, aunque `AppDelegate.swift` lo registra. También detectó que el bundle ID iOS no coincidía con el ID de Android.
-> - Se corrigieron ambos puntos en los commits `33316d0`, `410f631` y `97f6e5b`: registrar `OcrPlugin.swift` en el target y alinear todas las configuraciones de Xcode + `Info.plist` a `com.betOarg.multas_ar`.
-> - Se restauró `ios/Podfile` en el commit `2b25410`; antes no estaba versionado.
-> - Nueva validación en cola: [Restore and validate native Flutter scaffold](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39523485457), commit `2b25410`. **Aún no hay resultado de la compilación iOS corregida**.
-> - La app debe seguir procesando los datos localmente: estos arreglos no agregan servicios remotos ni envíos de datos personales.
->
-> Mantener bloqueada la publicación hasta que el build real iOS y el resto de las comprobaciones de OCR, privacidad y firma estén verdes.
+> - La integración nativa real anterior confirmó **Android debug VERDE**, `flutter pub get`, generación Drift, análisis, tests y CocoaPods **VERDE**; iOS quedó **ROJO** con `Cannot find 'OcrPlugin' in scope`.
+> - La causa detectada fue que CocoaPods descartaba la referencia PBX personalizada de `OcrPlugin.swift`. Se reemplazaron los identificadores PBX por IDs Xcode estándar, se registró el archivo en el grupo y la fase Sources, se alinearon todos los bundle IDs a `com.betOarg.multas_ar`, y se restauraron `ios/Podfile` y los includes de CocoaPods en los xcconfig.
+> - Se corrigió el OCR Android para conservar la proporción de imagen, aceptar la salida ONNX DBNet con dimensiones batch/canal y agrupar filas en líneas; además, se cierran tensores/resultados ONNX tras cada inferencia.
+> - Se retiró ML Kit como fallback y dependencia de ambos sistemas. Google indica que ML Kit puede enviar métricas de uso/rendimiento y contactar servidores; la app conserva PaddleOCR/ONNX en Android y Apple Vision en iOS, y ahora informa errores sin recurrir a un servicio externo.
+> - CI incorpora guardas para detectar clientes HTTP directos y comprobar que el APK Android integrado no contiene permiso INTERNET. También validará un AAB release con una clave efímera de CI, exclusivamente para compilación; **no sirve para publicar**.
+> - Validación final en curso/cola: [GitHub Actions](https://github.com/BetOarg/multas-ar-flutter/actions). No declarar verde el build iOS ni el AAB release hasta ver resultados de esta revisión.
+
+> Mantener bloqueada la publicación hasta que pasen los builds reales Android/iOS, las pruebas OCR locales con actas de prueba, las verificaciones de privacidad/backup en dispositivos, la firma de producción y la confirmación de un correo de soporte real.
 
 ---
 
@@ -228,7 +227,7 @@ flutter build apk --release --split-per-abi
 
 - Fuente de modelos: [gitakoos/ocr-models, release v1](https://github.com/gitakoos/ocr-models/releases/tag/v1), PP-OCRv5 Latin/ONNX bajo Apache-2.0.
 - Se añadió a `android/app/build.gradle` la tarea `downloadOcrModels`: obtiene los cuatro recursos desde la release fijada, valida SHA-256 y los instala en `android/app/src/main/assets/models`, donde `OcrChannel.kt` los busca. También descarga LICENSE y NOTICE desde el commit upstream fijado `86b424bec2b9210e24db414d3ce7a534688fbc25`.
-- El OCR no usa una API de pago ni envía imágenes a un servicio OCR en la nube. Android mantiene ML Kit como fallback; iOS utiliza Apple Vision integrado en el sistema.
+- El OCR no usa una API de pago ni envía imágenes a un servicio OCR en la nube. La rama actual utiliza PaddleOCR/ONNX en Android y Apple Vision en iOS; se retiró ML Kit para evitar las métricas automáticas del SDK. La inferencia real todavía debe validarse con imágenes de prueba.
 - Los binarios no se versionan en Git; el build necesita conexión a GitHub para descargarlos. Sin conexión o si falla la validación de hash, la compilación falla explícitamente.
 - [ ] Verificar en CI la tarea Gradle y los cuatro SHA-256.
 - [ ] Validar el preprocesamiento y decodificación del modelo con imágenes de actas argentinas; no declarar PaddleOCR listo hasta pasar pruebas de inferencia.
