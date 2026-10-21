@@ -1,28 +1,32 @@
 # Estado verificado — 2026-10-21
 
-> **NO APTO PARA RELEASE.**
-> - La integración nativa real anterior confirmó **Android debug VERDE**, `flutter pub get`, generación Drift, análisis, tests y CocoaPods **VERDE**; iOS quedó **ROJO** con `Cannot find 'OcrPlugin' in scope`.
-> - La causa detectada fue que CocoaPods descartaba la referencia PBX personalizada de `OcrPlugin.swift`. Se reemplazaron los identificadores PBX por IDs Xcode estándar, se registró el archivo en el grupo y la fase Sources, se alinearon todos los bundle IDs a `com.betOarg.multas_ar`, y se restauraron `ios/Podfile` y los includes de CocoaPods en los xcconfig.
-> - Se corrigió el OCR Android para conservar la proporción de imagen, aceptar la salida ONNX DBNet con dimensiones batch/canal y agrupar filas en líneas; además, se cierran tensores/resultados ONNX tras cada inferencia.
-> - Se retiró ML Kit como fallback y dependencia de ambos sistemas. Google indica que ML Kit puede enviar métricas de uso/rendimiento y contactar servidores; la app conserva PaddleOCR/ONNX en Android y Apple Vision en iOS, y ahora informa errores sin recurrir a un servicio externo.
-> - Se añadió en Configuración el botón **Eliminar mis datos locales**: borra casos, plazos, escritos, perfil/preferencias locales y notificaciones, conservando normativa y feriados. Falta probarlo en dispositivos reales y confirmar el comportamiento de archivos temporales.
-> - CI incorpora una guarda de clientes HTTP directos y verifica el permiso INTERNET en el APK **release**. La variante debug conserva ese permiso para hot reload y depuración de Flutter, por lo que no se usa como criterio de privacidad de producción. El AAB release y el APK release se compilan con una clave efímera de CI, exclusivamente para validación; **no sirven para publicar**.
-> - Validación final en curso/cola: [GitHub Actions](https://github.com/BetOarg/multas-ar-flutter/actions). No declarar verde el build iOS ni el AAB release hasta ver resultados de esta revisión.
+> **NO APTO PARA PUBLICAR TODAVÍA; BUILDS DE CI VERDES.**
+> - Commit validado: [51789dfa](https://github.com/BetOarg/multas-ar-flutter/commit/51789dfa7f443bfb4d042cc5b3dc850944806ad5).
+> - [Flutter checks](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39532302442): VERDE.
+> - [Build nativo real Android/iOS](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39532299611): VERDE. Android debug, AAB release de validación, APK release para inspección de permisos e iOS sin firma completaron correctamente.
+> - [Smoke test de integración nativa](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39532299597): VERDE en Android e iOS.
+> - [Propuesta de scaffold](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39532299572): VERDE.
+> - El bloqueo iOS `Cannot find 'OcrPlugin' in scope` se corrigió reparando la referencia PBX del archivo `OcrPlugin.swift`; la compilación iOS posterior pasó.
+> - CI verificó que el APK **release** no incluye el permiso `android.permission.INTERNET`. El manifiesto debug puede añadirlo para herramientas Flutter; la comprobación de privacidad corresponde al artefacto release.
+> - El build Android obtiene modelos PaddleOCR desde una release fijada, comprueba SHA-256 y los empaqueta como assets de la aplicación. Esto ocurre durante la compilación, no implica enviar imágenes o datos del usuario durante la ejecución. Falta probar OCR con actas de prueba y modo avión en un dispositivo físico.
+> - La base de datos local SQLite/Drift no está cifrada a nivel de archivo. Las copias de seguridad, la eliminación de datos y los flujos de compartir/exportar requieren comprobación en dispositivos reales.
+> - El AAB generado por CI usa una clave efímera y **no sirve para publicar**. No hay evidencia de firma de producción configurada.
 
-> Mantener bloqueada la publicación hasta que pasen los builds reales Android/iOS, las pruebas OCR locales con actas de prueba, las verificaciones de privacidad/backup en dispositivos, la firma de producción y la confirmación de un correo de soporte real.
+> **Bloqueos restantes para publicación:** firma Android de producción; pruebas físicas de OCR y privacidad/offline en Android e iOS; verificar copias de seguridad, eliminación de datos y archivos temporales; confirmar que el correo de privacidad publicado está bajo control del responsable; revisar tamaño/licencias de modelos y validar la normativa y la política de privacidad antes de publicar.
+
 
 ---
 
 # Release Checklist — Multas Argentina Pro
 ## Google Play Store v1.0.0
 
-> **Estado verificado (2026-10-20): NO APTO PARA RELEASE.**
+> **Registro histórico (2026-10-20; sustituido por el estado actual de arriba).**
 > En el commit `0e5039beeefb0c59b81f9cbbdc2b2a0a66ca4233` terminaron verdes:
 > - Flutter checks: run [39457947628](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39457947628).
 > - Smoke nativo Android + iOS: run [39457947666](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39457947666).
 > - Propuesta de scaffold: run [39457947536](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39457947536).
 > El smoke test compila contra un scaffold temporal generado por Flutter; **no es una compilación del proyecto nativo versionado**.
-> El árbol del repositorio aún carece de archivos nativos esenciales, incluidos `android/settings.gradle`, `android/gradlew`, `android/gradle/wrapper/gradle-wrapper.properties`, `ios/Podfile` y `ios/Runner.xcodeproj/project.pbxproj`. También faltan los modelos PaddleOCR binarios (`det.onnx`, `cls.onnx`, `rec.onnx`, `ppocr_keys.txt`).
+> En aquel commit, el scaffold nativo aún no estaba restaurado y los modelos OCR no se descargaban desde Gradle. Ese estado es histórico y ya no describe el commit actual.
 > No se ha validado un build de producción firmado ni la privacidad en dispositivos físicos. Mantener bloqueada la publicación hasta integrar y compilar el scaffold real, resolver los modelos OCR y completar las pruebas de privacidad.
 
 ---
@@ -30,7 +34,7 @@
 ## PRE-BUILD
 
 ### Keystore y firma
-- [ ] **Bloqueo previo:** completar scaffold Android/Gradle antes de configurar la firma.
+- [x] Scaffold Android/Gradle restaurado y compilado en CI; la firma de producción sigue pendiente.
 - [x] Eliminar la asignación explícita de `signingConfigs.debug` al tipo `release` (commit `f633527`).
 - [ ] Ejecutar una compilación nativa con la configuración Gradle completa y confirmar que release no usa firma debug.
 - [ ] Validar que `android/app/key.properties` contiene las cuatro propiedades requeridas y que la ruta del keystore resuelve correctamente.
@@ -52,20 +56,17 @@ android/app/*.keystore
 - [ ] Confirmar `versionCode: 1` y `versionName: "1.0.0"`
 
 ### Assets PaddleOCR
-- [ ] `assets/models/det.onnx` presente
-- [ ] `assets/models/cls.onnx` presente
-- [ ] `assets/models/rec.onnx` presente
-- [ ] `assets/models/ppocr_keys.txt` presente
-- [ ] Tamaño total de modelos < 80 MB (límite APK inicial)
+- [x] Gradle descarga los cuatro modelos OCR desde una release fijada y verifica sus SHA-256 antes de empaquetarlos en Android.
+- [ ] Verificar en el artefacto release que los cuatro modelos están incluidos y medir el tamaño total del AAB/APK.
+- [ ] Ejecutar OCR real en un dispositivo Android con modo avión activado.
 
-### Scaffold nativo — bloqueo previo al build
-- [ ] Generar y revisar la estructura Android con Flutter estable: `android/settings.gradle`, `android/gradlew`, `android/gradlew.bat` y `android/gradle/wrapper/gradle-wrapper.properties`.
-- [ ] Generar y revisar la estructura iOS: `ios/Runner.xcodeproj/project.pbxproj` y la configuración de dependencias/plugins compatible con Flutter (Podfile si usa CocoaPods o configuración Swift Package Manager si corresponde).
-- [ ] Ejecutar build Android en CI y compilar iOS en macOS/Xcode; no basta con `flutter analyze` ni con los tests Dart.
-- [ ] Revisar el artefacto del workflow `Generate native scaffold proposal`; es una referencia aislada, no una integración.
-- [ ] Revisar el workflow `Native scaffold integration smoke test`: genera un scaffold temporal, superpone el código Android existente solo en el runner y ejecuta `flutter pub get`, `flutter analyze` y build APK debug.
-- [ ] Confirmar que el APK debug compila y resolver cualquier incompatibilidad reportada antes de incorporar configuración Gradle al repositorio.
-- [ ] Validar iOS por separado en macOS/Xcode conservando el registro de `OcrPlugin.swift` y `AppDelegate.swift`.
+### Scaffold nativo — validación CI
+- [x] Scaffold Android/Gradle versionado y compilado con Flutter estable.
+- [x] Scaffold iOS/Xcode y CocoaPods versionado; compilación real iOS sin firma completada en macOS.
+- [x] Generación Drift, análisis Dart y tests Flutter completados.
+- [x] Smoke tests Android/iOS y propuesta de scaffold completados.
+- [x] Corregida la referencia Xcode de `OcrPlugin.swift`; el build iOS posterior terminó verde.
+- [ ] Prueba manual de instalación y flujo OCR en dispositivos físicos Android e iOS.
 
 ### Código
 - [ ] `flutter analyze` sin errores
