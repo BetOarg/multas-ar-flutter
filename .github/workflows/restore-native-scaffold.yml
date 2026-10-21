@@ -134,11 +134,37 @@ jobs:
       - name: Analyze Dart code
         run: flutter analyze
 
+      - name: Guardrail — no automatic in-app network clients
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -R -n -E 'package:http|HttpClient\\(|URLSession\\.|URLRequest\\(' lib ios/Runner android/app/src/main/kotlin; then
+            echo "::error::Unexpected in-app HTTP client detected; inspect before release."
+            exit 1
+          fi
+          echo "No direct HTTP client patterns found in app source. Manual portal launch remains user-initiated."
+
       - name: Run Flutter tests
         run: flutter test
 
       - name: Build real Android debug APK
         run: flutter build apk --debug
+
+      - name: Verify merged Android manifest has no Internet permission
+        shell: bash
+        run: |
+          set -euo pipefail
+          apk="build/app/outputs/flutter-apk/app-debug.apk"
+          test -f "$apk"
+          aapt="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -n 1)"
+          test -n "$aapt"
+          permissions="$("$aapt" dump permissions "$apk")"
+          printf '%s\\n' "$permissions"
+          if grep -q 'android.permission.INTERNET' <<< "$permissions"; then
+            echo "::error::Merged Android APK includes INTERNET permission; local-only privacy guard failed."
+            exit 1
+          fi
+          echo "VERIFIED: INTERNET permission is absent from the built APK."
 
       - name: Install iOS CocoaPods dependencies
         shell: bash
