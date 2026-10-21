@@ -112,15 +112,14 @@ class OcrChannel(
         if (env != null) return
         env = OrtEnvironment.getEnvironment()
 
-        val opts = OrtSession.SessionOptions().apply {
-            setIntraOpNumThreads(4)
-            setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT)
+        OrtSession.SessionOptions().use { opts ->
+            opts.setIntraOpNumThreads(4)
+            opts.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT)
+            detSession = env!!.createSession(assetBytes("models/det.onnx"), opts)
+            clsSession = env!!.createSession(assetBytes("models/cls.onnx"), opts)
+            recSession = env!!.createSession(assetBytes("models/rec.onnx"), opts)
         }
-
-        detSession = env!!.createSession(assetBytes("models/det.onnx"), opts)
-        clsSession = env!!.createSession(assetBytes("models/cls.onnx"), opts)
-        recSession = env!!.createSession(assetBytes("models/rec.onnx"), opts)
-        charset    = loadCharset()
+        charset = loadCharset()
     }
 
     // ── Detección de regiones de texto ───────────────────────
@@ -145,21 +144,24 @@ class OcrChannel(
         }
 
         val tensor = bitmapToTensor(letterboxed, DET_SIZE, DET_SIZE)
-        val output = detSession!!.run(mapOf("x" to tensor))
-        val probabilityMap = extractProbabilityMap(output[0].value)
-            ?: throw IllegalStateException(
-                "Formato de salida ONNX de detección no reconocido: ${output[0].value.javaClass.name}",
-            )
+        return tensor.use { input ->
+            detSession!!.run(mapOf("x" to input)).use { output ->
+                val probabilityMap = extractProbabilityMap(output[0].value)
+                    ?: throw IllegalStateException(
+                        "Formato de salida ONNX de detección no reconocido: ${output[0].value.javaClass.name}",
+                    )
 
-        return parseProbabilityMap(
-            probabilityMap = probabilityMap,
-            origW = bitmap.width,
-            origH = bitmap.height,
-            scaleX = scaledW.toFloat() / bitmap.width,
-            scaleY = scaledH.toFloat() / bitmap.height,
-            offsetX = offsetX,
-            offsetY = offsetY,
-        )
+                parseProbabilityMap(
+                    probabilityMap = probabilityMap,
+                    origW = bitmap.width,
+                    origH = bitmap.height,
+                    scaleX = scaledW.toFloat() / bitmap.width,
+                    scaleY = scaledH.toFloat() / bitmap.height,
+                    offsetX = offsetX,
+                    offsetY = offsetY,
+                )
+            }
+        }
     }
 
     /**
@@ -182,12 +184,14 @@ class OcrChannel(
     // ── Clasificación de ángulo ───────────────────────────────
     private fun classify(crop: Bitmap): Pair<Bitmap, Int> {
         val resized = Bitmap.createScaledBitmap(crop, CLS_WIDTH, CLS_HEIGHT, true)
-        val tensor  = bitmapToTensor(resized, CLS_WIDTH, CLS_HEIGHT)
-        val inputs  = mapOf("x" to tensor)
-        val output  = clsSession!!.run(inputs)
-        val scores  = output[0].value as Array<FloatArray>
-        val angle   = if (scores[0][1] > 0.9f) 180 else 0
-        return Pair(crop, angle)
+        val tensor = bitmapToTensor(resized, CLS_WIDTH, CLS_HEIGHT)
+        return tensor.use { input ->
+            clsSession!!.run(mapOf("x" to input)).use { output ->
+                val scores = output[0].value as Array<FloatArray>
+                val angle = if (scores[0][1] > 0.9f) 180 else 0
+                Pair(crop, angle)
+            }
+        }
     }
 
     // ── Reconocimiento de texto ───────────────────────────────
@@ -201,11 +205,13 @@ class OcrChannel(
             c.drawColor(android.graphics.Color.WHITE)
             c.drawBitmap(resized, 0f, 0f, null)
         }
-        val tensor  = bitmapToTensor(padded, REC_WIDTH, REC_HEIGHT)
-        val inputs  = mapOf("x" to tensor)
-        val output  = recSession!!.run(inputs)
-        val logits  = output[0].value as Array<Array<FloatArray>>
-        return ctcDecode(logits[0])
+        val tensor = bitmapToTensor(padded, REC_WIDTH, REC_HEIGHT)
+        return tensor.use { input ->
+            recSession!!.run(mapOf("x" to input)).use { output ->
+                val logits = output[0].value as Array<Array<FloatArray>>
+                ctcDecode(logits[0])
+            }
+        }
     }
 
     // ── CTC Decode ───────────────────────────────────────────
