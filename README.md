@@ -11,7 +11,7 @@ Asistente legal para análisis de infracciones de tránsito en Argentina.
 | Base de datos | Drift + SQLite |
 | OCR Android | Canal nativo PaddleOCR/ONNX (requiere modelos; no verificado en build) |
 | OCR iOS | Apple Vision Framework (implementación presente; build iOS no verificado) |
-| OCR Fallback | google_mlkit_text_recognition |
+| OCR local | PaddleOCR/ONNX (Android), Apple Vision (iOS) |
 | Análisis | Motor local de reglas y plazos; sin IA remota ni envío automático de datos |
 | Navegación | go_router |
 | Notificaciones | flutter_local_notifications |
@@ -69,7 +69,7 @@ lib/
 │   ├── database/                ← Drift: tablas, DAOs, migraciones
 │   ├── repository/              ← ICasosRepository, NormativaRepository
 │   └── services/
-│       ├── ocr_service.dart     ← PaddleOCR / Vision / MLKit
+│       ├── ocr_service.dart     ← PaddleOCR / Apple Vision (sin fallback remoto)
 │       ├── plazos_service.dart  ← Motor de plazos hábiles/corridos
 │       ├── analisis_service.dart ← Alertas y oportunidades
 │       ├── nulidades_service.dart ← Art. 3 Ley 13.927 + Art. 9 Ley 1217
