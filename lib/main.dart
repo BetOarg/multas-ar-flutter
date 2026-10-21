@@ -21,7 +21,7 @@ import 'shared/router/app_router.dart';
 import 'shared/theme/app_theme.dart';
 
 // ══════════════════════════════════════════════════════════════════
-// MAIN — Multas Argentina Pro v1.1 (Fase 5)
+// MAIN — Multas Argentina Pro v1.0 (local-only)
 //
 // Orden de inicialización:
 //   1. Flutter bindings + orientación
@@ -29,8 +29,8 @@ import 'shared/theme/app_theme.dart';
 //   3. Base de datos Drift
 //   4. Carga inicial de normativa desde assets locales (sin OTA)
 //   5. Notificaciones locales
-//   6. DI: MultiRepositoryProvider + AuthBloc wrapper
-//   7. GoRouter con guard de autenticación
+//   6. DI: MultiRepositoryProvider con servicios locales
+//   7. GoRouter sin cuentas ni sincronización remota
 // ══════════════════════════════════════════════════════════════════
 
 void main() async {
