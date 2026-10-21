@@ -138,7 +138,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -R -n -E 'package:http|HttpClient\\(|URLSession\\.|URLRequest\\(' lib ios/Runner android/app/src/main/kotlin; then
+          if grep -R -n -E 'package:http|HttpClient\(|URLSession\.|URLRequest\(' lib ios/Runner android/app/src/main/kotlin; then
             echo "::error::Unexpected in-app HTTP client detected; inspect before release."
             exit 1
           fi
