@@ -4,7 +4,9 @@
 > - En el workflow de integración real [39464215519, intento 2](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39464215519), `flutter pub get`, generación Drift, análisis, tests y build APK Android debug terminaron **VERDE**.
 > - La compilación iOS real terminó **ROJO**.
 > - La inspección del proyecto Xcode encontró que `OcrPlugin.swift` no estaba registrado en `project.pbxproj`, aunque `AppDelegate.swift` lo registra. También detectó que el bundle ID iOS no coincidía con el ID de Android.
-> - Se corrigieron ambos puntos en los commits `33316d0` y `410f631`: registrar el archivo Swift en el target y alinear el identificador a `com.betOarg.multas_ar`. **Pendiente confirmar con una nueva compilación iOS**.
+> - Se corrigieron ambos puntos en los commits `33316d0`, `410f631` y `97f6e5b`: registrar `OcrPlugin.swift` en el target y alinear todas las configuraciones de Xcode + `Info.plist` a `com.betOarg.multas_ar`.
+> - Se restauró `ios/Podfile` en el commit `2b25410`; antes no estaba versionado.
+> - Nueva validación en cola: [Restore and validate native Flutter scaffold](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39523485457), commit `2b25410`. **Aún no hay resultado de la compilación iOS corregida**.
 > - La app debe seguir procesando los datos localmente: estos arreglos no agregan servicios remotos ni envíos de datos personales.
 >
 > Mantener bloqueada la publicación hasta que el build real iOS y el resto de las comprobaciones de OCR, privacidad y firma estén verdes.
