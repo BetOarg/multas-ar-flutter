@@ -37,7 +37,7 @@
 <p>Estos datos se almacenan en el dispositivo. No se envían automáticamente a servidores propios ni de terceros. La base de datos utiliza SQLite/Drift y permanece en el almacenamiento privado de la app. La app deshabilita las copias de seguridad de Android y solicita excluir el directorio de datos de iOS de las copias de seguridad; esta exclusión debe verificarse en dispositivos reales. No afirmamos que la base esté cifrada a nivel de archivo. Los datos sensibles de configuración guardados mediante flutter_secure_storage usan los mecanismos de protección disponibles en el sistema operativo.</p>
 
 <h2>3. OCR y análisis</h2>
-<p>El OCR está diseñado para ejecutarse en el dispositivo: PaddleOCR/ONNX en Android, Apple Vision en iOS y ML Kit como alternativa local. La disponibilidad y precisión de cada motor dependen de que la integración nativa y los modelos se hayan compilado y validado correctamente. No se utiliza una API remota de OCR ni de análisis con IA.</p>
+<p>El OCR se ejecuta exclusivamente en el dispositivo: PaddleOCR/ONNX en Android y Apple Vision en iOS. No se incluye ML Kit ni otro SDK de OCR con telemetría. Si el motor local falla, la app informa el error en lugar de enviar la imagen o el texto a otro servicio. La disponibilidad y precisión dependen de que la integración nativa y los modelos se hayan compilado y validado correctamente. No se utiliza una API remota de OCR ni de análisis con IA.</p>
 
 <h2>4. Conexiones externas y acciones del usuario</h2>
 <p>La aplicación no debe realizar llamadas de red automáticas ni enviar datos de actas, patentes, identificadores o perfiles. La normativa incluida se carga desde archivos locales de la aplicación; no se actualiza automáticamente por Internet.</p>
