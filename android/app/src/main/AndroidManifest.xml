@@ -4,7 +4,7 @@
 
     <!-- ── Permisos requeridos ───────────────────────────────── -->
 
-    <!-- Defensa en profundidad: ninguna dependencia puede reintroducir acceso a Internet. -->
+    <!-- Defensa en profundidad para producción; la variante debug añade INTERNET para las herramientas de Flutter. -->
     <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
 
     <!-- Cámara — OCR de actas -->
