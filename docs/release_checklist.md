@@ -1,18 +1,17 @@
 # Estado verificado — 2026-10-21
 
-> **NO APTO PARA PUBLICAR TODAVÍA; BUILDS DE CI VERDES.**
-> - Commit validado: [51789dfa](https://github.com/BetOarg/multas-ar-flutter/commit/51789dfa7f443bfb4d042cc5b3dc850944806ad5).
-> - [Flutter checks](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39532302442): VERDE.
-> - [Build nativo real Android/iOS](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39532299611): VERDE. Android debug, AAB release de validación, APK release para inspección de permisos e iOS sin firma completaron correctamente.
-> - [Smoke test de integración nativa](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39532299597): VERDE en Android e iOS.
-> - [Propuesta de scaffold](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39532299572): VERDE.
-> - El bloqueo iOS `Cannot find 'OcrPlugin' in scope` se corrigió reparando la referencia PBX del archivo `OcrPlugin.swift`; la compilación iOS posterior pasó.
-> - CI verificó que el APK **release** no incluye el permiso `android.permission.INTERNET`. El manifiesto debug puede añadirlo para herramientas Flutter; la comprobación de privacidad corresponde al artefacto release.
-> - El build Android obtiene modelos PaddleOCR desde una release fijada, comprueba SHA-256 y los empaqueta como assets de la aplicación. Esto ocurre durante la compilación, no implica enviar imágenes o datos del usuario durante la ejecución. Falta probar OCR con actas de prueba y modo avión en un dispositivo físico.
-> - La base de datos local SQLite/Drift no está cifrada a nivel de archivo. Las copias de seguridad y la eliminación de datos requieren comprobación en dispositivos reales. Se retiró la acción de compartir escritos con otras aplicaciones; queda por verificar el flujo completo en el dispositivo.
-> - El AAB generado por CI usa una clave efímera y **no sirve para publicar**. No hay evidencia de firma de producción configurada.
-
-> **Bloqueos restantes para publicación:** firma Android de producción; pruebas físicas de OCR y privacidad/offline en Android e iOS; verificar copias de seguridad, eliminación de datos y archivos temporales; confirmar que el correo de privacidad publicado está bajo control del responsable; revisar tamaño/licencias de modelos y validar la normativa y la política de privacidad antes de publicar.
+> **NO APTO PARA PUBLICAR TODAVÍA; CI VERDE EN EL COMMIT ACTUAL.**
+> - Commit actual en `main`: [194009c](https://github.com/BetOarg/multas-ar-flutter/commit/194009c0cacc6fc6d03fde867cc7e7423cd80750).
+> - [Flutter checks en main](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39534734363): VERDE; análisis y pruebas unitarias/de integración completados.
+> - [Build nativo real Android/iOS](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39534309643): VERDE; APK debug, AAB de validación, APK release para inspección de permisos e iOS sin firma completaron correctamente.
+> - [Smoke test de integración nativa](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39534309649): VERDE en Android e iOS contra scaffolds Flutter temporales; no sustituye la prueba física.
+> - [Propuesta de scaffold](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39534309678): VERDE.
+> - CI verificó que el APK **release** no incluye el permiso `android.permission.INTERNET`. La variante debug puede añadirlo para herramientas Flutter.
+> - Android descarga cuatro modelos PaddleOCR desde una release fijada, comprueba SHA-256 y los empaqueta durante la compilación; falta probar OCR con actas de prueba y modo avión en un dispositivo físico.
+> - La base SQLite/Drift no está cifrada a nivel de archivo. Deben verificarse en dispositivos reales las copias de seguridad, eliminación de datos y archivos temporales. Se retiraron las acciones de compartir escritos con otras aplicaciones; falta validar el flujo completo en dispositivo.
+> - El AAB de CI usa una clave efímera y **no sirve para publicar**. La firma de producción sigue pendiente.
+>
+> **Bloqueos restantes para publicación:** firma Android de producción; pruebas físicas de OCR y privacidad/offline en Android e iOS; verificación de backups, eliminación y archivos temporales; confirmar que el correo de privacidad publicado está bajo control del responsable; revisión de tamaño/licencias de modelos; revisión jurídica de normativa y política de privacidad; y completar la ficha y los requisitos de las tiendas.
 
 
 ---
