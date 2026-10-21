@@ -1,11 +1,10 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
 // ══════════════════════════════════════════════════════════════════
 // OCR SERVICE — v2
-// Binding real con platform channels Android (PaddleOCR) e iOS
-// (Apple Vision). Fallback: google_mlkit_text_recognition.
+// OCR exclusivamente local: PaddleOCR/ONNX en Android y Apple Vision en iOS.
+// No usa SDKs con telemetría ni envía imágenes/texto a servicios externos.
 // ══════════════════════════════════════════════════════════════════
 
 const _kOcrChannel = MethodChannel('com.betOarg.multas_ar/ocr');
@@ -50,7 +49,7 @@ class OcrServiceFactory {
   static IOcrService crear() {
     if (Platform.isAndroid) return PaddleOcrService();
     if (Platform.isIOS)     return AppleVisionOcrService();
-    return MlKitOcrService();
+    return UnsupportedOcrService();
   }
 }
 
@@ -72,8 +71,11 @@ class PaddleOcrService implements IOcrService {
       final texto = await _kOcrChannel.invokeMethod<String>(
             'recognizeImage', {'imagePath': imagePath}) ?? '';
       return ActaParser.parsear(texto, motor: 'paddle');
-    } on PlatformException {
-      return MlKitOcrService().reconocer(imagePath);
+    } on PlatformException catch (e) {
+      throw OcrLocalException(
+        'PaddleOCR local no pudo procesar la imagen (${e.code}). '
+        'Los datos no se enviaron a ningún servicio externo.',
+      );
     }
   }
 }
@@ -96,35 +98,36 @@ class AppleVisionOcrService implements IOcrService {
       final texto = await _kOcrChannel.invokeMethod<String>(
             'recognizeImage', {'imagePath': imagePath}) ?? '';
       return ActaParser.parsear(texto, motor: 'vision');
-    } on PlatformException {
-      return MlKitOcrService().reconocer(imagePath);
+    } on PlatformException catch (e) {
+      throw OcrLocalException(
+        'Apple Vision local no pudo procesar la imagen (${e.code}). '
+        'Los datos no se enviaron a ningún servicio externo.',
+      );
     }
   }
 }
 
 // ══════════════════════════════════════════════════════════════════
-// MLKIT OCR SERVICE — Fallback
+// FALLBACK EXPLÍCITO — sin OCR de terceros
 // ══════════════════════════════════════════════════════════════════
-class MlKitOcrService implements IOcrService {
+
+class OcrLocalException implements Exception {
+  final String message;
+  const OcrLocalException(this.message);
+
   @override
-  Future<bool> isDisponible() async => true;
+  String toString() => message;
+}
+
+class UnsupportedOcrService implements IOcrService {
+  @override
+  Future<bool> isDisponible() async => false;
 
   @override
   Future<OcrResult> reconocer(String imagePath) async {
-    final recognizer = TextRecognizer(script: TextRecognitionScript.latin);
-    try {
-      final inputImage = InputImage.fromFilePath(imagePath);
-      final recognized = await recognizer.processImage(inputImage);
-      final bloques = recognized.blocks.toList()
-        ..sort((a, b) => a.boundingBox.top.compareTo(b.boundingBox.top));
-      final texto = bloques
-          .expand((b) => b.lines)
-          .map((l) => l.text)
-          .join('\n');
-      return ActaParser.parsear(texto, motor: 'mlkit');
-    } finally {
-      recognizer.close();
-    }
+    throw const OcrLocalException(
+      'El OCR local no está disponible en esta plataforma.',
+    );
   }
 }
 
