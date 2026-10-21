@@ -125,16 +125,58 @@ class OcrChannel(
 
     // ── Detección de regiones de texto ───────────────────────
     private fun detect(bitmap: Bitmap): List<FloatArray> {
-        val resized = Bitmap.createScaledBitmap(bitmap, DET_SIZE, DET_SIZE, true)
-        val tensor  = bitmapToTensor(resized, DET_SIZE, DET_SIZE)
-        val inputs  = mapOf("x" to tensor)
-        val output  = detSession!!.run(inputs)
-        val map     = output[0].value as Array<*>
+        // Mantener la relación de aspecto: estirar una foto vertical a 960×960
+        // deforma las letras y reduce la precisión del reconocimiento.
+        val scale = minOf(
+            DET_SIZE.toFloat() / bitmap.width,
+            DET_SIZE.toFloat() / bitmap.height,
+        )
+        val scaledW = (bitmap.width * scale).toInt().coerceIn(1, DET_SIZE)
+        val scaledH = (bitmap.height * scale).toInt().coerceIn(1, DET_SIZE)
+        val offsetX = (DET_SIZE - scaledW) / 2
+        val offsetY = (DET_SIZE - scaledH) / 2
+        val scaled = Bitmap.createScaledBitmap(bitmap, scaledW, scaledH, true)
+        val letterboxed = Bitmap.createBitmap(
+            DET_SIZE, DET_SIZE, Bitmap.Config.ARGB_8888,
+        )
+        android.graphics.Canvas(letterboxed).apply {
+            drawColor(android.graphics.Color.WHITE)
+            drawBitmap(scaled, offsetX.toFloat(), offsetY.toFloat(), null)
+        }
 
-        // Parsear mapa de probabilidades → bounding boxes
-        // Implementación simplificada: threshold 0.3, dilate, contours
-        return parseProbabilityMap(map, DET_SIZE, DET_SIZE,
-                                   bitmap.width, bitmap.height)
+        val tensor = bitmapToTensor(letterboxed, DET_SIZE, DET_SIZE)
+        val output = detSession!!.run(mapOf("x" to tensor))
+        val probabilityMap = extractProbabilityMap(output[0].value)
+            ?: throw IllegalStateException(
+                "Formato de salida ONNX de detección no reconocido: ${output[0].value.javaClass.name}",
+            )
+
+        return parseProbabilityMap(
+            probabilityMap = probabilityMap,
+            origW = bitmap.width,
+            origH = bitmap.height,
+            scaleX = scaledW.toFloat() / bitmap.width,
+            scaleY = scaledH.toFloat() / bitmap.height,
+            offsetX = offsetX,
+            offsetY = offsetY,
+        )
+    }
+
+    /**
+     * PaddleOCR DBNet suele devolver [1, 1, H, W]. ONNX Runtime lo expone
+     * como arrays anidados; quitar dimensiones batch/canal de forma segura.
+     */
+    private fun extractProbabilityMap(value: Any?): Array<FloatArray>? {
+        return when (value) {
+            is Array<*> -> when {
+                value.isEmpty() -> null
+                value.all { it is FloatArray } ->
+                    value.map { it as FloatArray }.toTypedArray()
+                value.size == 1 -> extractProbabilityMap(value[0])
+                else -> null
+            }
+            else -> null
+        }
     }
 
     // ── Clasificación de ángulo ───────────────────────────────
@@ -230,36 +272,86 @@ class OcrChannel(
     }
 
     private fun parseProbabilityMap(
-        map: Array<*>, detW: Int, detH: Int,
-        origW: Int, origH: Int,
+        probabilityMap: Array<FloatArray>,
+        origW: Int,
+        origH: Int,
+        scaleX: Float,
+        scaleY: Float,
+        offsetX: Int,
+        offsetY: Int,
     ): List<FloatArray> {
-        // Threshold + coordenadas escaladas al tamaño original
-        // Implementación básica: retorna lista de [x0,y0,x1,y1]
-        val scaleX = origW.toFloat() / detW
-        val scaleY = origH.toFloat() / detH
-        val boxes  = mutableListOf<FloatArray>()
-        @Suppress("UNCHECKED_CAST")
-        val prob = map as? Array<Array<FloatArray>> ?: return boxes
-        val rows = prob[0]
-        var inRegion  = false
-        var regionTop = 0
-        var regionLeft = 0
-        for (r in rows.indices) {
-            for (c in rows[r].indices) {
-                val p = rows[r][c]
-                if (p > 0.3f && !inRegion) {
-                    inRegion   = true
-                    regionTop  = r
-                    regionLeft = c
-                } else if (p <= 0.3f && inRegion) {
-                    inRegion = false
-                    boxes.add(floatArrayOf(
-                        regionLeft * scaleX, regionTop  * scaleY,
-                        c          * scaleX, (r + 1)    * scaleY,
-                    ))
-                }
+        // Agrupar filas contiguas del mapa DBNet en líneas de texto.
+        // La versión anterior generaba una caja por fragmento horizontal y
+        // además interpretaba mal la dimensión batch/canal del tensor ONNX.
+        data class LineBox(
+            var left: Int,
+            var top: Int,
+            var right: Int,
+            var bottom: Int,
+            var lastActiveRow: Int,
+        )
+
+        val boxes = mutableListOf<FloatArray>()
+        var current: LineBox? = null
+        val threshold = 0.3f
+        val maxVerticalGap = 4
+        val horizontalTolerance = 16
+
+        fun emit(box: LineBox) {
+            val x0 = ((box.left - offsetX) / scaleX).coerceIn(0f, origW.toFloat())
+            val y0 = ((box.top - offsetY) / scaleY).coerceIn(0f, origH.toFloat())
+            val x1 = ((box.right + 1 - offsetX) / scaleX).coerceIn(0f, origW.toFloat())
+            val y1 = ((box.bottom + 1 - offsetY) / scaleY).coerceIn(0f, origH.toFloat())
+            if (x1 - x0 >= 3f && y1 - y0 >= 3f) {
+                boxes.add(floatArrayOf(x0, y0, x1, y1))
             }
         }
+
+        for (rowIndex in probabilityMap.indices) {
+            val row = probabilityMap[rowIndex]
+            var left = -1
+            var right = -1
+            for (columnIndex in row.indices) {
+                if (row[columnIndex] > threshold) {
+                    if (left < 0) left = columnIndex
+                    right = columnIndex
+                }
+            }
+
+            if (left < 0) {
+                if (current != null &&
+                    rowIndex - current.lastActiveRow > maxVerticalGap
+                ) {
+                    emit(current)
+                    current = null
+                }
+                continue
+            }
+
+            val existing = current
+            if (existing == null) {
+                current = LineBox(left, rowIndex, right, rowIndex, rowIndex)
+                continue
+            }
+
+            val overlapsHorizontally =
+                minOf(existing.right, right) >=
+                    maxOf(existing.left, left) - horizontalTolerance
+            val closeVertically =
+                rowIndex - existing.lastActiveRow <= maxVerticalGap
+
+            if (overlapsHorizontally && closeVertically) {
+                existing.left = minOf(existing.left, left)
+                existing.right = maxOf(existing.right, right)
+                existing.bottom = rowIndex
+                existing.lastActiveRow = rowIndex
+            } else {
+                emit(existing)
+                current = LineBox(left, rowIndex, right, rowIndex, rowIndex)
+            }
+        }
+
+        current?.let(::emit)
         return boxes
     }
 
