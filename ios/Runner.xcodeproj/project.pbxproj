@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B8E4A1C25D6F4A70A1C0F001 /* OcrPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11CE0000000000000002 /* OcrPlugin.swift */; };
+		B8E4A1C25D6F4A70A1C0F001 /* OcrPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E4A1C25D6F4A70A1C0F002 /* OcrPlugin.swift */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
