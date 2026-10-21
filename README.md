@@ -75,7 +75,7 @@ lib/
 │       ├── nulidades_service.dart ← Art. 3 Ley 13.927 + Art. 9 Ley 1217
 │       ├── notification_service.dart
 │       ├── sinai_service.dart   ← URLs portales gubernamentales
-│       └── firebase_service.dart ← Stub Fase 3
+│       └── firebase_service.dart ← stub heredado, no usado en runtime
 ├── features/
 │   ├── analisis/    ← OCR + análisis IA (BLoC + UI)
 │   ├── casos/       ← CRUD casos + detalle (BLoC + UI)
@@ -106,7 +106,7 @@ lib/
 
 ## Estado de verificación
 
-La presencia de código fuente no demuestra que una función esté lista para producción. La app está configurada para procesamiento local, sin llamada OTA automática ni permiso Android INTERNET. Aún deben verificarse los builds nativos reales, el OCR en dispositivos, el tráfico de red y la eliminación de datos. SQLite/Drift no debe describirse como cifrado a nivel de archivo sin una implementación y pruebas específicas.
+La presencia de código fuente no demuestra que una función esté lista para producción. La app arranca directamente en modo local, sin cuentas ni sincronización, sin llamada OTA automática ni permiso Android INTERNET. La opción de eliminación local ya existe; falta validar los builds nativos, el OCR en dispositivos, el tráfico de red y el borrado en dispositivos reales. SQLite/Drift no está cifrado a nivel de archivo.
 
 ## Roadmap
 
@@ -114,9 +114,9 @@ La presencia de código fuente no demuestra que una función esté lista para pr
 |------|--------|
 | 1 — Core local (OCR, nulidades, plazos, escritos) | ✅ Completo |
 | 2 — OCR nativo PaddleOCR + Apple Vision | ⚠️ Código parcial; modelos y builds nativos por verificar |
-| 3 — Motor nulidades + Firebase stub | ⚠️ Stub presente; no equivale a autenticación ni sincronización operativa |
+| 3 — Motor nulidades + Firebase stub | ⚠️ Stub heredado, no se instancia en runtime |
 | 4 — Google Play Store | 🔜 Pendiente |
-| 5 — Firebase Auth + Firestore sync | 🔜 Pendiente |
+| 5 — Cuentas y sincronización remota | ❌ Excluidas del producto local-only |
 | 6 — SINAI/DVE integración | 🔜 Pendiente |
 
 ## Disclaimer
