@@ -9,7 +9,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es/).
 
 ### Agregado
 - **OCR nativo** PaddleOCR v4 + ONNX Runtime (Android) y Apple Vision
-  Framework (iOS) con fallback a google_mlkit_text_recognition
+  Framework (iOS) con fallback a google_mlkit_text_recognition (retirado por requisito de privacidad en la rama actual)
 - **Motor de nulidades formales**: Art. 3 Ley 13.927 PBA (6 causales
   absolutas), Art. 9 Ley 1217 CABA, Art. 70 Ley 24.449 Nacional,
   fotomultas (homologación + notificación)
@@ -33,7 +33,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es/).
 - Drift + SQLite como único engine de base de datos local
 - Repository Pattern: ICasosRepository → LocalCasosRepository
   (Firestore listo para Fase 5)
-- OcrServiceFactory: selección automática PaddleOCR / Vision / MLKit
+- OcrServiceFactory: selección automática PaddleOCR / Apple Vision; sin fallback ML Kit para evitar métricas de SDK fuera del dispositivo.
 - NulidadesService: motor legal puro sin dependencias de UI
 
 ### Tests
