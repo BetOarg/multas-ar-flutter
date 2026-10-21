@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../../shared/widgets/legal_alert_widget.dart';
 import '../../../core/services/analisis_service.dart';
+import '../../../core/database/app_database.dart';
 
 class ConfiguracionScreen extends StatefulWidget {
   const ConfiguracionScreen({super.key});
@@ -19,6 +22,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
   String? _jurPrincipal;
   bool _guardando = false;
   bool _guardado = false;
+  bool _eliminando = false;
 
   static const _perfiles = [
     ('abogado', '⚖️', 'Abogado/a matriculado/a'),
@@ -64,6 +68,80 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
     setState(() { _guardando = false; _guardado = true; });
     await Future.delayed(const Duration(seconds: 2));
     if (mounted) setState(() => _guardado = false);
+  }
+
+  Future<void> _eliminarDatosLocales() async {
+    final confirmado = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Eliminar datos locales'),
+        content: const Text(
+          'Se eliminarán todos los casos, plazos, escritos y los datos del '
+          'perfil profesional guardados en este dispositivo. También se '
+          'cancelarán las notificaciones locales. La normativa y los feriados '
+          'precargados se conservarán. Esta acción no se puede deshacer.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.danger,
+            ),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Eliminar datos'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmado != true || !mounted) return;
+    setState(() => _eliminando = true);
+    try {
+      final db = context.read<AppDatabase>();
+      await db.transaction(() async {
+        await db.delete(db.escritos).go();
+        await db.delete(db.plazos).go();
+        await db.delete(db.casos).go();
+      });
+
+      for (final key in const [
+        'cfg_nombre',
+        'cfg_matricula',
+        'cfg_perfil',
+        'cfg_jur',
+      ]) {
+        await _storage.delete(key: key);
+      }
+      await context.read<FlutterLocalNotificationsPlugin>().cancelAll();
+
+      _nombreCtrl.clear();
+      _matriculaCtrl.clear();
+      if (!mounted) return;
+      setState(() {
+        _perfilSeleccionado = null;
+        _jurPrincipal = null;
+        _guardando = false;
+        _guardado = false;
+        _eliminando = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Datos locales eliminados de este dispositivo.'),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _eliminando = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('No se pudieron eliminar todos los datos: $error'),
+          backgroundColor: AppColors.danger,
+        ),
+      );
+    }
   }
 
   @override
@@ -167,6 +245,51 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
                       icon: Icons.privacy_tip_outlined,
                       label: 'Privacidad',
                       valor: 'Procesamiento local. Sin cuentas, sincronización ni envío automático de datos.'),
+                ],
+              ),
+            ),
+
+            // ── Datos locales y eliminación ────────────────────
+            _SectionCard(
+              titulo: '🔐  Datos locales',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Los casos, plazos, escritos y el perfil profesional '
+                    'se guardan en este dispositivo. Podés eliminarlos '
+                    'sin borrar la normativa ni los feriados precargados.',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.text2,
+                      height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: _eliminando ? null : _eliminarDatosLocales,
+                      icon: _eliminando
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.delete_forever_outlined),
+                      label: Text(
+                        _eliminando
+                            ? 'Eliminando datos...'
+                            : 'Eliminar mis datos locales',
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.danger,
+                        side: BorderSide(
+                          color: AppColors.danger.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
