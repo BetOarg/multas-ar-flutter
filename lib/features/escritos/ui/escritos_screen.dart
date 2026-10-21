@@ -142,11 +142,10 @@ class _EscritoEditor extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleMedium),
               const Spacer(),
               // Acciones
-              _accionIcon(
-                context,
-                icon: Icons.copy_outlined,
+              IconButton(
+                icon: const Icon(Icons.copy_outlined, size: 18, color: AppColors.text2),
                 tooltip: 'Copiar',
-                onTap: () => _copiar(context, modelo.plantilla),
+                onPressed: () => _copiar(context, modelo.plantilla),
               ),
               const SizedBox(width: 4),
             ],
