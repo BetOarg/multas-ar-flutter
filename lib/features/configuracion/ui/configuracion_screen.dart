@@ -101,6 +101,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
     setState(() => _eliminando = true);
     try {
       final db = context.read<AppDatabase>();
+      final notifications = context.read<FlutterLocalNotificationsPlugin>();
       await db.transaction(() async {
         await db.delete(db.escritos).go();
         await db.delete(db.plazos).go();
@@ -115,7 +116,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
       ]) {
         await _storage.delete(key: key);
       }
-      await context.read<FlutterLocalNotificationsPlugin>().cancelAll();
+      await notifications.cancelAll();
 
       _nombreCtrl.clear();
       _matriculaCtrl.clear();
