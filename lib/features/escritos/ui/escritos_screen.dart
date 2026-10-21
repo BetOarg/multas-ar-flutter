@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:share_plus/share_plus.dart';
 import '../bloc/escritos_bloc.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../../shared/widgets/legal_alert_widget.dart';
@@ -150,15 +149,6 @@ class _EscritoEditor extends StatelessWidget {
                 onTap: () => _copiar(context, modelo.plantilla),
               ),
               const SizedBox(width: 4),
-              _accionIcon(
-                context,
-                icon: Icons.share_outlined,
-                tooltip: 'Compartir',
-                onTap: () => Share.share(
-                  modelo.plantilla,
-                  subject: '${modelo.titulo} — ${modelo.jurisdiccion}',
-                ),
-              ),
             ],
           ),
           const SizedBox(height: 6),
@@ -214,27 +204,18 @@ class _EscritoEditor extends StatelessWidget {
           ),
 
           // Botones de acción
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.copy, size: 16),
-                  label: const Text('Copiar texto'),
-                  onPressed: () => _copiar(context, modelo.plantilla),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: OutlinedButton.icon(
-                  icon: const Icon(Icons.share_outlined, size: 16),
-                  label: const Text('Compartir'),
-                  onPressed: () => Share.share(
-                    modelo.plantilla,
-                    subject: modelo.titulo,
-                  ),
-                ),
-              ),
-            ],
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.copy, size: 16),
+              label: const Text('Copiar texto'),
+              onPressed: () => _copiar(context, modelo.plantilla),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Por privacidad, esta pantalla no permite enviar escritos a otras aplicaciones.',
+            style: TextStyle(fontSize: 11.5, color: AppColors.text3),
           ),
         ],
       ),
@@ -251,16 +232,6 @@ class _EscritoEditor extends StatelessWidget {
     );
   }
 
-  Widget _accionIcon(BuildContext context,
-      {required IconData icon,
-      required String tooltip,
-      required VoidCallback onTap}) {
-    return IconButton(
-      icon: Icon(icon, size: 18, color: AppColors.text2),
-      tooltip: tooltip,
-      onPressed: onTap,
-    );
-  }
 }
 
 // ── CAMPOS OBLIGATORIOS ───────────────────────────────────────────

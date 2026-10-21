@@ -9,7 +9,7 @@
 > - El bloqueo iOS `Cannot find 'OcrPlugin' in scope` se corrigió reparando la referencia PBX del archivo `OcrPlugin.swift`; la compilación iOS posterior pasó.
 > - CI verificó que el APK **release** no incluye el permiso `android.permission.INTERNET`. El manifiesto debug puede añadirlo para herramientas Flutter; la comprobación de privacidad corresponde al artefacto release.
 > - El build Android obtiene modelos PaddleOCR desde una release fijada, comprueba SHA-256 y los empaqueta como assets de la aplicación. Esto ocurre durante la compilación, no implica enviar imágenes o datos del usuario durante la ejecución. Falta probar OCR con actas de prueba y modo avión en un dispositivo físico.
-> - La base de datos local SQLite/Drift no está cifrada a nivel de archivo. Las copias de seguridad, la eliminación de datos y los flujos de compartir/exportar requieren comprobación en dispositivos reales.
+> - La base de datos local SQLite/Drift no está cifrada a nivel de archivo. Las copias de seguridad y la eliminación de datos requieren comprobación en dispositivos reales. Se retiró la acción de compartir escritos con otras aplicaciones; queda por verificar el flujo completo en el dispositivo.
 > - El AAB generado por CI usa una clave efímera y **no sirve para publicar**. No hay evidencia de firma de producción configurada.
 
 > **Bloqueos restantes para publicación:** firma Android de producción; pruebas físicas de OCR y privacidad/offline en Android e iOS; verificar copias de seguridad, eliminación de datos y archivos temporales; confirmar que el correo de privacidad publicado está bajo control del responsable; revisar tamaño/licencias de modelos y validar la normativa y la política de privacidad antes de publicar.
@@ -132,7 +132,7 @@ flutter build apk --release --split-per-abi
 
 ### Seguridad de datos (Data Safety)
 - [ ] Completar formulario (ver tabla en `play_store_listing.md`)
-- [ ] Declarar en Data Safety únicamente los flujos confirmados: procesamiento OCR local, almacenamiento local y cualquier exportación/compartición iniciada expresamente por el usuario. No declarar Anthropic ni IA remota opcional.
+- [ ] Declarar en Data Safety únicamente los flujos confirmados: procesamiento OCR local, almacenamiento local y el procesamiento local y almacenamiento local; la pantalla de escritos solo copia al portapapeles y no ofrece compartir con otras apps. No declarar Anthropic ni IA remota opcional.
 - [ ] Declarar: sin venta de datos, sin analíticas
 
 ### Precios y distribución
@@ -249,13 +249,14 @@ flutter build apk --release --split-per-abi
 - [x] Eliminada la patente de la URL de consulta CABA generada por la app.
 - [x] Actualizada la política de privacidad y la ficha de tienda para no prometer IA remota ni actualizaciones automáticas.
 - [ ] Compilar Android e iOS desde el proyecto nativo integrado y confirmar que los cambios compilan.
-- [ ] Revisar todos los flujos de exportación/compartición: solo deben enviar archivos si el usuario inicia expresamente la acción.
+- [x] Retirada la acción de compartir escritos con otras aplicaciones; la pantalla de escritos solo permite copiar al portapapeles local.
+- [ ] Auditar en dispositivo real que ninguna otra pantalla exponga datos mediante un flujo de compartir/exportar.
 - [ ] Ejecutar prueba de tráfico de red en Android e iOS; confirmar que la app no transmite imágenes, texto OCR, patentes, datos de casos ni configuración.
 - [ ] Validar en dispositivos reales OCR local, consulta manual de portales, notificaciones y eliminación de datos.
 - [ ] Revisar que ninguna dependencia agregue telemetría o conexiones automáticas.
 - [ ] No declarar privacidad verificada ni publicar hasta completar las pruebas anteriores.
 
-**Alcance:** abrir un portal en el navegador o compartir/exportar un documento puede transferir información solo si el usuario lo elige. La app no debe rellenar automáticamente URLs con patentes ni enviar contenido en segundo plano.
+**Alcance:** abrir un portal en el navegador no debe adjuntar datos del caso ni rellenar formularios. La pantalla de escritos no ofrece compartir/exportar a otras aplicaciones. No debe haber envío automático de datos en segundo plano.
 
 
 ## Verificación CI y privacidad — 2026-10-20 (HEAD f89baee)
@@ -264,7 +265,7 @@ flutter build apk --release --split-per-abi
 - [x] Propuesta de scaffold nativo: run [39446233225](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39446233225) — verde; es una plantilla aislada, no una compilación de la app integrada.
 - [ ] Native scaffold integration smoke test: run [39446233151](https://github.com/BetOarg/multas-ar-flutter/actions/runs/39446233151) — rojo en iOS con `Framework 'Pods_Runner' not found`; Android terminó verde. Quitar la segunda generación del scaffold no resolvió el error. No marcar iOS como validado; inspeccionar la integración CocoaPods/Xcode generada y sus configuraciones de build antes de otra corrección.
 - [ ] Confirmar que el contacto de privacidad publicado en `docs/privacy_policy.html` existe y está operativo; el correo actual es un marcador pendiente de verificación.
-- [ ] Pruebas en dispositivo real pendientes: tráfico de red, OCR offline, exclusión de backups, borrado local, exportación/compartición y revisión de dependencias.
+- [ ] Pruebas en dispositivo real pendientes: tráfico de red, OCR offline, exclusión de backups, borrado local, auditoría de portapapeles y flujos externos, y revisión de dependencias.
 - [ ] La base SQLite/Drift no está cifrada a nivel de archivo; comunicarlo con precisión y evaluar cifrado solo si el requisito de amenaza lo exige.
 
 **Estado de release:** NO APTO. Los tests Dart verdes no compensan el build iOS rojo ni sustituyen builds nativos integrados y verificación de privacidad en dispositivos reales.

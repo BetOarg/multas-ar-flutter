@@ -208,12 +208,12 @@ En Play Console → Seguridad de datos, declarar:
 
 | Tipo de dato | Recopilado | Compartido | Cifrado | Eliminable |
 |---|---|---|---|---|
-| Fotos/imágenes | Sí (local) | No | Según almacenamiento del dispositivo | Sí |
-| Datos de app (actas) | Sí (local) | No | Sí | Sí |
+| Fotos/imágenes | Sí (local) | No | No se transmiten; almacenamiento privado del sistema operativo | Sí |
+| Datos de app (actas) | Sí (local) | No | No a nivel de archivo (SQLite/Drift) | Sí |
 | Datos de diagnóstico | No | No | — | — |
 
 **Prácticas de seguridad:**
-- ✅ La app no debe transmitir datos de actas o perfiles a servidores
+- ✅ La app no transmite datos de actas o perfiles a servidores y no ofrece compartir escritos con otras apps
 - ⚠️ Verificar en pruebas de red que no exista tráfico saliente de datos personales
 - ⚠️ Confirmar que la función de eliminación borre todos los datos locales
 - ✅ Los datos no se venden

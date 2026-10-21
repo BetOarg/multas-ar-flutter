@@ -9,13 +9,17 @@ Asistente legal para análisis de infracciones de tránsito en Argentina.
 | Framework | Flutter 3.x / Dart 3.3+ |
 | Estado | BLoC (flutter_bloc) |
 | Base de datos | Drift + SQLite |
-| OCR Android | Canal nativo PaddleOCR/ONNX (requiere modelos; no verificado en build) |
-| OCR iOS | Apple Vision Framework (implementación presente; build iOS no verificado) |
-| OCR local | PaddleOCR/ONNX (Android), Apple Vision (iOS) |
+| OCR Android | PaddleOCR/ONNX local; modelos descargados y verificados por SHA-256 durante el build CI |
+| OCR iOS | Apple Vision Framework; build nativo iOS sin firma verificado en CI |
+| OCR local | PaddleOCR/ONNX (Android), Apple Vision (iOS); no envía datos a servidores |
 | Análisis | Motor local de reglas y plazos; sin IA remota ni envío automático de datos |
 | Navegación | go_router |
 | Notificaciones | flutter_local_notifications |
 | Almacenamiento seguro | flutter_secure_storage para secretos compatibles; no implica cifrado de la base SQLite |
+
+## Privacidad
+
+Los datos de actas, fotos, patentes, texto OCR, casos y escritos se procesan localmente. La app no incluye una acción para compartir escritos con otras aplicaciones ni sincroniza datos. La pantalla de escritos permite copiar texto al portapapeles local. SQLite/Drift no está cifrado a nivel de archivo; validar backups, eliminación y OCR offline en dispositivos reales antes de publicar.
 
 ## Requisitos
 
